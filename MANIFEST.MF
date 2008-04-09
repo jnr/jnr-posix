@@ -1,0 +1,2 @@
+Implementation-Title: JNA-POSIX
+Implementation-Version: 0.5
