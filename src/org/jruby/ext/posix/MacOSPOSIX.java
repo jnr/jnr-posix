@@ -12,7 +12,7 @@ public class MacOSPOSIX extends BaseNativePOSIX {
     }
 
     public FileStat allocateStat() {
-        return new MacOSFileStat(this);
+        return new MacOSHeapFileStat(this);
     }
     
     @Override
