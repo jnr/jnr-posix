@@ -6,7 +6,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
     }
 
     public FileStat allocateStat() {
-        return new SolarisFileStat(this);
+        return new SolarisHeapFileStat(this);
     }
     
     @Override

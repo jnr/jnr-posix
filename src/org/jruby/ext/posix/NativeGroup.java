@@ -1,12 +1,9 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.sun.jna.Structure;
-import com.sun.jna.StringArray;
-import com.sun.jna.*;
-import com.sun.jna.ptr.PointerByReference;
 
 public class NativeGroup extends Structure implements Group {
     public String gr_name;   // name
