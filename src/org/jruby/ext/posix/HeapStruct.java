@@ -49,6 +49,7 @@ public class HeapStruct implements com.sun.jna.NativeMapped {
      */
     private static final int LONG_SIZE = (Platform.isWindows() ? 4 : Pointer.SIZE) * 8;
     private static final int LONG_ALIGN = isSPARC ? 64 : LONG_SIZE;
+    private static final long LONG_MASK = LONG_SIZE == 32 ? 0x7FFFFFFFL : 0x7FFFFFFFFFFFFFFFL;
     private static final int DOUBLE_ALIGN = isSPARC ? 64 : LONG_SIZE;
     private static final int FLOAT_ALIGN = isSPARC ? 64 : 32;
     private ByteBuffer buffer;
@@ -111,6 +112,22 @@ public class HeapStruct implements com.sun.jna.NativeMapped {
             getByteBuffer().put(offset, value);
         }
     }
+    protected class UInt8 extends Field {
+        public UInt8() {
+            super(8);
+        }
+        public UInt8(short value) {
+            this();
+            set(value);
+        }
+        public final short get() {
+            final short value = getByteBuffer().get(offset);
+            return value < 0 ? (short) ((value & 0x7F) + 0x80) : value;
+        }
+        public final void set(short value) {
+            getByteBuffer().put(offset, (byte) value);
+        }
+    }
     protected final class Byte extends Int8 {
         public Byte() { }
         public Byte(byte value) {
@@ -132,6 +149,22 @@ public class HeapStruct implements com.sun.jna.NativeMapped {
             getByteBuffer().putShort(offset, value);
         }
     }
+    protected class UInt16 extends Field {
+        public UInt16() {
+            super(16);
+        }
+        public UInt16(short value) {
+            this();
+            set(value);
+        }
+        public final int get() {
+            final int value = getByteBuffer().getShort(offset);
+            return value < 0 ? (int)((value & 0x7FFF) + 0x8000) : value;
+        }
+        public final void set(int value) {
+            getByteBuffer().putShort(offset, (short) value);
+        }
+    }
     protected class Short extends Int16 {
         public Short() {}
         public Short(short value) {
@@ -151,6 +184,22 @@ public class HeapStruct implements com.sun.jna.NativeMapped {
         }
         public final void set(int value) {
             getByteBuffer().putInt(offset, value);
+        }
+    }
+    protected class UInt32 extends Field {
+        public UInt32() {
+            super(32);
+        }
+        public UInt32(long value) {
+            this();
+            set(value);
+        }
+        public final long get() {
+            final long value = getByteBuffer().getInt(offset);
+            return value < 0 ? (long)((value & 0x7FFFFFFFL) + 0x80000000L) : value;
+        }
+        public final void set(long value) {
+            getByteBuffer().putInt(offset, (int) value);
         }
     }
     protected class Integer extends Int32 {
@@ -186,6 +235,29 @@ public class HeapStruct implements com.sun.jna.NativeMapped {
         public final long get() {
             return LONG_SIZE == 32 
                     ? getByteBuffer().getInt(offset) : getByteBuffer().getLong(offset);
+        }
+        public final void set(long value) {
+            if (LONG_SIZE == 32) {
+                getByteBuffer().putInt(offset, (int) value);
+            } else {
+                getByteBuffer().putLong(offset, value);
+            }
+        }
+    }
+    protected class ULong extends Field {
+        public ULong() {
+            super(LONG_SIZE, LONG_ALIGN);
+        }
+        public ULong(long value) {
+            this();
+            set(value);
+        }
+        public final long get() {
+            final long value = LONG_SIZE == 32 
+                    ? getByteBuffer().getInt(offset) : getByteBuffer().getLong(offset);
+            return value < 0
+                    ? (long) ((value & LONG_MASK) + LONG_MASK + 1) 
+                    : value;
         }
         public final void set(long value) {
             if (LONG_SIZE == 32) {

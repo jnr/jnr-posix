@@ -34,7 +34,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
 
     @Override
     public FileStat allocateStat() {
-        return new LinuxFileStat(this);
+        return new LinuxHeapFileStat(this);
     }
 
     @Override
