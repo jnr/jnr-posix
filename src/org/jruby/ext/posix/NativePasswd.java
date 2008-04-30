@@ -1,5 +1,6 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Structure;
 
 public class NativePasswd extends Structure implements Passwd {
@@ -7,13 +8,12 @@ public class NativePasswd extends Structure implements Passwd {
     public String pw_passwd; // password (encrypted)
     public int pw_uid;       // user id
     public int pw_gid;       // user id
-    public int pw_change;    // password change time
+    public NativeLong pw_change;    // password change time
     public String pw_class;  // user access class
     public String pw_gecos;  // login info
     public String pw_dir;    // home directory
     public String pw_shell;  // default shell
-    public int pw_expire;    // account expiration
-    public int unused;       // padding
+    public NativeLong pw_expire;    // account expiration
     
     public String getAccessClass() {
         return pw_class;
@@ -31,7 +31,7 @@ public class NativePasswd extends Structure implements Passwd {
         return pw_name;
     }
     public int getPasswdChangeTime() {
-        return pw_change;
+        return pw_change.intValue();
     }
     public String getPassword() {
         return pw_passwd;
@@ -43,6 +43,6 @@ public class NativePasswd extends Structure implements Passwd {
         return pw_uid;
     }
     public int getExpire() {
-        return pw_expire;
+        return pw_expire.intValue();
     }
 }
