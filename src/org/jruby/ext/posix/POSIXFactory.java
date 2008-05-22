@@ -1,12 +1,17 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.Library;
 import java.util.HashMap;
 import org.jruby.ext.posix.util.Platform;
 import com.sun.jna.Native;
+import java.util.Map;
 
 public class POSIXFactory {
     static final String LIBC = "c";
     static LibC libc = null;
+    static final Map<Object, Object> defaultOptions = new HashMap<Object, Object>() {{
+        put(Library.OPTION_TYPE_MAPPER, POSIXTypeMapper.INSTANCE);
+    }};
 
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
         POSIX posix = null;
@@ -53,31 +58,34 @@ public class POSIXFactory {
     }
 
     public static POSIX loadLinuxPOSIX(POSIXHandler handler) {
-        return new LinuxPOSIX(LIBC, loadLibC(LIBC, LinuxLibC.class, new HashMap<Object, Object>()), handler);
+        return new LinuxPOSIX(LIBC, loadLibC(LIBC, LinuxLibC.class, defaultOptions), handler);
     }
 
     public static POSIX loadMacOSPOSIX(POSIXHandler handler) {
-        return new MacOSPOSIX(LIBC, loadLibC(LIBC, LibC.class, new HashMap<Object, Object>()), handler);
+        return new MacOSPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
     }
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
-        return new SolarisPOSIX(LIBC, loadLibC(LIBC, LibC.class, new HashMap<Object, Object>()), handler);
+        return new SolarisPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
         String name = "msvcrt";
 
-        HashMap<Object, Object> options = new HashMap<Object, Object>();
+        Map<Object, Object> options = new HashMap<Object, Object>();
         options.put(com.sun.jna.Library.OPTION_FUNCTION_MAPPER, new WindowsLibCFunctionMapper());
 
         return new WindowsPOSIX(name, loadLibC(name, LibC.class, options), handler);
     }
 
-    public static LibC loadLibC(String libraryName, Class<?> libCClass, HashMap<Object, Object> options) {
+    public static LibC loadLibC(String libraryName, Class<?> libCClass, Map<Object, Object> options) {
         if (libc != null) return libc;
 
         libc = (LibC) Native.loadLibrary(libraryName, libCClass, options);
 
         return libc;
     }
+    
+    
+    
 }

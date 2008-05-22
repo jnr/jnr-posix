@@ -1,5 +1,7 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.Pointer;
 import java.io.FileDescriptor;
 
 public class LinuxPOSIX extends BaseNativePOSIX {
@@ -31,7 +33,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         if (!hasLxstat) hasLstat = hasMethod("lstat");
         if (!hasXstat) hasStat = hasMethod("stat");
     }
-
+    
     @Override
     public FileStat allocateStat() {
         return new LinuxHeapFileStat(this);
@@ -82,4 +84,12 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         
         return stat;
     }
+    
+    public static class PasswordConverter extends PointerConverter {
+        public Object fromNative(Object arg, FromNativeContext ctx) {
+            return new LinuxPasswd((Pointer) arg);
+        }
+    }
+    
+    public static final PasswordConverter PASSWD = new PasswordConverter();
 }

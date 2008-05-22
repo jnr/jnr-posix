@@ -1,5 +1,8 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.Pointer;
+
 public class MacOSPOSIX extends BaseNativePOSIX {
     private boolean hasLchmod;
     private boolean hasLchown;
@@ -10,7 +13,7 @@ public class MacOSPOSIX extends BaseNativePOSIX {
         hasLchmod = hasMethod("lchmod");
         hasLchown = hasMethod("lchown");
     }
-
+    
     public FileStat allocateStat() {
         return new MacOSHeapFileStat(this);
     }
@@ -28,4 +31,12 @@ public class MacOSPOSIX extends BaseNativePOSIX {
         
         return super.lchown(filename, user, group);
     }
+    
+    public static class PasswordConverter extends PointerConverter {
+        public Object fromNative(Object arg, FromNativeContext ctx) {
+            return new MacOSPasswd((Pointer) arg);
+        }
+    }
+    
+    public static final PasswordConverter PASSWD = new PasswordConverter();
 }

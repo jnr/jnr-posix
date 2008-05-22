@@ -11,7 +11,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
         helper = new JavaLibCHelper(handler);
     }
-
+    
     @Override
     public FileStat allocateStat() {
         return new WindowsFileStat(this);

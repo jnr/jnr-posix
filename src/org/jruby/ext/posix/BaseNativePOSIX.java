@@ -1,6 +1,9 @@
 package org.jruby.ext.posix;
 
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.FromNativeConverter;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Pointer;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -225,7 +228,7 @@ public abstract class BaseNativePOSIX implements POSIX {
     public boolean isatty(FileDescriptor fd) {
        return libc.isatty(helper.getfd(fd)) != 0;
     }
-    
+
     public abstract FileStat allocateStat();
 
     /**
@@ -242,4 +245,18 @@ public abstract class BaseNativePOSIX implements POSIX {
         
         return true;
     }
+    
+    public static abstract class PointerConverter implements FromNativeConverter {
+        public Class nativeType() {
+            return Pointer.class;
+        }
+    }
+    
+    public static class GroupConverter extends PointerConverter {
+        public Object fromNative(Object arg, FromNativeContext ctx) {
+            return new DefaultNativeGroup((Pointer) arg);
+        }        
+    }
+    
+    public static final GroupConverter GROUP = new GroupConverter();    
 }
