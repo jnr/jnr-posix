@@ -12,13 +12,12 @@ import com.sun.jna.Pointer;
  */
 public class LinuxPasswd extends NativePasswd implements Passwd {
     public String pw_name;   // user name
-    public String pw_passwd; // password (encrypted)
     public int pw_uid;       // user id
     public int pw_gid;       // user id
-    public String pw_class;  // user access class
-    public String pw_gecos;  // login info
     public String pw_dir;    // home directory
     public String pw_shell;  // default shell
+    public String pw_passwd; // password (encrypted)
+    public String pw_gecos;  // login info
     
     LinuxPasswd(Pointer memory) {
         useMemory(memory);
@@ -26,7 +25,7 @@ public class LinuxPasswd extends NativePasswd implements Passwd {
     }
     
     public String getAccessClass() {
-        return pw_class;
+        return "";
     }
     public String getGECOS() {
         return pw_gecos;
