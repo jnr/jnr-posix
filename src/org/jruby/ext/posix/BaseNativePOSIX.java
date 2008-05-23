@@ -252,11 +252,9 @@ public abstract class BaseNativePOSIX implements POSIX {
         }
     }
     
-    public static class GroupConverter extends PointerConverter {
+    public static final PointerConverter GROUP = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return new DefaultNativeGroup((Pointer) arg);
-        }        
-    }
-    
-    public static final GroupConverter GROUP = new GroupConverter();    
+        }
+    };
 }

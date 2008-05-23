@@ -24,14 +24,10 @@ class POSIXTypeMapper implements TypeMapper {
             return BaseNativePOSIX.GROUP;
         }
         
-        assert false : "No type converter for " + klazz;
-        
         return null;
     }
     
     public ToNativeConverter getToNativeConverter(Class klazz) {
-        assert false : "No type converter for " + klazz;
-        
         return null;
     }
 }

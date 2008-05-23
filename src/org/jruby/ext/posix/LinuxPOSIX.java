@@ -85,11 +85,9 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         return stat;
     }
     
-    public static class PasswordConverter extends PointerConverter {
+    public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return new LinuxPasswd((Pointer) arg);
         }
-    }
-    
-    public static final PasswordConverter PASSWD = new PasswordConverter();
+    };
 }
