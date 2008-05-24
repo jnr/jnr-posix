@@ -21,17 +21,17 @@ public class LinuxPOSIX extends BaseNativePOSIX {
          * Most linux systems define stat/lstat/fstat as macros which force
          * us to call these weird signature versions.
          */
-        hasFxstat = hasMethod("__fxstat");
-        hasLxstat = hasMethod("__lxstat");
-        hasXstat = hasMethod("__xstat");
+        hasFxstat = hasMethod("__fxstat64");
+        hasLxstat = hasMethod("__lxstat64");
+        hasXstat = hasMethod("__xstat64");
         
         /*
          * At least one person is using uLibc on linux which has real 
          * definitions for stat/lstat/fstat.
          */
-        if (!hasFxstat) hasFstat = hasMethod("fstat");
-        if (!hasLxstat) hasLstat = hasMethod("lstat");
-        if (!hasXstat) hasStat = hasMethod("stat");
+        if (!hasFxstat) hasFstat = hasMethod("fstat64");
+        if (!hasLxstat) hasLstat = hasMethod("lstat64");
+        if (!hasXstat) hasStat = hasMethod("stat64");
     }
     
     @Override
@@ -50,7 +50,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
         
-        if (((LinuxLibC) libc).__fxstat(STAT_VERSION, fd, stat) < 0) handler.error(ERRORS.ENOENT, "" + fd);
+        if (((LinuxLibC) libc).__fxstat64(STAT_VERSION, fd, stat) < 0) handler.error(ERRORS.ENOENT, "" + fd);
         
         return stat;
     }
@@ -65,7 +65,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
 
         FileStat stat = allocateStat();
 
-        if (((LinuxLibC) libc).__lxstat(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc).__lxstat64(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }
@@ -80,7 +80,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         
         FileStat stat = allocateStat(); 
 
-        if (((LinuxLibC) libc).__xstat(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc).__xstat64(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }
