@@ -51,7 +51,7 @@ public class MacOSFileStat extends BaseNativeFileStat {
         return st_gid;
     }
     
-    public int ino() {
+    public long ino() {
         return st_ino;
     }
     

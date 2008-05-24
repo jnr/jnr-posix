@@ -14,16 +14,14 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
     public final Int32 st_pad1_0 = new Int32();
     public final Int32 st_pad1_1 = new Int32();
     public final Int32 st_pad1_2 = new Int32();
-    public final Int32 st_ino = new Int32();
+    public final Int64 st_ino = new Int64();
     public final Int32 st_mode = new Int32();
     public final Int32 st_nlink = new Int32();
     public final Int32 st_uid = new Int32();
     public final Int32 st_gid = new Int32();
-    public final Int32 st_rdev = new Int32();
+    public final Int64 st_rdev = new Int64();
     public final Int32 st_pad2_0 = new Int32();
-    public final Int32 st_pad2_1 = new Int32();
-    public final Int32 st_size = new Int32();
-    public final Int32 st_pad3 = new Int32();
+    public final Int64 st_size = new Int64();
     public final Int32 st_atim_sec = new Int32();
     public final Int32 st_atim_nsec = new Int32();
     public final Int32 st_mtim_sec = new Int32();
@@ -31,7 +29,7 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
     public final Int32 st_ctim_sec = new Int32();
     public final Int32 st_ctim_nsec = new Int32();
     public final Int32 st_blksize = new Int32();
-    public final Int32 st_blocks = new Int32();
+    public final Int64 st_blocks = new Int64();
     public final Int32 st_pad7 = new Int32();
     public final Int32 st_pad8 = new Int32();
     public final Int32 st_pad9 = new Int32();
@@ -75,7 +73,7 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
         return st_gid.get();
     }
 
-    public int ino() {
+    public long ino() {
         return st_ino.get();
     }
 

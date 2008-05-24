@@ -86,7 +86,7 @@ public class MacOSHeapFileStat extends BaseHeapFileStat {
         return st_gid.get();
     }
 
-    public int ino() {
+    public long ino() {
         return st_ino.get();
     }
 

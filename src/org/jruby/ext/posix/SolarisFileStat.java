@@ -60,7 +60,7 @@ public class SolarisFileStat extends BaseNativeFileStat {
         return st_gid;
     }
 
-    public int ino() {
+    public long ino() {
         return st_ino;
     }
 

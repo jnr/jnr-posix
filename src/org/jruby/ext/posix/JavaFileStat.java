@@ -136,7 +136,7 @@ public class JavaFileStat implements FileStat {
     /**
      *  Limitation: We have no pure-java way of getting inode.  webrick needs this defined to work.
      */
-    public int ino() {
+    public long ino() {
         return 0;
     }
 

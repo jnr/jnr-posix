@@ -36,6 +36,7 @@ public interface LibC extends Library {
     public int chmod(String filename, int mode);
     public int chown(String filename, int user, int group);
     public int fstat(int fd, FileStat stat);
+    public int fstat64(int fd, FileStat stat);
     public int getegid();
     public int setegid(int egid);
     public int geteuid();
@@ -68,8 +69,10 @@ public interface LibC extends Library {
     public int lchown(String filename, int user, int group);
     public int link(String oldpath,String newpath);
     public int lstat(String path, FileStat stat);
+    public int lstat64(String path, FileStat stat);
     public int mkdir(String path, int mode);
     public int stat(String path, FileStat stat);
+    public int stat64(String path, FileStat stat);
     public int symlink(String oldpath,String newpath);
     public int readlink(String oldpath,ByteBuffer buffer,int len);
     public int umask(int mask);

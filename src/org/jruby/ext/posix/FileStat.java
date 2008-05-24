@@ -34,7 +34,7 @@ public interface FileStat {
     public String ftype();
     public int gid();
     public boolean groupMember(int gid);
-    public int ino();
+    public long ino();
     public boolean isBlockDev();
     public boolean isCharDev();
     public boolean isDirectory();
