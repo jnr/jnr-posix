@@ -1,19 +1,5 @@
 package org.jruby.ext.posix;
 
-/*
-  unsigned int st_dev;
-  unsigned short st_ino;
-  unsigned short st_mode;
-  short st_nlink;
-  short st_uid;
-  short st_gid;
-  unsigned int st_rdev;
-  long st_size;
-  time_t st_atime;
-  time_t st_mtime;
-  time_t st_ctime;
-*/
-
 public class WindowsFileStat extends BaseNativeFileStat {
     public int st_dev;
     public short st_ino;
@@ -22,13 +8,14 @@ public class WindowsFileStat extends BaseNativeFileStat {
     public short st_uid;
     public short st_gid;
     public int st_rdev;
-    public int st_size;
+    public long st_size;
     public int st_atime;
+    public int spare1;
     public int st_mtime;
+    public int spare2;
     public int st_ctime;
-
-    public int nothing6;
-    public int nothing7;
+    public long st_blksize;
+    public long st_blocks;
 
     public WindowsFileStat(POSIX posix) {
         super(posix);
@@ -39,13 +26,11 @@ public class WindowsFileStat extends BaseNativeFileStat {
     }
 
     public long blockSize() {
-        // TODO Auto-generated method stub
-        return 0;
+        return st_blksize;
     }
 
     public long blocks() {
-        // TODO Auto-generated method stub
-        return 0;
+        return st_blocks;
     }
 
     public long ctime() {
@@ -89,6 +74,7 @@ public class WindowsFileStat extends BaseNativeFileStat {
     }
 
     // FIXME: Implement 
+    @Override
     public boolean groupMember(int gid) {
         return true;
     }
@@ -112,14 +98,17 @@ public class WindowsFileStat extends BaseNativeFileStat {
     }
 
     // FIXME: Implement
+    @Override
     public boolean isOwned() {
         return true;
     }
     
     // FIXME: Implement
+    @Override
     public boolean isROwned() {
         return true;
     }
+    @Override
     public boolean isReadable() {
         if (isOwned()) return (mode() & S_IRUSR) != 0;
         if (isGroupOwned()) return (mode() & S_IRGRP) != 0;
@@ -128,6 +117,7 @@ public class WindowsFileStat extends BaseNativeFileStat {
         return true;
     }
     
+    @Override
     public boolean isReadableReal() {
         if (isROwned()) return (mode() & S_IRUSR) != 0;
         if (groupMember(gid())) return (mode() & S_IRGRP) != 0;
@@ -136,6 +126,7 @@ public class WindowsFileStat extends BaseNativeFileStat {
         return true;
     }
 
+    @Override
     public boolean isWritable() {
         if (isOwned()) return (mode() & S_IWUSR) != 0;
         if (isGroupOwned()) return (mode() & S_IWGRP) != 0;
@@ -144,6 +135,7 @@ public class WindowsFileStat extends BaseNativeFileStat {
         return true;
     }
 
+    @Override
     public boolean isWritableReal() {
         if (isROwned()) return (mode() & S_IWUSR) != 0;
         if (groupMember(gid())) return (mode() & S_IWGRP) != 0;
@@ -152,6 +144,7 @@ public class WindowsFileStat extends BaseNativeFileStat {
         return true;
     }
 
+    @Override
     public String toString() {
 	return "st_dev: " + st_dev +
 	    ", st_mode: " + Integer.toOctalString(st_mode) +
