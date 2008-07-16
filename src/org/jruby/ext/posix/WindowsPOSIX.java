@@ -59,9 +59,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int getuid() {
-        handler.unimplementedError("getuid");
-
-        return -1;
+        return 0;
     }
 
     @Override
