@@ -3,19 +3,21 @@ package org.jruby.ext.posix;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Pointer;
 import java.io.FileDescriptor;
+import org.jruby.ext.posix.util.Platform;
 
 public class LinuxPOSIX extends BaseNativePOSIX {
-    private static int STAT_VERSION = 3;
-
     private boolean hasFxstat;
     private boolean hasLxstat;
     private boolean hasXstat;
     private boolean hasFstat = false;
     private boolean hasLstat = false;
     private boolean hasStat = false;
+    private int statVersion;
     
     public LinuxPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
+
+        statVersion = Platform.IS_32_BIT ? 3 : 0;
 
         /*
          * Most linux systems define stat/lstat/fstat as macros which force
@@ -36,7 +38,11 @@ public class LinuxPOSIX extends BaseNativePOSIX {
     
     @Override
     public FileStat allocateStat() {
-        return new LinuxHeapFileStat(this);
+        if (Platform.IS_32_BIT) {
+            return new LinuxHeapFileStat(this);
+        } else {
+            return new Linux64HeapFileStat(this);
+        }
     }
 
     @Override
@@ -50,7 +56,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
         
-        if (((LinuxLibC) libc).__fxstat64(STAT_VERSION, fd, stat) < 0) handler.error(ERRORS.ENOENT, "" + fd);
+        if (((LinuxLibC) libc).__fxstat64(statVersion, fd, stat) < 0) handler.error(ERRORS.ENOENT, "" + fd);
         
         return stat;
     }
@@ -65,7 +71,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
 
         FileStat stat = allocateStat();
 
-        if (((LinuxLibC) libc).__lxstat64(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc).__lxstat64(statVersion, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }
@@ -80,7 +86,7 @@ public class LinuxPOSIX extends BaseNativePOSIX {
         
         FileStat stat = allocateStat(); 
 
-        if (((LinuxLibC) libc).__xstat64(STAT_VERSION, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc).__xstat64(statVersion, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }
