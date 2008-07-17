@@ -24,6 +24,8 @@ public class PasswdTest {
             passwdClass = MacOSPasswd.class;
         } else if (Platform.IS_LINUX) {
             passwdClass = LinuxPasswd.class;
+        } else if (Platform.IS_FREEBSD) {
+            passwdClass = FreeBSDPasswd.class;
         } else if (Platform.IS_SOLARIS) {
             passwdClass = SolarisPasswd.class;
         } else {
