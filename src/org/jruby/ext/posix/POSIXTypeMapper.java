@@ -18,6 +18,8 @@ class POSIXTypeMapper implements TypeMapper {
                 return LinuxPOSIX.PASSWD;
             } else if (Platform.IS_SOLARIS) {
                 return SolarisPOSIX.PASSWD;
+            } else if (Platform.IS_FREEBSD) {
+                return FreeBSDPOSIX.PASSWD;
             }
             return null;
         } else if (Group.class.isAssignableFrom(klazz)) {
