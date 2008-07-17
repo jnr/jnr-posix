@@ -14,7 +14,7 @@ import org.jruby.ext.posix.POSIX.ERRORS;
  *
  * @author wayne
  */
-public class TestPOSIXHandler implements POSIXHandler {
+public class DummyPOSIXHandler implements POSIXHandler {
 
     public void error(ERRORS error, String extraData) {
         throw new UnsupportedOperationException("Not supported yet.");

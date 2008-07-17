@@ -19,7 +19,7 @@ public class GroupTest {
     private static POSIX posix;
     @BeforeClass
     public static void setUpClass() throws Exception {
-        posix = POSIXFactory.getPOSIX(new TestPOSIXHandler(), true);
+        posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @AfterClass

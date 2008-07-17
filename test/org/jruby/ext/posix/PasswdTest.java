@@ -31,7 +31,7 @@ public class PasswdTest {
         } else {
             throw new IllegalArgumentException("Platform not supported");
         }
-        posix = POSIXFactory.getPOSIX(new TestPOSIXHandler(), true);
+        posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @AfterClass
