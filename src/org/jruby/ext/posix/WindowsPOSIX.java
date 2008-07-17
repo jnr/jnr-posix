@@ -120,9 +120,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int getppid() {
-        handler.unimplementedError("ppid");
-
-        return -1;
+        return 0;
     }
     
     @Override
