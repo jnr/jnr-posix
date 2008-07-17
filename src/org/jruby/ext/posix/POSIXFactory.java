@@ -22,6 +22,8 @@ public class POSIXFactory {
                     posix = loadMacOSPOSIX(handler);
                 } else if (Platform.IS_LINUX) {
                     posix = loadLinuxPOSIX(handler);
+                } else if (false && Platform.IS_FREEBSD) {
+                    posix = loadFreeBSDPOSIX(handler);
                 } else if (Platform.IS_32_BIT) {// No 64 bit structures defined yet.
                     if (Platform.IS_WINDOWS) {
                         posix = loadWindowsPOSIX(handler);
@@ -67,6 +69,10 @@ public class POSIXFactory {
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
         return new SolarisPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+    }
+
+    public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
+        return new FreeBSDPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
