@@ -31,7 +31,7 @@
 
 package org.jruby.ext.posix;
 
-public class MacOSHeapFileStat extends BaseHeapFileStat {
+public final class MacOSHeapFileStat extends BaseHeapFileStat {
     public final class time_t extends Long {
     }
     public final Int32  st_dev = new Int32();

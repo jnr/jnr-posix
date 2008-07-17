@@ -31,7 +31,7 @@
 
 package org.jruby.ext.posix;
 
-public class FreeBSDHeapFileStat extends BaseHeapFileStat {
+public final class FreeBSDHeapFileStat extends BaseHeapFileStat {
     public final class time_t extends Long {}
     public final class dev_t extends Int32 {}
 

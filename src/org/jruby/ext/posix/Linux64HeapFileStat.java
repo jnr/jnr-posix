@@ -1,25 +1,25 @@
 package org.jruby.ext.posix;
 
-public class Linux64HeapFileStat extends BaseHeapFileStat {
-    public Int64 st_dev = new Int64();
-    public Int64 st_ino = new Int64();
-    public Int64 st_nlink = new Int64();
-    public Int32 st_mode = new Int32();
-    public Int32 st_uid = new Int32();
-    public Int32 st_gid = new Int32();
-    public Int64 st_rdev = new Int64();
-    public Int64 st_size = new Int64();
-    public Int64 st_blksize = new Int64();
-    public Int64 st_blocks = new Int64();
-    public Int64 st_atime = new Int64();     // Time of last access (time_t)
-    public Int64 st_atimensec = new Int64(); // Time of last access (nanoseconds)
-    public Int64 st_mtime = new Int64();     // Last data modification time (time_t)
-    public Int64 st_mtimensec = new Int64(); // Last data modification time (nanoseconds)
-    public Int64 st_ctime = new Int64();     // Time of last status change (time_t)
-    public Int64 st_ctimensec = new Int64(); // Time of last status change (nanoseconds)
-    public Int64 __unused4 = new Int64();
-    public Int64 __unused5 = new Int64();
-    public Int64 __unused6 = new Int64();
+public final class Linux64HeapFileStat extends BaseHeapFileStat {
+    public final Int64 st_dev = new Int64();
+    public final Int64 st_ino = new Int64();
+    public final Int64 st_nlink = new Int64();
+    public final Int32 st_mode = new Int32();
+    public final Int32 st_uid = new Int32();
+    public final Int32 st_gid = new Int32();
+    public final Int64 st_rdev = new Int64();
+    public final Int64 st_size = new Int64();
+    public final Int64 st_blksize = new Int64();
+    public final Int64 st_blocks = new Int64();
+    public final Int64 st_atime = new Int64();     // Time of last access (time_t)
+    public final Int64 st_atimensec = new Int64(); // Time of last access (nanoseconds)
+    public final Int64 st_mtime = new Int64();     // Last data modification time (time_t)
+    public final Int64 st_mtimensec = new Int64(); // Last data modification time (nanoseconds)
+    public final Int64 st_ctime = new Int64();     // Time of last status change (time_t)
+    public final Int64 st_ctimensec = new Int64(); // Time of last status change (nanoseconds)
+    public final Int64 __unused4 = new Int64();
+    public final Int64 __unused5 = new Int64();
+    public final Int64 __unused6 = new Int64();
 
     public Linux64HeapFileStat() {
         super(null);

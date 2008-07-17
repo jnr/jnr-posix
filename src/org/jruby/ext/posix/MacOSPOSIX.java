@@ -3,9 +3,9 @@ package org.jruby.ext.posix;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Pointer;
 
-public class MacOSPOSIX extends BaseNativePOSIX {
-    private boolean hasLchmod;
-    private boolean hasLchown;
+public final class MacOSPOSIX extends BaseNativePOSIX {
+    private final boolean hasLchmod;
+    private final boolean hasLchown;
 
     public MacOSPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
         super(libraryName, libc, handler);

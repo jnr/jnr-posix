@@ -5,14 +5,14 @@ import com.sun.jna.Pointer;
 import java.io.FileDescriptor;
 import org.jruby.ext.posix.util.Platform;
 
-public class LinuxPOSIX extends BaseNativePOSIX {
-    private boolean hasFxstat;
-    private boolean hasLxstat;
-    private boolean hasXstat;
-    private boolean hasFstat = false;
-    private boolean hasLstat = false;
-    private boolean hasStat = false;
-    private int statVersion;
+public final class LinuxPOSIX extends BaseNativePOSIX {
+    private final boolean hasFxstat;
+    private final boolean hasLxstat;
+    private final boolean hasXstat;
+    private final boolean hasFstat;
+    private final boolean hasLstat;
+    private final boolean hasStat;
+    private final int statVersion;
     
     public LinuxPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
@@ -31,9 +31,9 @@ public class LinuxPOSIX extends BaseNativePOSIX {
          * At least one person is using uLibc on linux which has real 
          * definitions for stat/lstat/fstat.
          */
-        if (!hasFxstat) hasFstat = hasMethod("fstat64");
-        if (!hasLxstat) hasLstat = hasMethod("lstat64");
-        if (!hasXstat) hasStat = hasMethod("stat64");
+        hasFstat = !hasFxstat && hasMethod("fstat64");
+        hasLstat = !hasLxstat && hasMethod("lstat64");
+        hasStat = !hasXstat && hasMethod("stat64");
     }
     
     @Override
