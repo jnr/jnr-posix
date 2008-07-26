@@ -26,6 +26,8 @@ public class PasswdTest {
             passwdClass = LinuxPasswd.class;
         } else if (Platform.IS_FREEBSD) {
             passwdClass = FreeBSDPasswd.class;
+        } else if (Platform.IS_OPENBSD) {
+            passwdClass = OpenBSDPasswd.class;
         } else if (Platform.IS_SOLARIS) {
             passwdClass = SolarisPasswd.class;
         } else {
