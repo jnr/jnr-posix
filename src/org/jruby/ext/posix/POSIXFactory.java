@@ -24,6 +24,8 @@ public class POSIXFactory {
                     posix = loadLinuxPOSIX(handler);
                 } else if (Platform.IS_FREEBSD) {
                     posix = loadFreeBSDPOSIX(handler);
+                } else if (Platform.IS_OPENBSD) {
+                    posix = loadOpenBSDPOSIX(handler);
                 } else if (Platform.IS_32_BIT) {// No 64 bit structures defined yet.
                     if (Platform.IS_WINDOWS) {
                         posix = loadWindowsPOSIX(handler);
@@ -73,6 +75,10 @@ public class POSIXFactory {
 
     public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
         return new FreeBSDPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+    }
+
+    public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
+        return new OpenBSDPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
