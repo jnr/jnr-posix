@@ -56,4 +56,8 @@ public class PasswdTest {
         
         assertTrue(pwd.getClass().equals(passwdClass));
     }
+    @Test public void nonExistantUserReturnsNull() {
+        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+        assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
+    }
 }

@@ -50,7 +50,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
     
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
-            return new SolarisPasswd((Pointer) arg);
+            return arg != null ? new SolarisPasswd((Pointer) arg) : null;
         }
     };
 }

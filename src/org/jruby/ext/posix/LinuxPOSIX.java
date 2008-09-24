@@ -93,7 +93,7 @@ public final class LinuxPOSIX extends BaseNativePOSIX {
     
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
-            return new LinuxPasswd((Pointer) arg);
+            return arg != null ? new LinuxPasswd((Pointer) arg) : null;
         }
     };
 }

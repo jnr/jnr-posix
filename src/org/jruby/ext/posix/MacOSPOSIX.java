@@ -34,7 +34,7 @@ public final class MacOSPOSIX extends BaseNativePOSIX {
     
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
-            return new MacOSPasswd((Pointer) arg);
+            return arg != null ? new MacOSPasswd((Pointer) arg) : null;
         }
     };
 }

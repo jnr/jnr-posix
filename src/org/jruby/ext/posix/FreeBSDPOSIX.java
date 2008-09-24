@@ -45,7 +45,7 @@ public final class FreeBSDPOSIX extends BaseNativePOSIX {
     
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
-            return new FreeBSDPasswd((Pointer) arg);
+            return arg != null ? new FreeBSDPasswd((Pointer) arg) : null;
         }
     };
 }
