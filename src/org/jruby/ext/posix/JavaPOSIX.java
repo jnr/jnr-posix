@@ -1,9 +1,12 @@
 package org.jruby.ext.posix;
 
+import java.io.BufferedReader;
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import org.jruby.ext.posix.util.Platform;
 
 public class JavaPOSIX implements POSIX {
     POSIXHandler handler;
@@ -33,15 +36,15 @@ public class JavaPOSIX implements POSIX {
     }
 
     public int getegid() {
-        return unimplementedInt("getegid");
+        return GIDHolder.GID;
     }
     
     public int geteuid() {
-        return unimplementedInt("geteuid");
+        return UIDHolder.UID;
     }
     
     public int getgid() {
-        return unimplementedInt("getgid");
+        return GIDHolder.GID;
     }
     
     public String getlogin() {
@@ -109,7 +112,7 @@ public class JavaPOSIX implements POSIX {
     }
 
     public int getuid() {
-        return unimplementedInt("getuid");
+        return UIDHolder.UID;
     }
     
     public int fork() {
@@ -232,5 +235,25 @@ public class JavaPOSIX implements POSIX {
         handler.unimplementedError(message);
         
         return -1;
+    }
+    private static final class UIDHolder {
+        public static final int UID = IDHelper.getID("-u");
+    }
+    private static final class GIDHolder {
+        public static final int GID = IDHelper.getID("-g");
+    }
+    private static final class IDHelper {
+        private static final int NOBODY = Platform.IS_WINDOWS ? 0 : Short.MAX_VALUE;
+        public static int getID(String option) {
+            try {
+                Process p = Runtime.getRuntime().exec(new String[] { "id", option });
+                BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                return Integer.parseInt(r.readLine());
+            } catch (IOException ex) {
+                return NOBODY;
+            } catch (NumberFormatException ex) {
+                return NOBODY;
+            }
+        }
     }
 }
