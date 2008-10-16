@@ -243,10 +243,11 @@ public class JavaPOSIX implements POSIX {
         public static final int GID = IDHelper.getID("-g");
     }
     private static final class IDHelper {
+        private static final String ID_CMD = Platform.IS_SOLARIS ? "/usr/xpg4/bin/id" : "/usr/bin/id";
         private static final int NOBODY = Platform.IS_WINDOWS ? 0 : Short.MAX_VALUE;
         public static int getID(String option) {
             try {
-                Process p = Runtime.getRuntime().exec(new String[] { "id", option });
+                Process p = Runtime.getRuntime().exec(new String[] { ID_CMD, option });
                 BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 return Integer.parseInt(r.readLine());
             } catch (IOException ex) {
