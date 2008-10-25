@@ -87,7 +87,7 @@ public class POSIXFactory {
         Map<Object, Object> options = new HashMap<Object, Object>();
         options.put(com.sun.jna.Library.OPTION_FUNCTION_MAPPER, new WindowsLibCFunctionMapper());
 
-        return new WindowsPOSIX(name, loadLibC(name, LibC.class, options), handler);
+        return new WindowsPOSIX(name, loadLibC(name, WindowsLibC.class, options), handler);
     }
 
     public static LibC loadLibC(String libraryName, Class<?> libCClass, Map<Object, Object> options) {

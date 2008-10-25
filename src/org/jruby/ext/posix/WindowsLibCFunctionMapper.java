@@ -23,6 +23,7 @@ public class WindowsLibCFunctionMapper implements FunctionMapper {
         methodNameMap.put("stat", "_stat64");
         methodNameMap.put("mkdir", "_mkdir");
         methodNameMap.put("umask", "_umask");
+	methodNameMap.put("isatty", "_isatty");
     }
   
     public String getFunctionName(NativeLibrary library, Method method) {

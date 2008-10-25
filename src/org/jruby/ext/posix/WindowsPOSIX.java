@@ -220,8 +220,8 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public boolean isatty(FileDescriptor fd) {
-        return (fd == FileDescriptor.in
-                || fd == FileDescriptor.out
-                || fd == FileDescriptor.err);
+	int handle = (int)helper.gethandle(fd);
+	int crtfd = ((WindowsLibC)libc)._open_osfhandle(handle, 0/*_O_RDONLY*/);
+	return libc.isatty(crtfd) != 0;
     }
 }
