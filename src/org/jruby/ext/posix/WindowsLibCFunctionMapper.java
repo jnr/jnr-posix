@@ -4,12 +4,9 @@
 
 package org.jruby.ext.posix;
 
-import java.lang.reflect.Method;
+import com.kenai.jaffl.mapper.FunctionMapper;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.sun.jna.FunctionMapper;
-import com.sun.jna.NativeLibrary;
 
 public class WindowsLibCFunctionMapper implements FunctionMapper {
     private Map<String, String> methodNameMap;
@@ -25,8 +22,7 @@ public class WindowsLibCFunctionMapper implements FunctionMapper {
         methodNameMap.put("umask", "_umask");
     }
   
-    public String getFunctionName(NativeLibrary library, Method method) {
-        String originalName = method.getName();
+    public String mapFunctionName(String originalName, Context context) {
         String name = methodNameMap.get(originalName);
         
         return name != null ? name : originalName; 

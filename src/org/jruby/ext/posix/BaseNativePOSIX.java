@@ -1,9 +1,9 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.FromNativeConverter;
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.Pointer;
+import com.kenai.jaffl.mapper.FromNativeContext;
+import com.kenai.jaffl.mapper.FromNativeConverter;
+import com.kenai.jaffl.Library;
+import com.kenai.jaffl.Pointer;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -238,7 +238,7 @@ public abstract class BaseNativePOSIX implements POSIX {
      */
     protected boolean hasMethod(String name) {
         try {
-            NativeLibrary.getInstance(libraryName).getFunction(name);
+            Library.getInstance(libraryName).hasFunction(name);
         } catch (UnsatisfiedLinkError e) {
             return false;
         }

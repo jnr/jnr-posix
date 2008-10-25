@@ -31,60 +31,57 @@
 
 package org.jruby.ext.posix;
 
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
 
 public class OpenBSDPasswd extends NativePasswd implements Passwd {
-    public String pw_name;   // user name
-    public String pw_passwd; // password (encrypted)
-    public int pw_uid;       // user id
-    public int pw_gid;       // user id
-    public NativeLong pw_change;    // password change time
-    public String pw_class;  // user access class
-    public String pw_gecos;  // login info
-    public String pw_dir;    // home directory
-    public String pw_shell;  // default shell
-    public NativeLong pw_expire;    // account expiration
+    public final UTF8StringRef pw_name = new UTF8StringRef();   // user name
+    public final UTF8StringRef pw_passwd = new UTF8StringRef(); // password (encrypted)
+    public final Signed32 pw_uid = new Signed32();       // user id
+    public final Signed32 pw_gid = new Signed32();       // user id
+    public final SignedLong pw_change = new SignedLong();    // password change time
+    public final UTF8StringRef pw_class = new UTF8StringRef();  // user access class
+    public final UTF8StringRef pw_gecos = new UTF8StringRef();  // login info
+    public final UTF8StringRef pw_dir = new UTF8StringRef();    // home directory
+    public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
+    public final SignedLong pw_expire = new SignedLong();    // account expiration
 
-    OpenBSDPasswd(Pointer memory) {
+    OpenBSDPasswd(com.kenai.jaffl.Pointer memory) {
         useMemory(memory);
-        read();
     }
 
-    public String getAccessClass() {
-        return pw_class;
+    public java.lang.String getAccessClass() {
+        return pw_class.get();
     }
 
-    public String getGECOS() {
-        return pw_gecos;
+    public java.lang.String getGECOS() {
+        return pw_gecos.get();
     }
 
     public long getGID() {
-        return pw_gid;
+        return pw_gid.get();
     }
 
-    public String getHome() {
-        return pw_dir;
+    public java.lang.String getHome() {
+        return pw_dir.get();
     }
 
-    public String getLoginName() {
-        return pw_name;
+    public java.lang.String getLoginName() {
+        return pw_name.get();
     }
 
     public int getPasswdChangeTime() {
         return pw_change.intValue();
     }
 
-    public String getPassword() {
-        return pw_passwd;
+    public java.lang.String getPassword() {
+        return pw_passwd.get();
     }
 
-    public String getShell() {
-        return pw_shell;
+    public java.lang.String getShell() {
+        return pw_shell.get();
     }
 
     public long getUID() {
-        return pw_uid;
+        return pw_uid.get();
     }
 
     public int getExpire() {

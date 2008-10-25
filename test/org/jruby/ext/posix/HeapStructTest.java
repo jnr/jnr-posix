@@ -37,7 +37,7 @@ public class HeapStructTest {
     }
 
     private static final class Unsigned8Test extends HeapStruct {
-        public final UInt8 u8 = new UInt8();
+        public final Unsigned8 u8 = new Unsigned8();
     }
     @Test
     public void unsigned8() {
@@ -47,7 +47,7 @@ public class HeapStructTest {
         assertEquals("Incorrect unsigned byte value", MAGIC, s.u8.get());
     }
     private static final class Unsigned16Test extends HeapStruct {
-        public final UInt16 u16 = new UInt16();
+        public final Unsigned16 u16 = new Unsigned16();
     }
     @Test
     public void unsigned16() {
@@ -69,7 +69,7 @@ public class HeapStructTest {
     
    
     private static final class UnsignedLongTest extends HeapStruct {
-        public final ULong ul = new ULong();
+        public final UnsignedLong ul = new UnsignedLong();
     }
     @Test
     public void unsignedLong() {

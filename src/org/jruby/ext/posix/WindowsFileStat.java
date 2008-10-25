@@ -1,76 +1,76 @@
 package org.jruby.ext.posix;
 
-public class WindowsFileStat extends BaseNativeFileStat {
-    public int st_dev;
-    public short st_ino;
-    public short st_mode;
-    public short st_nlink;
-    public short st_uid;
-    public short st_gid;
-    public int st_rdev;
-    public long st_size;
-    public int st_atime;
-    public int spare1;
-    public int st_mtime;
-    public int spare2;
-    public int st_ctime;
-    public long st_blksize;
-    public long st_blocks;
+public class WindowsFileStat extends BaseHeapFileStat {
+    public final Signed32 st_dev = new Signed32();
+    public final Signed16 st_ino = new Signed16();
+    public final Signed16 st_mode = new Signed16();
+    public final Signed16 st_nlink = new Signed16();
+    public final Signed16 st_uid = new Signed16();
+    public final Signed16 st_gid = new Signed16();
+    public final Signed32 st_rdev = new Signed32();
+    public final Signed64 st_size = new Signed64();
+    public final Signed32 st_atime = new Signed32();
+    public final Signed32 spare1 = new Signed32();
+    public final Signed32 st_mtime = new Signed32();
+    public final Signed32 spare2 = new Signed32();
+    public final Signed32 st_ctime = new Signed32();
+    public final Signed64 st_blksize = new Signed64();
+    public final Signed64 st_blocks = new Signed64();
 
     public WindowsFileStat(POSIX posix) {
         super(posix);
     }
 
     public long atime() {
-        return st_atime;
+        return st_atime.get();
     }
 
     public long blockSize() {
-        return st_blksize;
+        return st_blksize.get();
     }
 
     public long blocks() {
-        return st_blocks;
+        return st_blocks.get();
     }
 
     public long ctime() {
-        return st_ctime;
+        return st_ctime.get();
     }
 
     public long dev() {
-	return st_dev;
+        return st_dev.get();
     }
 
     public int gid() {
-        return st_gid;
+        return st_gid.get();
     }
 
     public long ino() {
-	return st_ino;
+        return st_ino.get();
     }
 
     public int mode() {
-        return st_mode & 0xffff;
+        return st_mode.get() & 0xffff;
     }
 
     public long mtime() {
-        return st_mtime;
+        return st_mtime.get();
     }
 
     public int nlink() {
-        return st_nlink;
+        return st_nlink.get();
     }
 
     public long rdev() {
-        return st_rdev;
+        return st_rdev.get();
     }
 
     public long st_size() {
-        return st_size;
+        return st_size.get();
     }
 
     public int uid() {
-        return st_uid;
+        return st_uid.get();
     }
 
     // FIXME: Implement 
@@ -145,17 +145,17 @@ public class WindowsFileStat extends BaseNativeFileStat {
     }
 
     @Override
-    public String toString() {
-	return "st_dev: " + st_dev +
-	    ", st_mode: " + Integer.toOctalString(st_mode) +
-	    ", st_nlink: " + st_nlink +
-	    ", st_rdev: " + st_rdev +
-	    ", st_size: " + st_size +
-	    ", st_uid: " + st_uid +
-	    ", st_gid: " + st_gid +
-	    ", st_atime: " + st_atime +
-	    ", st_ctime: " + st_ctime +
-	    ", st_mtime: " + st_mtime +
-	    ", st_ino: " + st_ino;
+    public java.lang.String toString() {
+        return "st_dev: " + st_dev.get() +
+                ", st_mode: " + Integer.toOctalString(st_mode.get()) +
+                ", st_nlink: " + st_nlink.get() +
+                ", st_rdev: " + st_rdev.get() +
+                ", st_size: " + st_size.get() +
+                ", st_uid: " + st_uid.get() +
+                ", st_gid: " + st_gid.get() +
+                ", st_atime: " + st_atime.get() +
+                ", st_ctime: " + st_ctime.get() +
+                ", st_mtime: " + st_mtime.get() +
+                ", st_ino: " + st_ino.get();
     }
 }

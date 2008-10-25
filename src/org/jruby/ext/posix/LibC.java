@@ -29,10 +29,9 @@
  ***** END LICENSE BLOCK *****/
 package org.jruby.ext.posix;
 
-import com.sun.jna.Library;
 import java.nio.ByteBuffer;
 
-public interface LibC extends Library {
+public interface LibC {
     public int chmod(String filename, int mode);
     public int chown(String filename, int user, int group);
     public int fstat(int fd, FileStat stat);

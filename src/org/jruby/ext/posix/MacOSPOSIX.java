@@ -1,7 +1,8 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.Pointer;
+import com.kenai.jaffl.mapper.FromNativeContext;
+import com.kenai.jaffl.Pointer;
+
 
 public final class MacOSPOSIX extends BaseNativePOSIX {
     private final boolean hasLchmod;

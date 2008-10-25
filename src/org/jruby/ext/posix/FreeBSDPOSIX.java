@@ -31,8 +31,8 @@
 
 package org.jruby.ext.posix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.Pointer;
+import com.kenai.jaffl.mapper.FromNativeContext;
+import com.kenai.jaffl.Pointer;
 
 public final class FreeBSDPOSIX extends BaseNativePOSIX {
     public FreeBSDPOSIX(String libraryName, LibC libc, POSIXHandler handler) {

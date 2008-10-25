@@ -31,12 +31,10 @@
 
 package org.jruby.ext.posix;
 
-import com.sun.jna.NativeMapped;
-
 /**
  *
  */
-public abstract class BaseHeapFileStat extends HeapStruct implements FileStat, NativeMapped {
+public abstract class BaseHeapFileStat extends HeapStruct implements FileStat {
     protected final POSIX posix;
     
     public BaseHeapFileStat(POSIX posix) {
@@ -44,7 +42,7 @@ public abstract class BaseHeapFileStat extends HeapStruct implements FileStat, N
         this.posix = posix;
     }
     
-    public String ftype() {
+    public java.lang.String ftype() {
         if (isFile()) {
             return "file";
         } else if (isDirectory()) {

@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.Structure;
+import com.kenai.jaffl.struct.Struct;
 
-public abstract class NativeGroup extends Structure implements Group {
+public abstract class NativeGroup extends Struct implements Group {
 }

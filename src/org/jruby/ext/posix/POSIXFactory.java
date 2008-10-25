@@ -1,16 +1,17 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.Library;
+
+import com.kenai.jaffl.Library;
+import com.kenai.jaffl.LibraryOption;
 import java.util.HashMap;
 import org.jruby.ext.posix.util.Platform;
-import com.sun.jna.Native;
 import java.util.Map;
 
 public class POSIXFactory {
     static final String LIBC = "c";
     static LibC libc = null;
-    static final Map<Object, Object> defaultOptions = new HashMap<Object, Object>() {{
-        put(Library.OPTION_TYPE_MAPPER, POSIXTypeMapper.INSTANCE);
+    static final Map<LibraryOption, Object> defaultOptions = new HashMap<LibraryOption, Object>() {{
+        put(LibraryOption.TypeMapper, POSIXTypeMapper.INSTANCE);
     }};
 
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
@@ -84,16 +85,16 @@ public class POSIXFactory {
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
         String name = "msvcrt";
 
-        Map<Object, Object> options = new HashMap<Object, Object>();
-        options.put(com.sun.jna.Library.OPTION_FUNCTION_MAPPER, new WindowsLibCFunctionMapper());
+        Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>();
+        options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
 
         return new WindowsPOSIX(name, loadLibC(name, LibC.class, options), handler);
     }
 
-    public static LibC loadLibC(String libraryName, Class<?> libCClass, Map<Object, Object> options) {
+    public static LibC loadLibC(String libraryName, Class<? extends LibC> libCClass, Map<LibraryOption, Object> options) {
         if (libc != null) return libc;
 
-        libc = (LibC) Native.loadLibrary(libraryName, libCClass, options);
+        libc = Library.loadLibrary(libraryName, libCClass, options);
 
         return libc;
     }

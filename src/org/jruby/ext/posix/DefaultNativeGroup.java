@@ -26,7 +26,6 @@
 
 package org.jruby.ext.posix;
 
-import com.sun.jna.Pointer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,34 +37,34 @@ import java.util.List;
  * </p>
  */
 public final class DefaultNativeGroup extends NativeGroup implements Group {
-    public String gr_name;   // name
-    public String gr_passwd; // group password (encrypted)
-    public int gr_gid;       // group id
-    public Pointer gr_mem;
+    public final UTF8StringRef gr_name = new UTF8StringRef();   // name
+    public final UTF8StringRef gr_passwd = new UTF8StringRef(); // group password (encrypted)
+    public final Signed32 gr_gid = new Signed32();       // group id
+    public final Pointer gr_mem = new Pointer();
     
-    DefaultNativeGroup(Pointer memory) {
+    DefaultNativeGroup(com.kenai.jaffl.Pointer memory) {
         useMemory(memory);
-        read();
     }
     
-    public String getName() {
-        return gr_name;
+    public java.lang.String getName() {
+        return gr_name.get();
     }
-    public String getPassword() {
-        return gr_passwd;
+    public java.lang.String getPassword() {
+        return gr_passwd.get();
     }
     public long getGID() {
-        return gr_gid;
+        return gr_gid.get();
     }
-    public String[] getMembers() {
-        int size = Pointer.SIZE;
+    public java.lang.String[] getMembers() {
+        int size = com.kenai.jaffl.Pointer.SIZE;
         int i=0;
-        List<String> lst = new ArrayList<String>();
-        while(gr_mem.getPointer(i) != null) {
-            lst.add(gr_mem.getPointer(i).getString(0));
+        List<java.lang.String> lst = new ArrayList<java.lang.String>();
+        com.kenai.jaffl.Pointer ptr = gr_mem.get();
+        while (ptr.getPointer(i) != null) {
+            lst.add(ptr.getPointer(i).getString(0));
             i+=size;
         }
-        return lst.toArray(new String[0]);
+        return lst.toArray(new java.lang.String[0]);
     }
 
 }

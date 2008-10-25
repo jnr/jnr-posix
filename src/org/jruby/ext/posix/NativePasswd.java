@@ -1,6 +1,7 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.Structure;
+import com.kenai.jaffl.struct.Struct;
 
-public abstract class NativePasswd extends Structure implements Passwd {
+
+public abstract class NativePasswd extends Struct implements Passwd {
 }

@@ -33,14 +33,14 @@ package org.jruby.ext.posix;
 
 public final class LinuxHeapFileStat extends BaseHeapFileStat {
     public final Int64 st_dev = new Int64();
-    public final Short __pad1 = new Short();
+    public final Int16 __pad1 = new Int16();
     public final Int32 st_ino = new Int32();
     public final Int32 st_mode = new Int32();
     public final Int32 st_nlink = new Int32();
     public final Int32 st_uid = new Int32();
     public final Int32 st_gid = new Int32();
     public final Int64 st_rdev = new Int64();
-    public final Short __pad2 = new Short();
+    public final Int16 __pad2 = new Int16();
     public final Int64 st_size = new Int64();
     public final Int32 st_blksize = new Int32();
     public final Int32 st_blocks = new Int32();

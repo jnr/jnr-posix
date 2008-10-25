@@ -1,7 +1,7 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.Pointer;
+import com.kenai.jaffl.mapper.FromNativeContext;
+import com.kenai.jaffl.Pointer;
 import java.io.FileDescriptor;
 
 public class SolarisPOSIX extends BaseNativePOSIX {
