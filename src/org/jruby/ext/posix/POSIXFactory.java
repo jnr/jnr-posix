@@ -7,7 +7,7 @@ import com.sun.jna.Native;
 import java.util.Map;
 
 public class POSIXFactory {
-    static final String LIBC = "c";
+    static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : "c";
     static LibC libc = null;
     static final Map<Object, Object> defaultOptions = new HashMap<Object, Object>() {{
         put(Library.OPTION_TYPE_MAPPER, POSIXTypeMapper.INSTANCE);
