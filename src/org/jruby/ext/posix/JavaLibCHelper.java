@@ -53,11 +53,14 @@ public class JavaLibCHelper {
     public static final int STDERR = 2;
 
     POSIXHandler handler;
-    Field field;
+    Field fdField, handleField;
 
     public JavaLibCHelper(POSIXHandler handler) {
         this.handler = handler;
-        this.field = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
+	this.handleField = FieldAccess.getProtectedField(FileDescriptor.class,
+							 "handle");
+        this.fdField = FieldAccess.getProtectedField(FileDescriptor.class,
+						     "fd");
     }
     
     public int chmod(String filename, int mode) {
@@ -78,10 +81,21 @@ public class JavaLibCHelper {
     }
 
     public int getfd(FileDescriptor descriptor) {
-        if (descriptor == null || field == null) return -1;
-        
+        if (descriptor == null || fdField == null) return -1;
         try {
-            return field.getInt(descriptor);
+            return fdField.getInt(descriptor);
+        } catch (SecurityException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (IllegalAccessException e) {
+        }
+
+        return -1;
+    }
+
+    public long gethandle(FileDescriptor descriptor) {
+        if (descriptor == null || handleField == null) return -1;
+        try {
+            return handleField.getLong(descriptor);
         } catch (SecurityException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {

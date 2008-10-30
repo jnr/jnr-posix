@@ -8,7 +8,7 @@ import org.jruby.ext.posix.util.Platform;
 import java.util.Map;
 
 public class POSIXFactory {
-    static final String LIBC = "c";
+    static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : "c";
     static LibC libc = null;
     static final Map<LibraryOption, Object> defaultOptions = new HashMap<LibraryOption, Object>() {{
         put(LibraryOption.TypeMapper, POSIXTypeMapper.INSTANCE);
@@ -88,7 +88,7 @@ public class POSIXFactory {
         Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>();
         options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
 
-        return new WindowsPOSIX(name, loadLibC(name, LibC.class, options), handler);
+        return new WindowsPOSIX(name, loadLibC(name, WindowsLibC.class, options), handler);
     }
 
     public static LibC loadLibC(String libraryName, Class<? extends LibC> libCClass, Map<LibraryOption, Object> options) {
