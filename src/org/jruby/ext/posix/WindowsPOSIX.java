@@ -26,9 +26,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int chown(String filename, int user, int group) {
-        handler.unimplementedError("chown");
-        
-        return -1;
+        return 0;
     }
 
     @Override
