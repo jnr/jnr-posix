@@ -148,6 +148,12 @@ public class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int utimes(String path, long atime, long mtime) {
+        UTimBuf64 times = new UTimBuf64(atime, mtime);
+        return ((WindowsLibC)libc)._utime64(path, times);
+    }
+
+    @Override
     public int wait(int[] status) {
         handler.unimplementedError("wait");
 

@@ -1,6 +1,7 @@
 package org.jruby.ext.posix;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -212,6 +213,11 @@ public class JavaPOSIX implements POSIX {
     public int umask(int mask) {
         // TODO: We can possibly maintain an internal mask and try and apply it to individual
         // libc methods.  
+        return 0;
+    }
+
+    public int utimes(String path, long atime, long mtime) {
+        new File(path).setLastModified(mtime);
         return 0;
     }
     

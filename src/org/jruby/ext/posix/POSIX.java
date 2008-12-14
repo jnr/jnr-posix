@@ -54,6 +54,7 @@ public interface POSIX {
     public FileStat stat(String path);
     public int symlink(String oldpath,String newpath);
     public int umask(int mask);
+    public int utimes(String path, long atime, long mtime);
     public int waitpid(int pid, int[] status, int flags);
     public int wait(int[] status);
 }

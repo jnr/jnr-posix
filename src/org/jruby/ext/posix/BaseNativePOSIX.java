@@ -204,6 +204,13 @@ public abstract class BaseNativePOSIX implements POSIX {
     public int umask(int mask) {
         return libc.umask(mask);
     }
+
+    public int utimes(String path, long atime, long mtime) {
+        Timeval[] times = ((Timeval[])new DefaultNativeTimeval().toArray(2));
+        times[0].setMicroseconds(atime);
+        times[1].setMicroseconds(mtime);
+        return libc.utimes(path, times);
+    }
     
     public int fork() {
         return libc.fork();
