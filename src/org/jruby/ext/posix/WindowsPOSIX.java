@@ -148,8 +148,11 @@ public class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
-    public int utimes(String path, long atime, long mtime) {
-        UTimBuf64 times = new UTimBuf64(atime, mtime);
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        UTimBuf64 times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = new UTimBuf64(atimeval[0], mtimeval[0]);
+        }
         return ((WindowsLibC)libc)._utime64(path, times);
     }
 

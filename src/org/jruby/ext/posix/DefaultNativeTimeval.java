@@ -8,8 +8,9 @@ public final class DefaultNativeTimeval extends NativeTimeval {
 
     public DefaultNativeTimeval() {}
 
-    public void setMicroseconds(long time) {
-        tv_sec.setValue(time / 1000);
-        tv_usec.setValue(time % 1000);
+    public void setTime(long[] timeval) {
+        assert timeval.length == 2;
+        tv_sec.setValue(timeval[0]);
+        tv_usec.setValue(timeval[1]);
     }
 }

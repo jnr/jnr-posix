@@ -216,8 +216,15 @@ public class JavaPOSIX implements POSIX {
         return 0;
     }
 
-    public int utimes(String path, long atime, long mtime) {
-        new File(path).setLastModified(mtime);
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        long mtimeMillis;
+        if (mtimeval != null) {
+            assert mtimeval.length == 2;
+            mtimeMillis = (mtimeval[0] * 1000) + (mtimeval[1] / 1000);
+        } else {
+            mtimeMillis = System.currentTimeMillis();
+        }
+        new File(path).setLastModified(mtimeMillis);
         return 0;
     }
     
