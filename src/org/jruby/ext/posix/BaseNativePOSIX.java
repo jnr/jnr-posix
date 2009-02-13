@@ -2,6 +2,7 @@ package org.jruby.ext.posix;
 
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.FromNativeConverter;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import java.io.FileDescriptor;
@@ -236,7 +237,15 @@ public abstract class BaseNativePOSIX implements POSIX {
     }
 
     public boolean isatty(FileDescriptor fd) {
-       return libc.isatty(helper.getfd(fd)) != 0;
+        return libc.isatty(helper.getfd(fd)) != 0;
+    }
+
+    public int errno() {
+        return Native.getLastError();
+    }
+
+    public void errno(int value) {
+        Native.setLastError(value);
     }
 
     public abstract FileStat allocateStat();

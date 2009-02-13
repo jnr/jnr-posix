@@ -244,6 +244,14 @@ public class JavaPOSIX implements POSIX {
         return unimplementedInt("setpriority");
     }
 
+    public int errno() {
+        return 0;
+    }
+
+    public void errno(int value) {
+        // do nothing, errno is unsupported
+    }
+
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
         
