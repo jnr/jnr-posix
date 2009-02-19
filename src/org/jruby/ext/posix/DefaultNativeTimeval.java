@@ -2,7 +2,7 @@ package org.jruby.ext.posix;
 
 import com.sun.jna.NativeLong;
 
-public final class DefaultNativeTimeval extends NativeTimeval {
+public final class DefaultNativeTimeval extends Timeval {
     public NativeLong tv_sec;
     public NativeLong tv_usec;
 

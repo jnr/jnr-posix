@@ -5,6 +5,7 @@ import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
 import com.kenai.jaffl.Library;
 import com.kenai.jaffl.Pointer;
+import com.kenai.jaffl.struct.StructUtil;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -209,7 +210,7 @@ public abstract class BaseNativePOSIX implements POSIX {
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
-            times = ((Timeval[])new DefaultNativeTimeval().toArray(2));
+            times = StructUtil.newArray(DefaultNativeTimeval.class, 2);
             times[0].setTime(atimeval);
             times[1].setTime(mtimeval);
         }
