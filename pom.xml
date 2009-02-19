@@ -5,7 +5,7 @@
   <groupId>org.jruby.ext.posix</groupId>
   <artifactId>jna-posix</artifactId>
   <packaging>jar</packaging>
-  <version>0.7</version>
+  <version>0.9</version>
   <name>JNA-POSIX</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
@@ -88,9 +88,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jruby.extras</groupId>
+      <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.9</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

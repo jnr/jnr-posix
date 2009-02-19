@@ -1,5 +1,6 @@
 package org.jruby.ext.posix;
 
+import com.kenai.jaffl.LastError;
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
 import com.kenai.jaffl.Library;
@@ -205,6 +206,16 @@ public abstract class BaseNativePOSIX implements POSIX {
         return libc.umask(mask);
     }
     
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        Timeval[] times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = ((Timeval[])new DefaultNativeTimeval().toArray(2));
+            times[0].setTime(atimeval);
+            times[1].setTime(mtimeval);
+        }
+        return libc.utimes(path, times);
+    }
+
     public int fork() {
         return libc.fork();
     }
@@ -227,6 +238,14 @@ public abstract class BaseNativePOSIX implements POSIX {
 
     public boolean isatty(FileDescriptor fd) {
        return libc.isatty(helper.getfd(fd)) != 0;
+    }
+
+    public int errno() {
+        return LastError.getLastError();
+    }
+
+    public void errno(int value) {
+        LastError.setLastError(value);
     }
 
     public abstract FileStat allocateStat();

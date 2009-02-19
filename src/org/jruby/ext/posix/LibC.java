@@ -75,6 +75,7 @@ public interface LibC {
     public int symlink(String oldpath,String newpath);
     public int readlink(String oldpath,ByteBuffer buffer,int len);
     public int umask(int mask);
+    public int utimes(String path, Timeval[] times);
     public int fork();
     public int waitpid(int pid, int[] status, int options);
     public int wait(int[] status);

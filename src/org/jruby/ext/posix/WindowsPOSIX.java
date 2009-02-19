@@ -26,9 +26,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int chown(String filename, int user, int group) {
-        handler.unimplementedError("chown");
-        
-        return -1;
+        return 0;
     }
 
     @Override
@@ -147,6 +145,15 @@ public class WindowsPOSIX extends BaseNativePOSIX {
         handler.unimplementedError("readlink");
 
         return null;
+    }
+
+    @Override
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        UTimBuf64 times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = new UTimBuf64(atimeval[0], mtimeval[0]);
+        }
+        return ((WindowsLibC)libc)._utime64(path, times);
     }
 
     @Override

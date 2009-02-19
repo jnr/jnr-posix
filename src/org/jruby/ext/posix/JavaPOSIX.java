@@ -1,6 +1,7 @@
 package org.jruby.ext.posix;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -214,6 +215,18 @@ public class JavaPOSIX implements POSIX {
         // libc methods.  
         return 0;
     }
+
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        long mtimeMillis;
+        if (mtimeval != null) {
+            assert mtimeval.length == 2;
+            mtimeMillis = (mtimeval[0] * 1000) + (mtimeval[1] / 1000);
+        } else {
+            mtimeMillis = System.currentTimeMillis();
+        }
+        new File(path).setLastModified(mtimeMillis);
+        return 0;
+    }
     
     public int wait(int[] status) {
         return unimplementedInt("wait");
@@ -229,6 +242,14 @@ public class JavaPOSIX implements POSIX {
     
     public int setpriority(int which, int who, int prio) {
         return unimplementedInt("setpriority");
+    }
+
+    public int errno() {
+        return 0;
+    }
+
+    public void errno(int value) {
+        // do nothing, errno is unsupported
     }
 
     private int unimplementedInt(String message) {
