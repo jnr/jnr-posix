@@ -5,7 +5,7 @@
   <groupId>org.jruby.ext.posix</groupId>
   <artifactId>jna-posix</artifactId>
   <packaging>jar</packaging>
-  <version>0.9</version>
+  <version>1.0</version>
   <name>JNA-POSIX</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
