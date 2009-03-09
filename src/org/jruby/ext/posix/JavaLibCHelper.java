@@ -64,7 +64,7 @@ public class JavaLibCHelper {
     }
     
     public int chmod(String filename, int mode) {
-        return Chmod.chmod(new File(filename), Integer.toOctalString(mode));
+        return Chmod.chmod(new JavaSecuredFile(filename), Integer.toOctalString(mode));
     }
 
     public int chown(String filename, int user, int group) {
@@ -137,7 +137,7 @@ public class JavaLibCHelper {
     }
     
     public int lstat(String path, FileStat stat) {
-        File file = new File(path);
+        File file = new JavaSecuredFile(path);
 
         if (!file.exists()) handler.error(ERRORS.ENOENT, path);
         
@@ -153,7 +153,7 @@ public class JavaLibCHelper {
     }
     
     public int mkdir(String path, int mode) {
-        File dir = new File(path);
+        File dir = new JavaSecuredFile(path);
         
         if (!dir.mkdir()) return -1;
 
@@ -167,7 +167,7 @@ public class JavaLibCHelper {
         JavaFileStat jstat = (JavaFileStat) stat;
         
         try {
-            File file = new File(path);
+            File file = new JavaSecuredFile(path);
             
             if (!file.exists()) handler.error(ERRORS.ENOENT, path);
                 

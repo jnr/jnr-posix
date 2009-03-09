@@ -275,6 +275,8 @@ public class JavaPOSIX implements POSIX {
                 return NOBODY;
             } catch (NumberFormatException ex) {
                 return NOBODY;
+            } catch (SecurityException ex) {
+                return NOBODY;
             }
         }
     }

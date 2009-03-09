@@ -22,7 +22,7 @@ public class JavaFileStat implements FileStat {
     public void setup(String path) {
         // ENEBO: This was originally JRubyFile, but I believe we use JRuby file for normalization
         // of paths.  So we should be safe.
-        File file = new File(path);
+        File file = new JavaSecuredFile(path);
         // Limitation: We cannot determine, so always return 4096 (better than blowing up)
         st_blksize = 4096;
         st_mode = calculateMode(file, st_mode);
@@ -78,7 +78,7 @@ public class JavaFileStat implements FileStat {
         }
         
         // directory itself has symlinks (canonical != absolute), so build new path with canonical parent and compare
-        file = new File(canonicalParent.getAbsolutePath() + "/" + file.getName());
+        file = new JavaSecuredFile(canonicalParent.getAbsolutePath() + "/" + file.getName());
         if (!file.getAbsolutePath().equalsIgnoreCase(file.getCanonicalPath())) {
             st_mode |= S_IFLNK;
         }
