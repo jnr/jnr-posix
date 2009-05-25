@@ -37,15 +37,15 @@ public class JavaPOSIX implements POSIX {
     }
 
     public int getegid() {
-        return GIDHolder.GID;
+        return LoginInfo.GID;
     }
     
     public int geteuid() {
-        return UIDHolder.UID;
+        return LoginInfo.UID;
     }
     
     public int getgid() {
-        return GIDHolder.GID;
+        return LoginInfo.GID;
     }
     
     public String getlogin() {
@@ -73,8 +73,7 @@ public class JavaPOSIX implements POSIX {
     }
 
     public Passwd getpwuid(int which) {
-        handler.unimplementedError("getpwuid unimplemented");
-        return null;
+        return helper.getpwuid(which);
     }
 
     public Group getgrgid(int which) {
@@ -113,7 +112,7 @@ public class JavaPOSIX implements POSIX {
     }
 
     public int getuid() {
-        return UIDHolder.UID;
+        return LoginInfo.UID;
     }
     
     public int fork() {
@@ -257,16 +256,15 @@ public class JavaPOSIX implements POSIX {
         
         return -1;
     }
-    private static final class UIDHolder {
-        public static final int UID = IDHelper.getID("-u");
-    }
-    private static final class GIDHolder {
-        public static final int GID = IDHelper.getID("-g");
+    static final class LoginInfo {
+        public static final int UID = IDHelper.getInt("-u");
+        public static final int GID = IDHelper.getInt("-g");
+        public static final String USERNAME = IDHelper.getString("-un");
     }
     private static final class IDHelper {
         private static final String ID_CMD = Platform.IS_SOLARIS ? "/usr/xpg4/bin/id" : "/usr/bin/id";
         private static final int NOBODY = Platform.IS_WINDOWS ? 0 : Short.MAX_VALUE;
-        public static int getID(String option) {
+        public static int getInt(String option) {
             try {
                 Process p = Runtime.getRuntime().exec(new String[] { ID_CMD, option });
                 BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -277,5 +275,57 @@ public class JavaPOSIX implements POSIX {
                 return NOBODY;
             }
         }
+        public static String getString(String option) {
+            try {
+                Process p = Runtime.getRuntime().exec(new String[] { ID_CMD, option });
+                BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                return r.readLine();
+            } catch (IOException ex) {
+                return null;
+            }
+        }
+    }
+    private static final class FakePasswd implements Passwd {
+
+        public String getLoginName() {
+            return LoginInfo.USERNAME;
+        }
+
+        public String getPassword() {
+            return "";
+        }
+
+        public long getUID() {
+            return LoginInfo.UID;
+        }
+
+        public long getGID() {
+            return LoginInfo.GID;
+        }
+
+        public int getPasswdChangeTime() {
+            return 0;
+        }
+
+        public String getAccessClass() {
+            return "";
+        }
+
+        public String getGECOS() {
+            return getLoginName();
+        }
+
+        public String getHome() {
+            return "/";
+        }
+
+        public String getShell() {
+            return "/bin/sh";
+        }
+
+        public int getExpire() {
+            return ~0;
+        }
+
     }
 }

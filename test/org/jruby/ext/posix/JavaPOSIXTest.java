@@ -1,3 +1,7 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 package org.jruby.ext.posix;
 
@@ -10,16 +14,15 @@ import static org.junit.Assert.*;
 
 /**
  *
+ * @author wayne
  */
-public class GroupTest {
-
-    public GroupTest() {
+public class JavaPOSIXTest {
+    POSIX posix;
+    public JavaPOSIXTest() {
     }
 
-    private static POSIX posix;
     @BeforeClass
     public static void setUpClass() throws Exception {
-        posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @AfterClass
@@ -28,10 +31,12 @@ public class GroupTest {
 
     @Before
     public void setUp() {
+        posix = new JavaPOSIX(new DummyPOSIXHandler());
     }
 
     @After
     public void tearDown() {
+        posix = null;
     }
 
     // TODO add test methods here.
@@ -39,14 +44,12 @@ public class GroupTest {
     //
     // @Test
     // public void hello() {}
-    @Test public void getgrnam() {
-        final String LOGIN = "nogroup";
-        Group grp = posix.getgrnam(LOGIN);
-        assertNotNull(grp);
-        assertEquals("Login name not equal", LOGIN, grp.getName());
+    @Test public void uid() {
+        
     }
-    @Test public void nonExistantGroupReturnsNull() {
-        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-        assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
+    @Test public void getpwuid() {
+        Passwd pwd = posix.getpwuid(posix.getuid());
+        assertNotNull("getpwuid failed", pwd);
+        
     }
 }

@@ -14,15 +14,11 @@ public class JavaPasswd implements Passwd {
     }
 
     public String getGECOS() {
-        handler.unimplementedError("passwd.pw_gecos unimplemented");
-        
-        return null;
+        return getLoginName();
     }
 
     public long getGID() {
-        handler.unimplementedError("passwd.pw_gid unimplemented");
-
-        return -1;
+        return JavaPOSIX.LoginInfo.GID;
     }
 
     public String getHome() {
@@ -52,14 +48,12 @@ public class JavaPasswd implements Passwd {
     }
 
     public long getUID() {
-        handler.unimplementedError("passwd.pw_uid unimplemented");
-        
-        return -1;
+        return JavaPOSIX.LoginInfo.UID;
     }
 
     public int getExpire() {
         handler.unimplementedError("passwd.expire unimplemented");
         
-        return -1;
+        return ~0;
     }
 }

@@ -111,9 +111,16 @@ public class JavaLibCHelper {
     public int getpid() {
         return handler.getPID();
     }
-
+    ThreadLocal<Integer> pwIndex = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return 0;
+        }
+    };
     public Passwd getpwent() {
-        return new JavaPasswd(handler);
+        Passwd retVal = pwIndex.get().intValue() == 0 ? new JavaPasswd(handler) : null;
+        pwIndex.set(pwIndex.get() + 1);
+        return retVal;
     }
 
     public int setpwent() {
@@ -121,9 +128,12 @@ public class JavaLibCHelper {
     }
 
     public int endpwent() {
+        pwIndex.set(0);
         return 0;
     }
-    
+    public Passwd getpwuid(int which) {
+        return which == JavaPOSIX.LoginInfo.UID ? new JavaPasswd(handler) : null;
+    }
     public int isatty(int fd) {
         return (fd == STDOUT || fd == STDIN || fd == STDERR) ? 1 : 0;
     }
