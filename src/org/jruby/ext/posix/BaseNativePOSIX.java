@@ -252,7 +252,7 @@ public abstract class BaseNativePOSIX implements POSIX {
         LastError.setLastError(value);
     }
 
-    public abstract FileStat allocateStat();
+    public abstract BaseHeapFileStat allocateStat();
 
     /**
      * Does the loaded library have the method specified

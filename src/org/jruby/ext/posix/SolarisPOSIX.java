@@ -9,7 +9,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
         super(libraryName, libc, handler);
     }
     
-    public FileStat allocateStat() {
+    public BaseHeapFileStat allocateStat() {
         return new SolarisHeapFileStat(this);
     }
     

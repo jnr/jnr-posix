@@ -15,7 +15,7 @@ public final class MacOSPOSIX extends BaseNativePOSIX {
         hasLchown = hasMethod("lchown");
     }
     
-    public FileStat allocateStat() {
+    public BaseHeapFileStat allocateStat() {
         return new MacOSHeapFileStat(this);
     }
     

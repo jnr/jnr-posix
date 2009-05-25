@@ -39,7 +39,7 @@ public final class OpenBSDPOSIX extends BaseNativePOSIX {
         super(libraryName, libc, handler);
     }
     
-    public FileStat allocateStat() {
+    public BaseHeapFileStat allocateStat() {
         return new FreeBSDHeapFileStat(this);
     }
     

@@ -37,7 +37,7 @@ public final class LinuxPOSIX extends BaseNativePOSIX {
     }
     
     @Override
-    public FileStat allocateStat() {
+    public BaseHeapFileStat allocateStat() {
         if (Platform.IS_32_BIT) {
             return new LinuxHeapFileStat(this);
         } else {
