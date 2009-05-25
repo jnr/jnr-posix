@@ -1,13 +1,13 @@
 package org.jruby.ext.posix;
 
-import com.sun.jna.Structure;
+import com.kenai.jaffl.struct.Struct;
 
-public class UTimBuf64 extends Structure {
-    public long actime;
-    public long modtime;
+public final class UTimBuf64 extends Struct {
+    public final Signed64 actime = new Signed64();
+    public final Signed64 modtime = new Signed64();
 
     public UTimBuf64(long actime, long modtime) {
-        this.actime = actime;
-        this.modtime = modtime;
+        this.actime.set(actime);
+        this.modtime.set(modtime);
     }
 }
