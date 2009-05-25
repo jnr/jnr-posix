@@ -5,6 +5,9 @@ import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
 import com.kenai.jaffl.Library;
 import com.kenai.jaffl.Pointer;
+import com.kenai.jaffl.mapper.ToNativeContext;
+import com.kenai.jaffl.mapper.ToNativeConverter;
+import com.kenai.jaffl.struct.Struct;
 import com.kenai.jaffl.struct.StructUtil;
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -276,5 +279,20 @@ public abstract class BaseNativePOSIX implements POSIX {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new DefaultNativeGroup((Pointer) arg) : null;
         }
+    };
+
+    public static final ToNativeConverter<FileStat, Struct> FileStatConverter = new ToNativeConverter<FileStat, Struct>() {
+
+        public Struct toNative(FileStat value, ToNativeContext context) {
+            if (!(value instanceof Struct)) {
+                throw new IllegalArgumentException("FileStat instance is not a struct");
+            }
+            return (Struct) value;
+        }
+
+        public Class<Struct> nativeType() {
+            return Struct.class;
+        }
+
     };
 }

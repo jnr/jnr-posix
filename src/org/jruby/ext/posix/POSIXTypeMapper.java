@@ -33,6 +33,9 @@ class POSIXTypeMapper implements TypeMapper {
     }
     
     public ToNativeConverter getToNativeConverter(Class klazz) {
+        if (FileStat.class.isAssignableFrom(klazz)) {
+            return BaseNativePOSIX.FileStatConverter;
+        }
         return null;
     }
 }
