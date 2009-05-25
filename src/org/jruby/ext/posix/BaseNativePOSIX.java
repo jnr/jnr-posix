@@ -15,10 +15,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 public abstract class BaseNativePOSIX implements POSIX {
-    protected String libraryName;
-    protected LibC libc;
-    protected POSIXHandler handler;
-    protected JavaLibCHelper helper;
+    protected final String libraryName;
+    protected final LibC libc;
+    protected final POSIXHandler handler;
+    protected final JavaLibCHelper helper;
     
     public BaseNativePOSIX(String libraryName, LibC libc, POSIXHandler handler) {
         this.libc = libc;
