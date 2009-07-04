@@ -225,7 +225,7 @@ public abstract class BaseNativePOSIX implements POSIX {
     }
     
     public int waitpid(int pid, int[] status, int flags) {
-        return libc.waitpid(pid, status, pid);
+        return libc.waitpid(pid, status, flags);
     }
     
     public int wait(int[] status) {
