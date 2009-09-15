@@ -27,11 +27,11 @@ public class POSIXFactory {
                     posix = loadFreeBSDPOSIX(handler);
                 } else if (Platform.IS_OPENBSD) {
                     posix = loadOpenBSDPOSIX(handler);
+                } else if (Platform.IS_SOLARIS) {
+                    posix = loadSolarisPOSIX(handler);
                 } else if (Platform.IS_32_BIT) {// No 64 bit structures defined yet.
                     if (Platform.IS_WINDOWS) {
                         posix = loadWindowsPOSIX(handler);
-                    } else if (Platform.IS_SOLARIS) {
-                        posix = loadSolarisPOSIX(handler);
                     }
                 }
 
