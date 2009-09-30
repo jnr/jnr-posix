@@ -17,19 +17,19 @@ import org.jruby.ext.posix.POSIX.ERRORS;
 public class DummyPOSIXHandler implements POSIXHandler {
 
     public void error(ERRORS error, String extraData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("error: " + error);
     }
 
     public void unimplementedError(String methodName) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("unimplemented method: " + methodName);
     }
 
     public void warn(WARNING_ID id, String message, Object... data) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("warning: " + id);
     }
 
     public boolean isVerbose() {
-        return false;
+        return true;
     }
 
     public File getCurrentWorkingDirectory() {
