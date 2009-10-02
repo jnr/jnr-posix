@@ -56,7 +56,7 @@ public final class DefaultNativeGroup extends NativeGroup implements Group {
         return gr_gid.get();
     }
     public java.lang.String[] getMembers() {
-        int size = com.kenai.jaffl.Pointer.SIZE;
+        int size = com.kenai.jaffl.Pointer.SIZE / 8;
         int i=0;
         List<java.lang.String> lst = new ArrayList<java.lang.String>();
         com.kenai.jaffl.Pointer ptr = gr_mem.get();
