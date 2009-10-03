@@ -8,8 +8,7 @@ import org.jruby.ext.posix.util.Platform;
 import java.util.Map;
 
 public class POSIXFactory {
-    static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : "c";
-    static LibC libc = null;
+    static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : Platform.IS_WINDOWS ? "msvcrt" : "c";
     static final Map<LibraryOption, Object> defaultOptions = new HashMap<LibraryOption, Object>() {{
         put(LibraryOption.TypeMapper, POSIXTypeMapper.INSTANCE);
     }};
@@ -63,47 +62,77 @@ public class POSIXFactory {
     }
 
     public static POSIX loadLinuxPOSIX(POSIXHandler handler) {
-        return new LinuxPOSIX(LIBC, new DefaultLibCProvider(LinuxLibC.class, defaultOptions, LIBC), handler);
+        return new LinuxPOSIX(LIBC, new LinuxLibCProvider(), handler);
     }
 
     public static POSIX loadMacOSPOSIX(POSIXHandler handler) {
-        return new MacOSPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
+        return new MacOSPOSIX(LIBC, new DefaultLibCProvider(), handler);
     }
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
-        return new SolarisPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
+        return new SolarisPOSIX(LIBC, new SolarisLibCProvider(), handler);
     }
 
     public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
-        return new FreeBSDPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
+        return new FreeBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
     }
 
     public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
-        return new OpenBSDPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
+        return new OpenBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
-        String name = "msvcrt";
-
-        Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>();
-        options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
-
-        return new WindowsPOSIX(name, new DefaultLibCProvider(WindowsLibC.class, options, name), handler);
+        return new WindowsPOSIX(LIBC, new WindowsLibCProvider(), handler);
     }
-    
+
+
     private static final class DefaultLibCProvider implements LibCProvider {
-        private final Class<? extends LibC> libcClass;
-        private final LibC libc;
 
-        public DefaultLibCProvider(Class<? extends LibC> libcClass, Map<LibraryOption, Object> options, String... libraryNames) {
-            this.libcClass = libcClass;
-            libc = Library.loadLibrary(libcClass, options, libraryNames);
+        private static final class SingletonHolder {
+            public static LibC libc = Library.loadLibrary(LibC.class, defaultOptions, "c");
         }
 
-
-        public LibC getLibC() {
-            return libc;
+        public final LibC getLibC() {
+            return SingletonHolder.libc;
         }
     }
-    
+
+    private static final class LinuxLibCProvider implements LibCProvider {
+
+        private static final class SingletonHolder {
+            public static LibC libc = Library.loadLibrary(LinuxLibC.class, defaultOptions, "libc.so.6");
+        }
+
+        public final LibC getLibC() {
+            return SingletonHolder.libc;
+        }
+    }
+
+    private static final class SolarisLibCProvider implements LibCProvider {
+
+        private static final class SingletonHolder {
+            public static LibC libc = Library.loadLibrary(LibC.class, defaultOptions, "socket", "nsl", "c");
+        }
+
+        public final LibC getLibC() {
+            return SingletonHolder.libc;
+        }
+    }
+
+    private static final class WindowsLibCProvider implements LibCProvider {
+        
+        static final class SingletonHolder {
+            public static LibC libc = Library.loadLibrary(WindowsLibC.class, getOptions(), "msvcrt");
+        }
+
+        public final LibC getLibC() {
+            return SingletonHolder.libc;
+        }
+
+        static final Map<LibraryOption, Object> getOptions() {
+            Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>(defaultOptions);
+            options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
+            return options;
+        }
+    }
 }
