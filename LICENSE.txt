@@ -1,4 +1,4 @@
-jna-posix is released under a tri CPL/GPL/LGPL license. You can use it,
+jnr-posix is released under a tri CPL/GPL/LGPL license. You can use it,
 redistribute it and/or modify it under the terms of the license of your choice.
 
 === Common Public License - v 1.0
