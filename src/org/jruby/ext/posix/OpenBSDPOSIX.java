@@ -35,7 +35,7 @@ import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.Pointer;
 
 public final class OpenBSDPOSIX extends BaseNativePOSIX {
-    public OpenBSDPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
+    public OpenBSDPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     

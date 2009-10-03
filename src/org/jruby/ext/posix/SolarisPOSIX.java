@@ -6,7 +6,7 @@ import java.io.FileDescriptor;
 import org.jruby.ext.posix.util.Platform;
 
 public class SolarisPOSIX extends BaseNativePOSIX {
-    public SolarisPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
+    public SolarisPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     

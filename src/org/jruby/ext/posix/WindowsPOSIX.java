@@ -3,13 +3,8 @@ package org.jruby.ext.posix;
 import java.io.FileDescriptor;
 
 public class WindowsPOSIX extends BaseNativePOSIX {
-    // We fall back to Pure Java Posix impl when windows does not support something
-    JavaLibCHelper helper;
-
-    public WindowsPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
+    public WindowsPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
-
-        helper = new JavaLibCHelper(handler);
     }
     
     @Override

@@ -14,8 +14,9 @@ public final class LinuxPOSIX extends BaseNativePOSIX {
     private final boolean hasStat;
     private final int statVersion;
     
-    public LinuxPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
+    public LinuxPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+        super(libraryName, libcProvider, handler);
+
 
         statVersion = Platform.IS_32_BIT ? 3 : 0;
 
@@ -26,9 +27,9 @@ public final class LinuxPOSIX extends BaseNativePOSIX {
         hasFxstat = hasMethod("__fxstat64");
         hasLxstat = hasMethod("__lxstat64");
         hasXstat = hasMethod("__xstat64");
-        
+
         /*
-         * At least one person is using uLibc on linux which has real 
+         * At least one person is using uLibc on linux which has real
          * definitions for stat/lstat/fstat.
          */
         hasFstat = !hasFxstat && hasMethod("fstat64");

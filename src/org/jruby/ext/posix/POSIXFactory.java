@@ -63,23 +63,23 @@ public class POSIXFactory {
     }
 
     public static POSIX loadLinuxPOSIX(POSIXHandler handler) {
-        return new LinuxPOSIX(LIBC, loadLibC(LIBC, LinuxLibC.class, defaultOptions), handler);
+        return new LinuxPOSIX(LIBC, new DefaultLibCProvider(LinuxLibC.class, defaultOptions, LIBC), handler);
     }
 
     public static POSIX loadMacOSPOSIX(POSIXHandler handler) {
-        return new MacOSPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+        return new MacOSPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
     }
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
-        return new SolarisPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+        return new SolarisPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
     }
 
     public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
-        return new FreeBSDPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+        return new FreeBSDPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
     }
 
     public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
-        return new OpenBSDPOSIX(LIBC, loadLibC(LIBC, LibC.class, defaultOptions), handler);
+        return new OpenBSDPOSIX(LIBC, new DefaultLibCProvider(LibC.class, defaultOptions, LIBC), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
@@ -88,17 +88,22 @@ public class POSIXFactory {
         Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>();
         options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
 
-        return new WindowsPOSIX(name, loadLibC(name, WindowsLibC.class, options), handler);
-    }
-
-    public static LibC loadLibC(String libraryName, Class<? extends LibC> libCClass, Map<LibraryOption, Object> options) {
-        if (libc != null) return libc;
-
-        libc = Library.loadLibrary(libraryName, libCClass, options);
-
-        return libc;
+        return new WindowsPOSIX(name, new DefaultLibCProvider(WindowsLibC.class, options, name), handler);
     }
     
-    
+    private static final class DefaultLibCProvider implements LibCProvider {
+        private final Class<? extends LibC> libcClass;
+        private final LibC libc;
+
+        public DefaultLibCProvider(Class<? extends LibC> libcClass, Map<LibraryOption, Object> options, String... libraryNames) {
+            this.libcClass = libcClass;
+            libc = Library.loadLibrary(libcClass, options, libraryNames);
+        }
+
+
+        public LibC getLibC() {
+            return libc;
+        }
+    }
     
 }

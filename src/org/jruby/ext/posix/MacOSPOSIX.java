@@ -5,32 +5,32 @@ import com.kenai.jaffl.Pointer;
 
 
 public final class MacOSPOSIX extends BaseNativePOSIX {
-    private final boolean hasLchmod;
-    private final boolean hasLchown;
-
-    public MacOSPOSIX(String libraryName, LibC libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
-        
-        hasLchmod = hasMethod("lchmod");
-        hasLchown = hasMethod("lchown");
+    public MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+        super(libraryName, libcProvider, handler);
     }
-    
+
     public BaseHeapFileStat allocateStat() {
         return new MacOSHeapFileStat(this);
     }
     
     @Override
     public int lchmod(String filename, int mode) {
-        if (!hasLchmod) handler.unimplementedError("lchmod");
-        
-        return libc().lchmod(filename, mode);
+        try {
+            return libc().lchmod(filename, mode);
+        } catch (UnsatisfiedLinkError ex) {
+            handler.unimplementedError("lchmod");
+            return -1;
+        }
     }
     
     @Override
     public int lchown(String filename, int user, int group) {
-        if (!hasLchown) handler.unimplementedError("lchown");
-        
-        return super.lchown(filename, user, group);
+        try {
+            return super.lchown(filename, user, group);
+        } catch (UnsatisfiedLinkError ex) {
+            handler.unimplementedError("lchown");
+            return -1;
+        }
     }
     
     public static final PointerConverter PASSWD = new PointerConverter() {

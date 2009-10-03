@@ -16,19 +16,19 @@ import java.nio.charset.Charset;
 
 public abstract class BaseNativePOSIX implements POSIX {
     protected final String libraryName;
-    private final LibC libc;
+    private final LibCProvider libc;
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
-    public BaseNativePOSIX(String libraryName, LibC libc, POSIXHandler handler) {
-        this.libc = libc;
+    public BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+        this.libc = libcProvider;
         this.handler = handler;
         this.libraryName = libraryName;
         helper = new JavaLibCHelper(handler);
     }
 
     protected final LibC libc() {
-        return libc;
+        return libc.getLibC();
     }
 
     public int chmod(String filename, int mode) {
