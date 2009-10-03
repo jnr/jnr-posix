@@ -19,7 +19,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
 
-        if ((Platform.IS_64_BIT ? libc.fstat(fd, stat) : libc.fstat64(fd, stat)) < 0) handler.error(ERRORS.ENOENT, ""+fd);
+        if ((Platform.IS_64_BIT ? libc().fstat(fd, stat) : libc().fstat64(fd, stat)) < 0) handler.error(ERRORS.ENOENT, ""+fd);
         
         return stat;
     }
@@ -35,7 +35,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
 
-        if ((Platform.IS_64_BIT ? libc.lstat(path, stat) : libc.lstat64(path, stat)) < 0) handler.error(ERRORS.ENOENT, path);
+        if ((Platform.IS_64_BIT ? libc().lstat(path, stat) : libc().lstat64(path, stat)) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }
@@ -44,7 +44,7 @@ public class SolarisPOSIX extends BaseNativePOSIX {
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
 
-        if ((Platform.IS_64_BIT ? libc.stat(path, stat) : libc.stat64(path, stat)) < 0) handler.error(ERRORS.ENOENT, path);
+        if ((Platform.IS_64_BIT ? libc().stat(path, stat) : libc().stat64(path, stat)) < 0) handler.error(ERRORS.ENOENT, path);
         
         return stat;
     }

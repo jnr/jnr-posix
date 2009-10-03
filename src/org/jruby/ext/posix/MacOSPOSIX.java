@@ -23,7 +23,7 @@ public final class MacOSPOSIX extends BaseNativePOSIX {
     public int lchmod(String filename, int mode) {
         if (!hasLchmod) handler.unimplementedError("lchmod");
         
-        return libc.lchmod(filename, mode);
+        return libc().lchmod(filename, mode);
     }
     
     @Override

@@ -153,7 +153,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
         if (atimeval != null && mtimeval != null) {
             times = new UTimBuf64(atimeval[0], mtimeval[0]);
         }
-        return ((WindowsLibC)libc)._utime64(path, times);
+        return ((WindowsLibC)libc())._utime64(path, times);
     }
 
     @Override
@@ -228,7 +228,7 @@ public class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public boolean isatty(FileDescriptor fd) {
 	int handle = (int)helper.gethandle(fd);
-	int crtfd = ((WindowsLibC)libc)._open_osfhandle(handle, 0/*_O_RDONLY*/);
-	return libc.isatty(crtfd) != 0;
+	int crtfd = ((WindowsLibC)libc())._open_osfhandle(handle, 0/*_O_RDONLY*/);
+	return libc().isatty(crtfd) != 0;
     }
 }
