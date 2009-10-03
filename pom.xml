@@ -5,7 +5,7 @@
   <groupId>org.jruby.ext.posix</groupId>
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
   <name>jnr-posix</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>org.jruby.extras</groupId>
       <artifactId>jaffl</artifactId>
-      <version>0.3.1</version>
+      <version>0.3.3</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
