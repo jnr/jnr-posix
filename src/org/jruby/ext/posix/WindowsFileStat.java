@@ -10,12 +10,8 @@ public class WindowsFileStat extends BaseHeapFileStat {
     public final Signed32 st_rdev = new Signed32();
     public final Signed64 st_size = new Signed64();
     public final Signed32 st_atime = new Signed32();
-    public final Signed32 spare1 = new Signed32();
     public final Signed32 st_mtime = new Signed32();
-    public final Signed32 spare2 = new Signed32();
     public final Signed32 st_ctime = new Signed32();
-    public final Signed64 st_blksize = new Signed64();
-    public final Signed64 st_blocks = new Signed64();
 
     public WindowsFileStat(POSIX posix) {
         super(posix);
@@ -26,11 +22,11 @@ public class WindowsFileStat extends BaseHeapFileStat {
     }
 
     public long blockSize() {
-        return st_blksize.get();
+        return 512;
     }
 
     public long blocks() {
-        return st_blocks.get();
+        return st_size.get() / blockSize();
     }
 
     public long ctime() {
