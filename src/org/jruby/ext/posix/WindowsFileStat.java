@@ -26,7 +26,7 @@ public class WindowsFileStat extends BaseHeapFileStat {
     }
 
     public long blocks() {
-        return st_size.get() / blockSize();
+        return (st_size.get() + 512 - 1) / 512;
     }
 
     public long ctime() {
