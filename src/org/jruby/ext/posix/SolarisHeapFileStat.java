@@ -24,8 +24,8 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
     public final Int32 st_uid = new Int32();
     public final Int32 st_gid = new Int32();
     public final Int32 st_rdev = new Int32();
-    public final Int64 st_pad2_0 = new Int64();
-    public final Int64 st_pad2_1 = new Int64();
+    public final SignedLong st_pad2_0 = new SignedLong();
+    public final SignedLong st_pad2_1 = new SignedLong();
     public final Int64 st_size = new Int64();
     public final Int32 st_atim_sec = new Int32();
     public final Int32 st_atim_nsec = new Int32();
@@ -36,7 +36,7 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
     public final Int32 st_blksize = new Int32();
     public final Int64 st_blocks = new Int64();
     public final Signed8[] st_fstype = array(new Signed8[_ST_FSTYPSZ]);
-    public final Signed64[] st_pad4 = array(new Signed64[8]);
+    public final SignedLong[] st_pad4 = array(new SignedLong[8]);
     
     public SolarisHeapFileStat() {
         this(null);
