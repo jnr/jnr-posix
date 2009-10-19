@@ -71,4 +71,26 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-pre-init">
+        <condition property="run.jvm.model" value="-d64">
+          <or>
+            <os arch="amd64"/>
+            <os arch="x86_64"/>
+            <os arch="sparcv9"/>
+            <os arch="s390x"/>
+          </or>
+        </condition>
+        <condition property="run.jvm.model" value="-d32">
+          <or>
+            <os arch="i386"/>
+            <os arch="x86"/>
+            <os arch="powerpc"/>
+            <os arch="sparc"/>
+          </or>
+        </condition>
+        <condition property="run.jvm.model" value="">
+            <not><isset property="run.jvm.model"/></not>
+        </condition>
+        <property name="run.jvmargs" value="${run.jvm.model}"/>
+    </target>
 </project>
