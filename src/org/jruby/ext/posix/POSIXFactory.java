@@ -11,6 +11,7 @@ public class POSIXFactory {
     static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : Platform.IS_WINDOWS ? "msvcrt" : "c";
     static final Map<LibraryOption, Object> defaultOptions = new HashMap<LibraryOption, Object>() {{
         put(LibraryOption.TypeMapper, POSIXTypeMapper.INSTANCE);
+        put(LibraryOption.LoadNow, Boolean.TRUE);
     }};
 
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
