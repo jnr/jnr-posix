@@ -16,8 +16,8 @@ public class WindowsLibCFunctionMapper implements FunctionMapper {
         
         methodNameMap.put("getpid", "_getpid");
         methodNameMap.put("chmod", "_chmod");
-        methodNameMap.put("fstat", "_fstati64");
-        methodNameMap.put("stat", "_stati64");
+        methodNameMap.put("fstat", "_fstat64");
+        methodNameMap.put("stat", "_stat64");
         methodNameMap.put("mkdir", "_mkdir");
         methodNameMap.put("umask", "_umask");
 	methodNameMap.put("isatty", "_isatty");

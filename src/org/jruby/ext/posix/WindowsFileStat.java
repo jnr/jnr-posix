@@ -9,9 +9,9 @@ public class WindowsFileStat extends BaseHeapFileStat {
     public final Signed16 st_gid = new Signed16();
     public final Signed32 st_rdev = new Signed32();
     public final Signed64 st_size = new Signed64();
-    public final Signed32 st_atime = new Signed32();
-    public final Signed32 st_mtime = new Signed32();
-    public final Signed32 st_ctime = new Signed32();
+    public final Signed64 st_atime = new Signed64();
+    public final Signed64 st_mtime = new Signed64();
+    public final Signed64 st_ctime = new Signed64();
 
     public WindowsFileStat(POSIX posix) {
         super(posix);
