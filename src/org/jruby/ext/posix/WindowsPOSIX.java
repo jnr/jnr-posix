@@ -3,6 +3,8 @@ package org.jruby.ext.posix;
 import java.io.FileDescriptor;
 
 public class WindowsPOSIX extends BaseNativePOSIX {
+    private final static int FILE_TYPE_CHAR = 0x0002;
+
     public WindowsPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
@@ -223,7 +225,12 @@ public class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public boolean isatty(FileDescriptor fd) {
 	int handle = (int)helper.gethandle(fd);
-	int crtfd = ((WindowsLibC)libc())._open_osfhandle(handle, 0/*_O_RDONLY*/);
-	return libc().isatty(crtfd) != 0;
+
+        int type = ((WindowsLibC)libc()).GetFileType(handle);
+        if (type == FILE_TYPE_CHAR) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.jruby.ext.posix;
 
-
 import com.kenai.jaffl.Library;
 import com.kenai.jaffl.LibraryOption;
 import java.util.HashMap;
@@ -123,7 +122,7 @@ public class POSIXFactory {
     private static final class WindowsLibCProvider implements LibCProvider {
         
         static final class SingletonHolder {
-            public static LibC libc = Library.loadLibrary(WindowsLibC.class, getOptions(), "msvcrt");
+            public static LibC libc = Library.loadLibrary(WindowsLibC.class, getOptions(),  "msvcrt", "kernel32");
         }
 
         public final LibC getLibC() {
