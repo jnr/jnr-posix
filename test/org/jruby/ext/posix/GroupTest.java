@@ -1,6 +1,8 @@
 
 package org.jruby.ext.posix;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,8 +47,25 @@ public class GroupTest {
         assertNotNull(grp);
         assertEquals("Login name not equal", LOGIN, grp.getName());
     }
+
     @Test public void nonExistantGroupReturnsNull() {
         final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
         assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
+    }
+
+    @Test public void getgrent() {
+        ArrayList<Group> grps = new ArrayList<Group>();
+        while (true) {
+            Group grp = posix.getgrent();
+            if (grp == null) {
+                break;
+            }
+            grps.add(grp);
+        }
+        for (Group grp : grps) {
+            assertNotNull(grp.getName());
+            assertNotNull(grp.getPassword());
+            assertNotNull(grp.getGID());
+        }
     }
 }
