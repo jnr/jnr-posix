@@ -66,6 +66,9 @@ public class GroupTest {
             assertNotNull(grp.getName());
             assertNotNull(grp.getPassword());
             assertNotNull(grp.getGID());
+            for (String member : grp.getMembers()) {
+                assertNotNull(member);
+            }
         }
     }
 }
