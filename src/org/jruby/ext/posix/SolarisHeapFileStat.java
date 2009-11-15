@@ -15,17 +15,14 @@ public class SolarisHeapFileStat extends BaseHeapFileStat {
     public static final int _ST_FSTYPSZ = 16;		/* array size for file system type name */
     
     public final Int32 st_dev = new Int32();
-    public final Int32 st_pad1_0 = new Int32();
-    public final Int32 st_pad1_1 = new Int32();
-    public final Int32 st_pad1_2 = new Int32();
+    public final SignedLong[] st_pad1 = array(new SignedLong[3]);
     public final Int64 st_ino = new Int64();
     public final Int32 st_mode = new Int32();
     public final Int32 st_nlink = new Int32();
     public final Int32 st_uid = new Int32();
     public final Int32 st_gid = new Int32();
     public final Int32 st_rdev = new Int32();
-    public final SignedLong st_pad2_0 = new SignedLong();
-    public final SignedLong st_pad2_1 = new SignedLong();
+    public final SignedLong[] st_pad2 = array(new SignedLong[2]);
     public final Int64 st_size = new Int64();
     public final Int32 st_atim_sec = new Int32();
     public final Int32 st_atim_nsec = new Int32();
