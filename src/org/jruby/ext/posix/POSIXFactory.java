@@ -14,6 +14,10 @@ public class POSIXFactory {
     }};
 
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
+        return new LazyPOSIX(handler, useNativePOSIX);
+    }
+
+    static POSIX loadPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
         POSIX posix = null;
 
         if (useNativePOSIX) {
