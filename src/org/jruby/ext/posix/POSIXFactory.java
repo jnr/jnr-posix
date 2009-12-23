@@ -133,7 +133,7 @@ public class POSIXFactory {
 
         static final Map<LibraryOption, Object> getOptions() {
             Map<LibraryOption, Object> options = new HashMap<LibraryOption, Object>(defaultOptions);
-            options.put(LibraryOption.FunctionMapper, new WindowsLibCFunctionMapper());
+            options.put(LibraryOption.FunctionMapper, WindowsLibCFunctionMapper.INSTANCE);
             return options;
         }
     }

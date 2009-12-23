@@ -5,14 +5,16 @@ import java.io.IOException;
 
 import org.jruby.ext.posix.POSIXHandler.WARNING_ID;
 
-public class JavaFileStat implements FileStat {
-    private POSIXHandler handler;
+public final class JavaFileStat implements FileStat {
+    private final POSIXHandler handler;
+    private final POSIX posix;
+
     short st_mode;
     int st_blksize;
     long st_size;
     int st_ctime;
     int st_mtime;
-    POSIX posix;
+    
     
     public JavaFileStat(POSIX posix, POSIXHandler handler) {
         this.handler = handler;

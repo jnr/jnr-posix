@@ -1,14 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package org.jruby.ext.posix;
 
-/**
- *
- */
-public class LinuxPasswd extends NativePasswd implements Passwd {
+public final class LinuxPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_name = new UTF8StringRef();   // user name
     public final UTF8StringRef pw_passwd = new UTF8StringRef(); // password (encrypted)
     public final Signed32 pw_uid = new Signed32();       // user id

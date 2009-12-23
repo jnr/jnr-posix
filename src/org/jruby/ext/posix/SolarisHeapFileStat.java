@@ -1,16 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package org.jruby.ext.posix;
 
 import com.kenai.jaffl.struct.StructUtil;
 
-/**
- *
- * @author enebo
- */
 public class SolarisHeapFileStat extends BaseHeapFileStat {
     public static final int _ST_FSTYPSZ = 16;		/* array size for file system type name */
     

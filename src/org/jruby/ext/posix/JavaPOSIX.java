@@ -9,13 +9,13 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import org.jruby.ext.posix.util.Platform;
 
-public class JavaPOSIX implements POSIX {
-    POSIXHandler handler;
-    JavaLibCHelper helper;
+final class JavaPOSIX implements POSIX {
+    private final POSIXHandler handler;
+    private final JavaLibCHelper helper;
 
-    public JavaPOSIX(POSIXHandler handler) {
+    JavaPOSIX(POSIXHandler handler) {
         this.handler = handler;
-        helper = new JavaLibCHelper(handler);
+        this.helper = new JavaLibCHelper(handler);
     }
     
     public FileStat allocateStat() {

@@ -4,18 +4,23 @@ package org.jruby.ext.posix;
 import java.io.FileDescriptor;
 import java.io.IOException;
 
-public final class LazyPOSIX implements POSIX {
+final class LazyPOSIX implements POSIX {
 
     private final POSIXHandler handler;
     private final boolean useNativePosix;
-    private POSIX posix;
 
-    public LazyPOSIX(POSIXHandler handler, boolean useNativePosix) {
+    // NOTE: because all implementations of POSIX that are loaded via loadPOSIX()
+    // are immutable, there is no need for 'posix' to be a volatile field.
+    // See http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html
+    // (but since volatile reads on x86 and x86_64 are cheap, do it anyway)
+    private volatile POSIX posix;
+
+    LazyPOSIX(POSIXHandler handler, boolean useNativePosix) {
         this.handler = handler;
         this.useNativePosix = useNativePosix;
     }
 
-    private final POSIX p() {
+    private final POSIX posix() {
         return posix != null ? posix : loadPOSIX();
     }
 
@@ -27,199 +32,199 @@ public final class LazyPOSIX implements POSIX {
 
 
     public int chmod(String filename, int mode) {
-        return p().chmod(filename, mode);
+        return posix().chmod(filename, mode);
     }
 
     public int chown(String filename, int user, int group) {
-        return p().chown(filename, user, group);
+        return posix().chown(filename, user, group);
     }
 
     public int endgrent() {
-        return p().endgrent();
+        return posix().endgrent();
     }
 
     public int endpwent() {
-        return p().endpwent();
+        return posix().endpwent();
     }
 
     public int errno() {
-        return p().errno();
+        return posix().errno();
     }
 
     public void errno(int value) {
-        p().errno(value);
+        posix().errno(value);
     }
 
     public int fork() {
-        return p().fork();
+        return posix().fork();
     }
 
     public FileStat fstat(FileDescriptor descriptor) {
-        return p().fstat(descriptor);
+        return posix().fstat(descriptor);
     }
 
     public int getegid() {
-        return p().getegid();
+        return posix().getegid();
     }
 
     public int geteuid() {
-        return p().geteuid();
+        return posix().geteuid();
     }
 
     public int getgid() {
-        return p().getgid();
+        return posix().getgid();
     }
 
     public Group getgrent() {
-        return p().getgrent();
+        return posix().getgrent();
     }
 
     public Group getgrgid(int which) {
-        return p().getgrgid(which);
+        return posix().getgrgid(which);
     }
 
     public Group getgrnam(String which) {
-        return p().getgrnam(which);
+        return posix().getgrnam(which);
     }
 
     public String getlogin() {
-        return p().getlogin();
+        return posix().getlogin();
     }
 
     public int getpgid() {
-        return p().getpgid();
+        return posix().getpgid();
     }
 
     public int getpgid(int pid) {
-        return p().getpgid(pid);
+        return posix().getpgid(pid);
     }
 
     public int getpgrp() {
-        return p().getpgrp();
+        return posix().getpgrp();
     }
 
     public int getpid() {
-        return p().getpid();
+        return posix().getpid();
     }
 
     public int getppid() {
-        return p().getppid();
+        return posix().getppid();
     }
 
     public int getpriority(int which, int who) {
-        return p().getpriority(which, who);
+        return posix().getpriority(which, who);
     }
 
     public Passwd getpwent() {
-        return p().getpwent();
+        return posix().getpwent();
     }
 
     public Passwd getpwnam(String which) {
-        return p().getpwnam(which);
+        return posix().getpwnam(which);
     }
 
     public Passwd getpwuid(int which) {
-        return p().getpwuid(which);
+        return posix().getpwuid(which);
     }
 
     public int getuid() {
-        return p().getuid();
+        return posix().getuid();
     }
 
     public boolean isatty(FileDescriptor descriptor) {
-        return p().isatty(descriptor);
+        return posix().isatty(descriptor);
     }
 
     public int kill(int pid, int signal) {
-        return p().kill(pid, signal);
+        return posix().kill(pid, signal);
     }
 
     public int lchmod(String filename, int mode) {
-        return p().lchmod(filename, mode);
+        return posix().lchmod(filename, mode);
     }
 
     public int lchown(String filename, int user, int group) {
-        return p().lchown(filename, user, group);
+        return posix().lchown(filename, user, group);
     }
 
     public int link(String oldpath, String newpath) {
-        return p().link(oldpath, newpath);
+        return posix().link(oldpath, newpath);
     }
 
     public FileStat lstat(String path) {
-        return p().lstat(path);
+        return posix().lstat(path);
     }
 
     public int mkdir(String path, int mode) {
-        return p().mkdir(path, mode);
+        return posix().mkdir(path, mode);
     }
 
     public String readlink(String path) throws IOException {
-        return p().readlink(path);
+        return posix().readlink(path);
     }
 
     public int setegid(int egid) {
-        return p().setegid(egid);
+        return posix().setegid(egid);
     }
 
     public int seteuid(int euid) {
-        return p().seteuid(euid);
+        return posix().seteuid(euid);
     }
 
     public int setgid(int gid) {
-        return p().setgid(gid);
+        return posix().setgid(gid);
     }
 
     public int setgrent() {
-        return p().setgrent();
+        return posix().setgrent();
     }
 
     public int setpgid(int pid, int pgid) {
-        return p().setpgid(pid, pgid);
+        return posix().setpgid(pid, pgid);
     }
 
     public int setpgrp(int pid, int pgrp) {
-        return p().setpgrp(pid, pgrp);
+        return posix().setpgrp(pid, pgrp);
     }
 
     public int setpriority(int which, int who, int prio) {
-        return p().setpriority(which, who, prio);
+        return posix().setpriority(which, who, prio);
     }
 
     public int setpwent() {
-        return p().setpwent();
+        return posix().setpwent();
     }
 
     public int setsid() {
-        return p().setsid();
+        return posix().setsid();
     }
 
     public int setuid(int uid) {
-        return p().setuid(uid);
+        return posix().setuid(uid);
     }
 
     public FileStat stat(String path) {
-        return p().stat(path);
+        return posix().stat(path);
     }
 
     public int symlink(String oldpath, String newpath) {
-        return p().symlink(oldpath, newpath);
+        return posix().symlink(oldpath, newpath);
     }
 
     public int umask(int mask) {
-        return p().umask(mask);
+        return posix().umask(mask);
     }
 
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
-        return p().utimes(path, atimeval, mtimeval);
+        return posix().utimes(path, atimeval, mtimeval);
     }
 
     public int wait(int[] status) {
-        return p().wait(status);
+        return posix().wait(status);
     }
 
     public int waitpid(int pid, int[] status, int flags) {
-        return p().waitpid(pid, status, flags);
+        return posix().waitpid(pid, status, flags);
     }
 
 }

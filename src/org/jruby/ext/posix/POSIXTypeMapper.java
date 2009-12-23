@@ -6,7 +6,7 @@ import com.kenai.jaffl.mapper.ToNativeConverter;
 import com.kenai.jaffl.mapper.TypeMapper;
 import org.jruby.ext.posix.util.Platform;
 
-class POSIXTypeMapper implements TypeMapper {
+final class POSIXTypeMapper implements TypeMapper {
     public static final TypeMapper INSTANCE = new POSIXTypeMapper();
     
     private POSIXTypeMapper() {}

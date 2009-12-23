@@ -34,8 +34,8 @@ package org.jruby.ext.posix;
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.Pointer;
 
-public final class OpenBSDPOSIX extends BaseNativePOSIX {
-    public OpenBSDPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
+final class OpenBSDPOSIX extends BaseNativePOSIX {
+    OpenBSDPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     

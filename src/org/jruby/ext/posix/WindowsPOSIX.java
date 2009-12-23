@@ -2,10 +2,10 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 
-public class WindowsPOSIX extends BaseNativePOSIX {
+final class WindowsPOSIX extends BaseNativePOSIX {
     private final static int FILE_TYPE_CHAR = 0x0002;
 
-    public WindowsPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
+    WindowsPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     

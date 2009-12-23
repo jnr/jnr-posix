@@ -1,7 +1,7 @@
 package org.jruby.ext.posix;
 
-public class JavaPasswd implements Passwd {
-    private POSIXHandler handler;
+final class JavaPasswd implements Passwd {
+    private final POSIXHandler handler;
 
     public JavaPasswd(POSIXHandler handler) {
         this.handler = handler;

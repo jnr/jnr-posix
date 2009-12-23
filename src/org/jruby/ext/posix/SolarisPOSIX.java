@@ -5,8 +5,8 @@ import com.kenai.jaffl.Pointer;
 import java.io.FileDescriptor;
 import org.jruby.ext.posix.util.Platform;
 
-public class SolarisPOSIX extends BaseNativePOSIX {
-    public SolarisPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
+final class SolarisPOSIX extends BaseNativePOSIX {
+    SolarisPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     

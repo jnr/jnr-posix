@@ -52,8 +52,8 @@ public class JavaLibCHelper {
     public static final int STDOUT = 1;
     public static final int STDERR = 2;
 
-    POSIXHandler handler;
-    Field fdField, handleField;
+    private final POSIXHandler handler;
+    private final Field fdField, handleField;
 
     public JavaLibCHelper(POSIXHandler handler) {
         this.handler = handler;

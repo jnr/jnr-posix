@@ -14,19 +14,18 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-public abstract class BaseNativePOSIX implements POSIX {
-    protected final String libraryName;
-    private final LibCProvider libcProvider;
+abstract class BaseNativePOSIX implements POSIX {
     private final LibC libc;
+    
+    protected final String libraryName;
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
-    public BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
-        this.libcProvider = libcProvider;
+    BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
         this.libraryName = libraryName;
         this.libc = libcProvider.getLibC();
-        helper = new JavaLibCHelper(handler);
+        this.helper = new JavaLibCHelper(handler);
     }
 
     public final LibC libc() {

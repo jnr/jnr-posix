@@ -5,7 +5,7 @@ import com.kenai.jaffl.Pointer;
 import java.io.FileDescriptor;
 import org.jruby.ext.posix.util.Platform;
 
-public final class LinuxPOSIX extends BaseNativePOSIX {
+final class LinuxPOSIX extends BaseNativePOSIX {
     private final boolean hasFxstat;
     private final boolean hasLxstat;
     private final boolean hasXstat;
@@ -14,7 +14,7 @@ public final class LinuxPOSIX extends BaseNativePOSIX {
     private final boolean hasStat;
     private final int statVersion;
     
-    public LinuxPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+    LinuxPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         super(libraryName, libcProvider, handler);
 
 

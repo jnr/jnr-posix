@@ -1,10 +1,6 @@
 
 package org.jruby.ext.posix;
 
-
-/**
- *
- */
 public class SolarisPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_name = new UTF8StringRef();   // user name
     public final UTF8StringRef pw_passwd = new UTF8StringRef(); // password (encrypted)
@@ -16,7 +12,7 @@ public class SolarisPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_dir = new UTF8StringRef();    // home directory
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
     
-    SolarisPasswd(com.kenai.jaffl.Pointer memory) {
+    public SolarisPasswd(com.kenai.jaffl.Pointer memory) {
         useMemory(memory);
     }
     

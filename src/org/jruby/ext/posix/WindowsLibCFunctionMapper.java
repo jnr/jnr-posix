@@ -1,6 +1,3 @@
-/*
- * POSIXFunctionMapper.java
- */
 
 package org.jruby.ext.posix;
 
@@ -8,10 +5,13 @@ import com.kenai.jaffl.mapper.FunctionMapper;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WindowsLibCFunctionMapper implements FunctionMapper {
-    private Map<String, String> methodNameMap;
+final class WindowsLibCFunctionMapper implements FunctionMapper {
 
-    public WindowsLibCFunctionMapper() {
+    static final FunctionMapper INSTANCE = new WindowsLibCFunctionMapper();
+
+    private final Map<String, String> methodNameMap;
+
+    WindowsLibCFunctionMapper() {
         methodNameMap = new HashMap<String, String>();
         
         methodNameMap.put("getpid", "_getpid");

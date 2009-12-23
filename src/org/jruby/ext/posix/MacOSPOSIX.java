@@ -4,8 +4,8 @@ import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.Pointer;
 
 
-public final class MacOSPOSIX extends BaseNativePOSIX {
-    public MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+final class MacOSPOSIX extends BaseNativePOSIX {
+    MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         super(libraryName, libcProvider, handler);
     }
 
