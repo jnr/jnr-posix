@@ -8,3 +8,6 @@
 ^nbproject/private/.*
 ^lib/.*private.*
 ^dist/.*
+^eclipse.build
+^.classpath
+^.project
