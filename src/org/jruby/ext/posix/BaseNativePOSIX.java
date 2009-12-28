@@ -1,5 +1,7 @@
 package org.jruby.ext.posix;
 
+import static com.kenai.constantine.platform.Errno.*;
+
 import com.kenai.jaffl.LastError;
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
@@ -44,7 +46,7 @@ abstract class BaseNativePOSIX implements POSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
 
-        if (libc().fstat(fd, stat) < 0) handler.error(ERRORS.ENOENT, ""+fd);
+        if (libc().fstat(fd, stat) < 0) handler.error(ENOENT, ""+fd);
         
         return stat;
     }
@@ -178,7 +180,7 @@ abstract class BaseNativePOSIX implements POSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
 
-        if (libc().lstat(path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (libc().lstat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }
@@ -190,7 +192,7 @@ abstract class BaseNativePOSIX implements POSIX {
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
 
-        if (libc().stat(path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (libc().stat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }

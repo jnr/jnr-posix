@@ -7,4 +7,6 @@ public interface WindowsLibC extends LibC {
     public int _utime64(String filename, UTimBuf64 times);
     @StdCall
     public int GetFileType(int handle);
+    @StdCall
+    public boolean CreateHardLinkA(String oldname, String newName, byte[] reserved);
 }

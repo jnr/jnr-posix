@@ -28,6 +28,7 @@
  ***** END LICENSE BLOCK *****/
 package org.jruby.ext.posix;
 
+import static com.kenai.constantine.platform.Errno.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +37,6 @@ import java.io.IOException;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
-import org.jruby.ext.posix.POSIX.ERRORS;
 import org.jruby.ext.posix.util.Chmod;
 import org.jruby.ext.posix.util.ExecIt;
 import org.jruby.ext.posix.util.FieldAccess;
@@ -149,7 +149,7 @@ public class JavaLibCHelper {
     public int lstat(String path, FileStat stat) {
         File file = new JavaSecuredFile(path);
 
-        if (!file.exists()) handler.error(ERRORS.ENOENT, path);
+        if (!file.exists()) handler.error(ENOENT, path);
         
         // FIXME: Bulletproof this or no?
         JavaFileStat jstat = (JavaFileStat) stat;
@@ -179,7 +179,7 @@ public class JavaLibCHelper {
         try {
             File file = new JavaSecuredFile(path);
             
-            if (!file.exists()) handler.error(ERRORS.ENOENT, path);
+            if (!file.exists()) handler.error(ENOENT, path);
                 
             jstat.setup(file.getCanonicalPath());
         } catch (IOException e) {
@@ -191,7 +191,7 @@ public class JavaLibCHelper {
 
         return 0;
     }
- 
+
     public int symlink(String oldpath, String newpath) {
         try {
             return new ExecIt(handler).runAndWait("ln", "-s", oldpath, newpath);
@@ -199,7 +199,7 @@ public class JavaLibCHelper {
             
         return -1;  // We tried and failed for some reason. Indicate error.
     }
-    
+
     public int readlink(String oldpath, ByteBuffer buffer, int length) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

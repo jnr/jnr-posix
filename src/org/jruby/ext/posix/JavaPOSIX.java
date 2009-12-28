@@ -1,5 +1,7 @@
 package org.jruby.ext.posix;
 
+import static com.kenai.constantine.platform.Errno.*;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -144,7 +146,7 @@ final class JavaPOSIX implements POSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
 
-        if (helper.lstat(path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (helper.lstat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }
@@ -168,7 +170,7 @@ final class JavaPOSIX implements POSIX {
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
 
-        if (helper.stat(path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (helper.stat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }

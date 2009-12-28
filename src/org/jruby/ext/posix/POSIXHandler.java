@@ -1,5 +1,7 @@
 package org.jruby.ext.posix;
 
+import com.kenai.constantine.platform.Errno;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -20,7 +22,7 @@ public interface POSIXHandler {
             this.messageID = messageID;
         }
     }
-    public void error(POSIX.ERRORS error, String extraData);
+    public void error(Errno error, String extraData);
     
     /**
      * Specify that posix method is unimplemented.  In JRuby we generate an

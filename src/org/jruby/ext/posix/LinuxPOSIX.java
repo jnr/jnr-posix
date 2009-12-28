@@ -1,5 +1,7 @@
 package org.jruby.ext.posix;
 
+import static com.kenai.constantine.platform.Errno.*;
+
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.Pointer;
 import java.io.FileDescriptor;
@@ -57,7 +59,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
         
-        if (((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat) < 0) handler.error(ERRORS.ENOENT, "" + fd);
+        if (((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat) < 0) handler.error(ENOENT, "" + fd);
         
         return stat;
     }
@@ -72,7 +74,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
 
         FileStat stat = allocateStat();
 
-        if (((LinuxLibC) libc()).__lxstat64(statVersion, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc()).__lxstat64(statVersion, path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }
@@ -87,7 +89,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         
         FileStat stat = allocateStat(); 
 
-        if (((LinuxLibC) libc()).__xstat64(statVersion, path, stat) < 0) handler.error(ERRORS.ENOENT, path);
+        if (((LinuxLibC) libc()).__xstat64(statVersion, path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
     }

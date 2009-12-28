@@ -5,10 +5,11 @@
 
 package org.jruby.ext.posix;
 
+import com.kenai.constantine.platform.Errno;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-import org.jruby.ext.posix.POSIX.ERRORS;
 
 /**
  *
@@ -16,7 +17,7 @@ import org.jruby.ext.posix.POSIX.ERRORS;
  */
 public class DummyPOSIXHandler implements POSIXHandler {
 
-    public void error(ERRORS error, String extraData) {
+    public void error(Errno error, String extraData) {
         throw new UnsupportedOperationException("error: " + error);
     }
 
