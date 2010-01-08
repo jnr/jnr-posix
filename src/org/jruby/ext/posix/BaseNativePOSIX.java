@@ -2,6 +2,7 @@ package org.jruby.ext.posix;
 
 import static com.kenai.constantine.platform.Errno.*;
 
+import com.kenai.constantine.platform.Errno;
 import com.kenai.jaffl.LastError;
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
@@ -184,9 +185,14 @@ abstract class BaseNativePOSIX implements POSIX {
         
         return stat;
     }
-    
+
     public int mkdir(String path, int mode) {
-        return libc().mkdir(path, mode);
+        int res = libc().mkdir(path, mode);
+        if (res < 0) {
+            int errno = errno();
+            handler.error(Errno.valueOf(errno), path);
+        }
+        return res;
     }
 
     public FileStat stat(String path) {

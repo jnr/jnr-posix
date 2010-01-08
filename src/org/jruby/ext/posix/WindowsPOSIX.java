@@ -5,6 +5,7 @@ import static com.kenai.constantine.platform.Errno.*;
 import static com.kenai.constantine.platform.windows.LastError.*;
 
 import java.io.FileDescriptor;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -340,6 +341,23 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int mkdir(String path, int mode) {
+        try {
+            byte[] widePath = appendWcharNul(path.getBytes("UTF-16LE"));
+            int res = ((WindowsLibC)libc())._wmkdir(widePath, mode);
+            if (res < 0) {
+                int error = errno();
+                handler.error(mapErrorToErrno(error), path);
+            }
+            return res;
+        } catch (UnsupportedEncodingException e) {
+            // should not really happen
+            handler.error(Errno.EINVAL, path);
+            return -1;
+        }
+    }
+
+    @Override
     public int link(String oldpath, String newpath) {
         boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkA(newpath, oldpath, null);
 
@@ -358,5 +376,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             errno = __UNKNOWN_CONSTANT__;
         }
         return errno;
+    }
+
+    private static byte[] appendWcharNul(byte[] bytes) {
+        byte[] withNul = new byte[bytes.length + 2];
+        System.arraycopy(bytes, 0, withNul, 0, bytes.length);
+        withNul[bytes.length] = 0;
+        withNul[bytes.length + 1] = 0;
+        return withNul;
     }
 }

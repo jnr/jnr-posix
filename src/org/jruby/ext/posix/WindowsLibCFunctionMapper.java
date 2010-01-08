@@ -18,7 +18,6 @@ final class WindowsLibCFunctionMapper implements FunctionMapper {
         methodNameMap.put("chmod", "_chmod");
         methodNameMap.put("fstat", "_fstat64");
         methodNameMap.put("stat", "_stat64");
-        methodNameMap.put("mkdir", "_mkdir");
         methodNameMap.put("umask", "_umask");
 	methodNameMap.put("isatty", "_isatty");
     }
