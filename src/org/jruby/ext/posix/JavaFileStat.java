@@ -43,10 +43,16 @@ public final class JavaFileStat implements FileStat {
 
     private short calculateMode(File file, short st_mode) {
         // implementation to lowest common denominator...
-        // Windows has no file mode, but C ruby returns either 0100444 or 0100666
+        // Windows has no file mode, but C ruby returns either 0100444 or 0100644
 
-        if (file.canRead()) st_mode |= ALL_READ;
-        if (file.canWrite()) st_mode |= ALL_WRITE;
+        if (file.canRead()) {
+            st_mode |= ALL_READ;
+        }
+
+        if (file.canWrite()) {
+            st_mode |= ALL_WRITE;
+            st_mode &= ~(S_IWGRP | S_IWOTH);
+        }
 
         if (file.isDirectory()) {
             st_mode |= S_IFDIR;
