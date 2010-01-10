@@ -1,13 +1,14 @@
 package org.jruby.ext.posix;
 
+import com.kenai.jaffl.annotations.In;
 import com.kenai.jaffl.annotations.StdCall;
 
 public interface WindowsLibC extends LibC {
     public int _open_osfhandle(int handle, int flags);
     public int _utime64(String filename, UTimBuf64 times);
-    public int _wmkdir(byte[] path, int mode);
+    public int _wmkdir(@In byte[] path);
     @StdCall
     public int GetFileType(int handle);
     @StdCall
-    public boolean CreateHardLinkA(String oldname, String newName, byte[] reserved);
+    public boolean CreateHardLinkA(String oldname, String newName, @In byte[] reserved);
 }

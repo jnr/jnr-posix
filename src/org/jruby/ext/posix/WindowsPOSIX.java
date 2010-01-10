@@ -342,9 +342,10 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int mkdir(String path, int mode) {
+        // TODO: somehow handle the mode
         try {
             byte[] widePath = appendWcharNul(path.getBytes("UTF-16LE"));
-            int res = ((WindowsLibC)libc())._wmkdir(widePath, mode);
+            int res = ((WindowsLibC)libc())._wmkdir(widePath);
             if (res < 0) {
                 int error = errno();
                 handler.error(mapErrorToErrno(error), path);
