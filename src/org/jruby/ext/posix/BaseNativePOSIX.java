@@ -6,7 +6,6 @@ import com.kenai.constantine.platform.Errno;
 import com.kenai.jaffl.LastError;
 import com.kenai.jaffl.mapper.FromNativeContext;
 import com.kenai.jaffl.mapper.FromNativeConverter;
-import com.kenai.jaffl.Library;
 import com.kenai.jaffl.Pointer;
 import com.kenai.jaffl.mapper.ToNativeContext;
 import com.kenai.jaffl.mapper.ToNativeConverter;
@@ -266,21 +265,6 @@ abstract class BaseNativePOSIX implements POSIX {
     }
 
     public abstract BaseHeapFileStat allocateStat();
-
-    /**
-     * Does the loaded library have the method specified
-     * @param name of method to look for
-     * @return true if found.  false otherwise
-     */
-    protected boolean hasMethod(String name) {
-        try {
-            Library.getInstance(libraryName).hasFunction(name);
-        } catch (UnsatisfiedLinkError e) {
-            return false;
-        }
-        
-        return true;
-    }
     
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
