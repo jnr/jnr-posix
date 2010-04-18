@@ -51,7 +51,6 @@ public final class JavaFileStat implements FileStat {
 
         if (file.canWrite()) {
             st_mode |= ALL_WRITE;
-            st_mode &= ~(S_IWGRP | S_IWOTH);
         }
 
         if (file.isDirectory()) {

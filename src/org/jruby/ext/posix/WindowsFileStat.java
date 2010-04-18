@@ -46,7 +46,7 @@ public class WindowsFileStat extends BaseHeapFileStat {
     }
 
     public int mode() {
-        return st_mode.get() & ~(S_IWGRP | S_IWOTH) & 0xffff;
+        return st_mode.get() & 0xffff;
     }
 
     public long mtime() {
