@@ -227,4 +227,7 @@ final class LazyPOSIX implements POSIX {
         return posix().waitpid(pid, status, flags);
     }
 
+    public boolean isNative() {
+        return posix().isNative();
+    }
 }

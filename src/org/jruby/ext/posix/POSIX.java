@@ -54,4 +54,5 @@ public interface POSIX {
     public int wait(int[] status);
     public int errno();
     public void errno(int value);
+    public boolean isNative();
 }

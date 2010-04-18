@@ -52,4 +52,7 @@ public class JavaPOSIXTest {
         assertNotNull("getpwuid failed", pwd);
         
     }
+    @Test public void isNative() {
+        assertFalse("JavaPOSIX isNative should be false", posix.isNative());
+    }
 }

@@ -253,6 +253,10 @@ final class JavaPOSIX implements POSIX {
         // do nothing, errno is unsupported
     }
 
+    public boolean isNative() {
+        return false;
+    }
+
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
         

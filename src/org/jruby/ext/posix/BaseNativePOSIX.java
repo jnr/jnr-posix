@@ -264,6 +264,10 @@ abstract class BaseNativePOSIX implements POSIX {
         LastError.setLastError(value);
     }
 
+    public boolean isNative() {
+        return true;
+    }
+
     public abstract BaseHeapFileStat allocateStat();
     
     public static abstract class PointerConverter implements FromNativeConverter {
