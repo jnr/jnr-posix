@@ -4,6 +4,8 @@ import com.kenai.constantine.platform.Errno;
 import static com.kenai.constantine.platform.Errno.*;
 import static com.kenai.constantine.platform.windows.LastError.*;
 
+import java.io.File;
+
 import java.io.FileDescriptor;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -250,13 +252,62 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return null;
     }
 
+    private static final int INVALID_HANDLE_VALUE = -1;
+
+    private static final int GENERIC_ALL = 0x10000000;
+    private static final int GENERIC_READ = 0x80000000;
+    private static final int GENERIC_WRITE = 0x40000000;
+    private static final int GENERIC_EXECUTE = 0x2000000;
+
+    private static final int FILE_SHARE_DELETE = 0x00000004;
+    private static final int FILE_SHARE_READ =  0x00000001;
+    private static final int FILE_SHARE_WRITE =  0x00000002;
+
+    private static final int CREATE_ALWAYS = 2;
+    private static final int CREATE_NEW = 1;
+    private static final int OPEN_ALWAYS = 4;
+    private static final int OPEN_EXISTING = 3;
+    private static final int TRUNCATE_EXISTING = 5;
+
+    public static final int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+
     @Override
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
-        UTimBuf64 times = null;
-        if (atimeval != null && mtimeval != null) {
-            times = new UTimBuf64(atimeval[0], mtimeval[0]);
+        WindowsLibC libc = (WindowsLibC) libc();
+        byte[] wpath = toWPath(path);
+        FileTime aTime = atimeval == null ? null : unixTimeToFileTime(atimeval[0]);
+        FileTime mTime = mtimeval == null ? null : unixTimeToFileTime(mtimeval[0]);
+
+        if (aTime == null || mTime == null) {
+            FileTime nowFile = unixTimeToFileTime(System.currentTimeMillis() / 1000L);
+
+            if (aTime == null) aTime = nowFile;
+            if (mTime == null) mTime = nowFile;
         }
-        return ((WindowsLibC)libc())._utime64(path, times);
+
+        int handle = libc.CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                null, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
+        if (handle == INVALID_HANDLE_VALUE) {
+            return -1;             // TODO proper error handling
+        }
+
+        boolean timeSet = libc.SetFileTime(handle, null, aTime, mTime);
+        libc.CloseHandle(handle);
+
+        return timeSet ? 0 : -1;
+    }
+
+    private FileTime unixTimeToFileTime(long unixTime) {
+        // FILETIME is a 64-bit unsigned integer representing
+        // the number of 100-nanosecond intervals since January 1, 1601
+        // UNIX timestamp is number of seconds since January 1, 1970
+        // 116444736000000000 = 10000000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
+        long ft = (unixTime + 11644473600L) * 10000000L;
+
+        FileTime fileTime = new FileTime();
+        fileTime.dwLowDateTime.set(ft & 0xFFFFFFFFL);
+        fileTime.dwHighDateTime.set((ft >> 32) & 0xFFFFFFFFL);
+        return fileTime;
     }
 
     @Override
@@ -343,24 +394,21 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int mkdir(String path, int mode) {
         // TODO: somehow handle the mode
-        try {
-            byte[] widePath = appendWcharNul(path.getBytes("UTF-16LE"));
-            int res = ((WindowsLibC)libc())._wmkdir(widePath);
-            if (res < 0) {
-                int error = errno();
-                handler.error(mapErrorToErrno(error), path);
-            }
-            return res;
-        } catch (UnsupportedEncodingException e) {
-            // should not really happen
-            handler.error(Errno.EINVAL, path);
-            return -1;
+        byte[] widePath = toWPath(path);
+        int res = ((WindowsLibC)libc())._wmkdir(widePath);
+        if (res < 0) {
+            int error = errno();
+            handler.error(mapErrorToErrno(error), path);
         }
+        return res;
     }
 
     @Override
     public int link(String oldpath, String newpath) {
-        boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkA(newpath, oldpath, null);
+        byte[] oldWPath = toWPath(oldpath);
+        byte[] newWPath = toWPath(newpath);
+
+        boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkW(newWPath, oldWPath, null);
 
         if (!linkCreated) {
             int error = errno();
@@ -379,11 +427,22 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return errno;
     }
 
-    private static byte[] appendWcharNul(byte[] bytes) {
-        byte[] withNul = new byte[bytes.length + 2];
-        System.arraycopy(bytes, 0, withNul, 0, bytes.length);
-        withNul[bytes.length] = 0;
-        withNul[bytes.length + 1] = 0;
-        return withNul;
+    private static byte[] toWPath(String path) {
+        boolean absolute = new File(path).isAbsolute();
+        if (absolute) {
+            path = "//?/" + path;
+        }
+
+        return toWString(path);
+    }
+
+    private static byte[] toWString(String string) {
+        string += (char) 0;
+
+        try {
+            return string.getBytes("UTF-16LE");
+        } catch (UnsupportedEncodingException e) {
+            return null; // JVM mandates this encoding. Not reached
+        }
     }
 }
