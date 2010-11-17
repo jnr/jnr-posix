@@ -45,7 +45,7 @@ public class Platform {
     private static final String WINDOWS_NT = "nt";
     private static final String WINDOWS_20X = "windows 2";
     private static final String WINDOWS_XP = "windows xp";
-    // TODO:  For Windows Server 2003, 2008
+    private static final String WINDOWS_SERVER = "server";
     private static final String WINDOWS_VISTA = "vista";
     private static final String WINDOWS_7 = "windows 7";
     private static final String MAC_OS = "mac os";
@@ -63,6 +63,7 @@ public class Platform {
     public static final boolean IS_WINDOWS_20X = OS_NAME_LC.indexOf(WINDOWS_20X) > -1;
     public static final boolean IS_WINDOWS_XP = OS_NAME_LC.indexOf(WINDOWS_XP) > -1;
     public static final boolean IS_WINDOWS_VISTA = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_VISTA) > -1;
+    public static final boolean IS_WINDOWS_SERVER = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_SERVER) > -1;
     public static final boolean IS_WINDOWS_7 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_7) > -1;
     public static final boolean IS_MAC = OS_NAME_LC.startsWith(MAC_OS) || OS_NAME_LC.startsWith(DARWIN);
     public static final boolean IS_FREEBSD = OS_NAME_LC.startsWith(FREEBSD);
@@ -75,7 +76,8 @@ public class Platform {
         if (IS_WINDOWS) {
             if (IS_WINDOWS_9X) {
                 return "command.com /c set";
-            } else if (IS_WINDOWS_NT || IS_WINDOWS_20X || IS_WINDOWS_XP || IS_WINDOWS_VISTA || IS_WINDOWS_7) {
+            } else if (IS_WINDOWS_NT || IS_WINDOWS_20X || IS_WINDOWS_XP ||
+                       IS_WINDOWS_SERVER || IS_WINDOWS_VISTA || IS_WINDOWS_7) {
                 return "cmd.exe /c set";
             }
         }
