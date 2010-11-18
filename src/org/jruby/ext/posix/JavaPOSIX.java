@@ -257,6 +257,10 @@ final class JavaPOSIX implements POSIX {
         return false;
     }
 
+    public LibC libc() {
+        return null;
+    }
+
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
         

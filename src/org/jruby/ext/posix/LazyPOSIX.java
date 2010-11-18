@@ -230,4 +230,8 @@ final class LazyPOSIX implements POSIX {
     public boolean isNative() {
         return posix().isNative();
     }
+
+    public LibC libc() {
+        return posix().libc();
+    }
 }
