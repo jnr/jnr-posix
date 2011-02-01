@@ -30,7 +30,6 @@ final class LazyPOSIX implements POSIX {
                 : (posix = POSIXFactory.loadPOSIX(handler, useNativePosix));
     }
 
-
     public int chmod(String filename, int mode) {
         return posix().chmod(filename, mode);
     }
@@ -225,6 +224,10 @@ final class LazyPOSIX implements POSIX {
 
     public int waitpid(int pid, int[] status, int flags) {
         return posix().waitpid(pid, status, flags);
+    }
+
+    public int execv(String path, String... argv) {
+        return posix().execv(path, argv);
     }
 
     public boolean isNative() {

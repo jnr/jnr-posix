@@ -54,6 +54,7 @@ public interface POSIX {
     int wait(int[] status);
     int errno();
     void errno(int value);
+    int execv(String path, String... argv);
     boolean isNative();
     /** Returns null if isNative returns false. */
     LibC libc();

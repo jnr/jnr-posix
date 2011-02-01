@@ -89,4 +89,5 @@ public interface LibC {
     int read(int fd, @Out ByteBuffer dst, int len);
     int write(int fd, @In ByteBuffer src, int len);
     int close(int fd);
+    int execv(CharSequence path, @In CharSequence... argv);
 }

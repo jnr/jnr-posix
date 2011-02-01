@@ -253,6 +253,10 @@ final class JavaPOSIX implements POSIX {
         // do nothing, errno is unsupported
     }
 
+    public int execv(String path, String... argv) {
+        return -1;
+    }
+
     public boolean isNative() {
         return false;
     }

@@ -264,6 +264,10 @@ abstract class BaseNativePOSIX implements POSIX {
         LastError.setLastError(value);
     }
 
+    public int execv(String path, String[] args) {
+        return libc().execv(path, args);
+    }
+
     public boolean isNative() {
         return true;
     }
