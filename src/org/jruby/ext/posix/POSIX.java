@@ -5,6 +5,7 @@ import java.io.IOException;
 
 
 public interface POSIX {
+    FileStat allocateStat();
     int chmod(String filename, int mode);
     int chown(String filename, int user, int group);
     int fork();
@@ -56,6 +57,8 @@ public interface POSIX {
     void errno(int value);
     int execv(String path, String... argv);
     boolean isNative();
+    int aspawn(boolean overlay, String program, String[] argv, String path);
+    int spawn(boolean ovelay, String command, String program, String path);
     /** Returns null if isNative returns false. */
     LibC libc();
 }

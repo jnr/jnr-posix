@@ -3,6 +3,9 @@ package org.jruby.ext.posix;
 import com.kenai.constantine.platform.Errno;
 import static com.kenai.constantine.platform.Errno.*;
 import static com.kenai.constantine.platform.windows.LastError.*;
+import com.kenai.jaffl.Pointer;
+import com.kenai.jaffl.Type;
+import com.kenai.jaffl.provider.jffi.Provider;
 
 import java.io.File;
 
@@ -10,6 +13,7 @@ import java.io.FileDescriptor;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import org.jruby.ext.posix.util.WindowsHelpers;
 
 final class WindowsPOSIX extends BaseNativePOSIX {
     private final static int FILE_TYPE_CHAR = 0x0002;
@@ -132,6 +136,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int chown(String filename, int user, int group) {
         return 0;
+    }
+    
+    @Override
+    public int execv(String path, String[] argv) {
+        if (argv.length == 1) {
+            return spawn(true, argv[0], null, path);
+        }
+        return aspawn(true, null, argv, path);
     }
 
     @Override
@@ -418,6 +430,61 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             return 0;
         }
     }
+    
+    /**
+     * @param overlay is P_OVERLAY if true and P_NOWAIT if false
+     * @param program to be invoked
+     * @param argv is all args including argv0 being what is executed
+     * @param path is path to be searched when needed (delimited by ; on windows)
+     * @return the pid
+     */    
+    @Override
+    public int aspawn(boolean overlay, String program, String[] argv, String path) {
+        try {
+        if (argv.length == 0) return -1;
+        
+        String[] cmds = WindowsHelpers.processCommandArgs(this, program, argv, path);
+ 
+        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null), overlay);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    
+    /**
+     * @param overlay is P_OVERLAY if true and P_NOWAIT if false
+     * @param command full command string
+     * @param program program to be invoked
+     * @param path is path to be searched when needed (delimited by ; on windows)     * 
+     * @return the pid
+     */
+    @Override
+    public int spawn(boolean overlay, String command, String program, String path) {
+        if (command == null) return -1;
+
+        String[] cmds = WindowsHelpers.processCommandLine(this, command, program, path);
+
+        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null), overlay);
+    }
+    
+    private int childResult(WindowsChildRecord child, boolean overlay) {
+        if (child == null) return -1;
+
+        if (overlay) {
+            Pointer exitCode = Provider.getProvider().getMemoryManager().allocate(Type.UINT.size());
+
+            WindowsLibC libc = (WindowsLibC) libc();
+            int handle = child.getProcess().intValue();
+            
+            libc.WaitForSingleObject(handle, WindowsLibC.INFINITE);
+            libc.GetExitCodeProcess(handle, exitCode);
+            libc.CloseHandle(handle);
+            System.exit(exitCode.getInt(0));
+        }
+
+        return child.getPid();
+    }
 
     private static Errno mapErrorToErrno(int error) {
         Errno errno = errorToErrnoMapper.get(error);
@@ -444,5 +511,47 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         } catch (UnsupportedEncodingException e) {
             return null; // JVM mandates this encoding. Not reached
         }
+    }
+    
+    private static final int STARTF_USESTDHANDLES = 0x00000100;
+    
+    // Used by spawn and aspawn
+    private WindowsChildRecord createProcess(String command, String program, 
+            WindowsSecurityAttributes securityAttributes, Pointer input,
+            Pointer output, Pointer error) {
+        if (command == null || program == null) {
+            handler.error(EFAULT, "no command or program specified");
+            return null;
+        }
+        
+        if (securityAttributes == null) {
+            securityAttributes = new WindowsSecurityAttributes();
+        }
+        
+        WindowsStartupInfo startupInfo = new WindowsStartupInfo();
+        WindowsLibC libc = (WindowsLibC) libc();
+        
+        startupInfo.setFlags(STARTF_USESTDHANDLES);
+        startupInfo.setStandardInput(input != null ? input :
+                libc.GetStdHandle(WindowsLibC.STD_INPUT_HANDLE));
+        startupInfo.setStandardOutput(output != null ? output :
+                libc.GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE));
+        startupInfo.setStandardError(error != null ? input :
+                libc.GetStdHandle(WindowsLibC.STD_ERROR_HANDLE));
+        
+        int creationFlags = WindowsLibC.NORMAL_PRIORITY_CLASS;
+        WindowsProcessInformation processInformation = new WindowsProcessInformation();
+        
+        boolean returnValue = libc.CreateProcessA(program, command, 
+                securityAttributes, securityAttributes, 
+                securityAttributes.getInheritHandle() ? 1: 0, creationFlags, null, null, 
+                startupInfo, processInformation);
+        
+        if (!returnValue) return null;
+        
+        libc.CloseHandle(processInformation.getThread());
+        
+        // TODO: On winnt reverse sign of pid
+        return new WindowsChildRecord(processInformation.getProcess(), processInformation.getPid());
     }
 }

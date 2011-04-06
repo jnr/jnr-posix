@@ -267,6 +267,18 @@ abstract class BaseNativePOSIX implements POSIX {
     public int execv(String path, String[] args) {
         return libc().execv(path, args);
     }
+    
+    public int aspawn(boolean overlay, String program, String[] argv, String path) {
+        handler.unimplementedError("aspawn only on windows platforms");
+        
+        return -1;        
+    }    
+    
+    public int spawn(boolean overlay, String command, String program, String path) {
+        handler.unimplementedError("spawn only on windows platforms");
+        
+        return -1;
+    }
 
     public boolean isNative() {
         return true;
