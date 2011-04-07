@@ -8,6 +8,12 @@ public interface POSIX {
     FileStat allocateStat();
     int chmod(String filename, int mode);
     int chown(String filename, int user, int group);
+    /**
+     * Shell expanding and escaping version of exec which handles all the
+     * preparation of a command line or command list.
+     */
+    int exec(String path, String... argv);
+    int execv(String path, String... argv);    
     int fork();
     FileStat fstat(FileDescriptor descriptor);
     int getegid();
@@ -55,7 +61,6 @@ public interface POSIX {
     int wait(int[] status);
     int errno();
     void errno(int value);
-    int execv(String path, String... argv);
     boolean isNative();
     int aspawn(boolean overlay, String program, String[] argv, String path);
     int spawn(boolean ovelay, String command, String program, String path);

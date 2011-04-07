@@ -31,6 +31,17 @@ final class JavaPOSIX implements POSIX {
     public int chown(String filename, int user, int group) {
         return helper.chown(filename, user, group);
     }
+
+    public int exec(String path, String... argv) {
+        handler.unimplementedError("No exec in Java (yet)");
+        
+        return -1;
+    }
+    public int execv(String path, String... argv) {
+        handler.unimplementedError("No execv in Java (yet)");
+        
+        return -1;
+    }
     
     public FileStat fstat(FileDescriptor descriptor) {
         handler.unimplementedError("fstat unimplemented");
@@ -251,12 +262,6 @@ final class JavaPOSIX implements POSIX {
 
     public void errno(int value) {
         // do nothing, errno is unsupported
-    }
-
-    public int execv(String path, String... argv) {
-        handler.unimplementedError("No execv in Java (yet)");
-        
-        return -1;
     }
 
     public boolean isNative() {

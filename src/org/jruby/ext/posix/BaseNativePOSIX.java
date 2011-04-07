@@ -41,6 +41,15 @@ abstract class BaseNativePOSIX implements POSIX {
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }
+    
+    public int exec(String path, String[] args) {
+        handler.unimplementedError("exec unimplemented");
+        return -1;
+    }
+    
+    public int execv(String path, String[] args) {
+        return libc().execv(path, args);
+    }    
 
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();
@@ -262,10 +271,6 @@ abstract class BaseNativePOSIX implements POSIX {
 
     public void errno(int value) {
         LastError.setLastError(value);
-    }
-
-    public int execv(String path, String[] args) {
-        return libc().execv(path, args);
     }
     
     public int aspawn(boolean overlay, String program, String[] argv, String path) {

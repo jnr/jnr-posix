@@ -57,7 +57,15 @@ final class LazyPOSIX implements POSIX {
     public void errno(int value) {
         posix().errno(value);
     }
+    
+    public int exec(String path, String[] args) {
+        return posix().exec(path, args);
+    }
 
+    public int execv(String path, String... argv) {
+        return posix().execv(path, argv);
+    }
+    
     public int fork() {
         return posix().fork();
     }
@@ -236,10 +244,6 @@ final class LazyPOSIX implements POSIX {
 
     public int waitpid(int pid, int[] status, int flags) {
         return posix().waitpid(pid, status, flags);
-    }
-
-    public int execv(String path, String... argv) {
-        return posix().execv(path, argv);
     }
 
     public boolean isNative() {

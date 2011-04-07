@@ -139,11 +139,17 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
     
     @Override
-    public int execv(String path, String[] argv) {
-        if (argv.length == 1) {
-            return spawn(true, argv[0], null, path);
-        }
+    public int exec(String path, String[] argv) {
+        if (argv.length == 1) return spawn(true, argv[0], null, path);
+
         return aspawn(true, null, argv, path);
+    }
+    
+    @Override
+    public int execv(String path, String[] argv) {
+        handler.unimplementedError("egid");
+
+        return -1;
     }
 
     @Override
