@@ -453,7 +453,6 @@ final class WindowsPOSIX extends BaseNativePOSIX {
  
         return childResult(createProcess(cmds[0], cmds[1], null, null, null, null), overlay);
         } catch (Exception e) {
-            e.printStackTrace();
             return -1;
         }
     }

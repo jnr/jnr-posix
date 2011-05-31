@@ -102,6 +102,7 @@ public class WindowsHelpers {
             
             shell = fullPath == null ? program : fullPath.replace('/', '\\');
         } else {
+            // Strip off leading whitespace
             command = command.substring(firstNonWhitespaceIndex(command));
             
             // FIXME: Ruby first looks for RUBYSHELL, but this only applies for
@@ -140,13 +141,14 @@ public class WindowsHelpers {
                     if (quote != 0) continue;
                     
                     if (Character.isSpaceChar(c) || isFunnyChar(c)) {
-                        shell = command.substring(0, i - 1);
+                        shell = command.substring(0, i);
+                        break;
                     }
                 }
                 shell = Finder.findFileInPath(posix, shell, path);
                 
                 if (shell == null) {
-                    shell = command.substring(0, i - 1);
+                    shell = command.substring(0, i);
                 } else {
                     if (!shell.contains(" ")) quote = 0;
                     
