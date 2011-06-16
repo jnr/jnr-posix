@@ -40,6 +40,7 @@ public interface LibC {
     int chown(CharSequence filename, int user, int group);
     int fstat(int fd, @Out @Transient FileStat stat);
     int fstat64(int fd, @Out @Transient FileStat stat);
+    String getenv(CharSequence envName);
     @IgnoreError int getegid();
     int setegid(int egid);
     @IgnoreError int geteuid();
@@ -78,7 +79,9 @@ public interface LibC {
     int stat64(CharSequence path, @Out @Transient FileStat stat);
     int symlink(CharSequence oldpath, CharSequence newpath);
     int readlink(CharSequence oldpath, @Out ByteBuffer buffer, int len);
+    int setenv(CharSequence envName, CharSequence envValue, int overwrite);
     @IgnoreError int umask(int mask);
+    int unsetenv(CharSequence envName);
     int utimes(CharSequence path, @In Timeval[] times);
     int fork();
     int waitpid(int pid, @Out int[] status, int options);

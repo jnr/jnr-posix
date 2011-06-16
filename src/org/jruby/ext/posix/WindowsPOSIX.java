@@ -170,6 +170,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     public int geteuid() {
         return 0;
     }
+    
+    @Override
+    public String getenv(String envName) {
+        handler.unimplementedError("getenv");
+        
+        return null;
+    }
 
     @Override
     public int seteuid(int euid) {
@@ -268,6 +275,37 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         handler.unimplementedError("readlink");
 
         return null;
+    }
+    
+    @Override
+    public int setenv(String envName, String envValue, int overwrite) {
+        if (envName.contains("=")) {
+            handler.error(EINVAL, envName);
+            return -1;
+        }
+
+        // FIXME: We do not have getenv implemented yet.  So we are ignoring for now
+        // POSIX specified.  Existence is success if overwrite is 0.
+        // if (overwrite == 0 && getenv(envName) != null) return 0;
+        
+        byte[] wideName = toWString(envName);
+        byte[] wideValue = toWString(envValue);
+        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(wideName, wideValue)) {
+            handler.error(EINVAL, envName);
+            return -1;
+        }
+
+        return 0;
+    }
+    
+    @Override
+    public int unsetenv(String envName) {
+        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(toWString(envName), null)) {
+            handler.error(EINVAL, envName);
+            return -1;
+        }
+        
+        return 0;
     }
 
     private static final int INVALID_HANDLE_VALUE = -1;

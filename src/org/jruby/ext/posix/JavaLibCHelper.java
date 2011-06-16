@@ -37,6 +37,8 @@ import java.io.IOException;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 import org.jruby.ext.posix.util.Chmod;
 import org.jruby.ext.posix.util.ExecIt;
 import org.jruby.ext.posix.util.FieldAccess;
@@ -54,8 +56,10 @@ public class JavaLibCHelper {
 
     private final POSIXHandler handler;
     private final Field fdField, handleField;
+    private final Map<String, String> env;
 
     public JavaLibCHelper(POSIXHandler handler) {
+        this.env = new HashMap<String, String>();
         this.handler = handler;
 	this.handleField = FieldAccess.getProtectedField(FileDescriptor.class,
 							 "handle");
@@ -218,4 +222,7 @@ public class JavaLibCHelper {
         return -1; // We tried and failed for some reason. Indicate error.
     }
 
+    public Map<String, String> getEnv() {
+        return env;
+    }
 }

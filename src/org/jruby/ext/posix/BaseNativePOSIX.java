@@ -59,6 +59,10 @@ abstract class BaseNativePOSIX implements POSIX {
         
         return stat;
     }
+    
+    public String getenv(String envName) {
+        return libc().getenv(envName);
+    }
 
     public int getegid() {
         return libc().getegid();
@@ -202,6 +206,10 @@ abstract class BaseNativePOSIX implements POSIX {
         }
         return res;
     }
+    
+    public int setenv(String envName, String envValue, int overwrite) {
+        return libc().setenv(envName, envValue, overwrite);
+    }
 
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
@@ -225,6 +233,10 @@ abstract class BaseNativePOSIX implements POSIX {
         buffer.position(0);
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
+    }
+    
+    public int unsetenv(String envName) {
+        return libc().unsetenv(envName);
     }
     
     public int umask(int mask) {

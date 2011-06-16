@@ -2,6 +2,7 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.Map;
 
 
 public interface POSIX {
@@ -16,6 +17,7 @@ public interface POSIX {
     int execv(String path, String... argv);    
     int fork();
     FileStat fstat(FileDescriptor descriptor);
+    String getenv(String envName);
     int getegid();
     int geteuid();
     int seteuid(int euid);
@@ -46,6 +48,7 @@ public interface POSIX {
     FileStat lstat(String path);
     int mkdir(String path, int mode);
     String readlink(String path) throws IOException;
+    int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
     int setsid();
     int setgid(int gid);
     int setegid(int egid);
@@ -56,6 +59,7 @@ public interface POSIX {
     FileStat stat(String path);
     int symlink(String oldpath,String newpath);
     int umask(int mask);
+    int unsetenv(String envName);
     int utimes(String path, long[] atimeval, long[] mtimeval);
     int waitpid(int pid, int[] status, int flags);
     int wait(int[] status);

@@ -253,4 +253,16 @@ final class LazyPOSIX implements POSIX {
     public LibC libc() {
         return posix().libc();
     }
+
+    public String getenv(String envName) {
+        return posix().getenv(envName);
+    }
+
+    public int setenv(String envName, String envValue, int overwrite) {
+        return posix().setenv(envName, envValue, overwrite);
+    }
+
+    public int unsetenv(String envName) {
+        return posix().unsetenv(envName);
+    }
 }

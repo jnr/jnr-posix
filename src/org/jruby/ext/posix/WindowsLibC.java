@@ -54,6 +54,11 @@ public interface WindowsLibC extends LibC {
             int dwFlagsAndAttributes,
             int hTemplateFile
     );
+    
+    @StdCall
+    boolean SetEnvironmentVariableW(
+            byte[] envName,
+            byte[] envValue);
 
     @StdCall
     boolean SetFileTime(
