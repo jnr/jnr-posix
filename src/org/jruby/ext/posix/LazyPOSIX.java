@@ -58,12 +58,20 @@ final class LazyPOSIX implements POSIX {
         posix().errno(value);
     }
     
-    public int exec(String path, String[] args) {
+    public int exec(String path, String... args) {
         return posix().exec(path, args);
     }
+    
+    public int exec(String path, String[] args, String[] envp) {
+        return posix().exec(path, args, envp);
+    }
 
-    public int execv(String path, String... argv) {
+    public int execv(String path, String[] argv) {
         return posix().execv(path, argv);
+    }
+
+    public int execve(String path, String[] argv, String[] envp) {
+        return posix().execve(path, argv, envp);
     }
     
     public int fork() {

@@ -42,14 +42,23 @@ abstract class BaseNativePOSIX implements POSIX {
         return libc().chown(filename, user, group);
     }
     
-    public int exec(String path, String[] args) {
+    public int exec(String path, String... args) {
+        handler.unimplementedError("exec unimplemented");
+        return -1;
+    }
+    
+    public int exec(String path, String[] args, String[] envp) {
         handler.unimplementedError("exec unimplemented");
         return -1;
     }
     
     public int execv(String path, String[] args) {
         return libc().execv(path, args);
-    }    
+    }
+    
+    public int execve(String path, String[] args, String[] env) {
+        return libc().execve(path, args, env);
+    }
 
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();

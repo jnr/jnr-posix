@@ -38,8 +38,21 @@ final class JavaPOSIX implements POSIX {
         
         return -1;
     }
-    public int execv(String path, String... argv) {
+
+    public int exec(String path, String[] argv, String[] envp) {
+        handler.unimplementedError("No exec in Java (yet)");
+        
+        return -1;
+    }
+    
+    public int execv(String path, String[] argv) {
         handler.unimplementedError("No execv in Java (yet)");
+        
+        return -1;
+    }
+    
+    public int execve(String path, String[] argv, String[] envp) {
+        handler.unimplementedError("No execve in Java (yet)");
         
         return -1;
     }

@@ -93,4 +93,5 @@ public interface LibC {
     int write(int fd, @In ByteBuffer src, int len);
     int close(int fd);
     int execv(CharSequence path, @In CharSequence... argv);
+    int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);
 }

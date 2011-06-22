@@ -2,8 +2,6 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.util.Map;
-
 
 public interface POSIX {
     FileStat allocateStat();
@@ -14,7 +12,10 @@ public interface POSIX {
      * preparation of a command line or command list.
      */
     int exec(String path, String... argv);
-    int execv(String path, String... argv);    
+    int exec(String path, String[] argv, String[] envp);
+    
+    int execv(String path, String[] argv);  
+    int execve(String path, String[] argv, String[] envp);    
     int fork();
     FileStat fstat(FileDescriptor descriptor);
     String getenv(String envName);
