@@ -2,30 +2,34 @@ package org.jruby.ext.posix;
 
 import com.kenai.jaffl.Pointer;
 import com.kenai.jaffl.annotations.In;
+import com.kenai.jaffl.annotations.Out;
 import com.kenai.jaffl.annotations.StdCall;
+import java.nio.ByteBuffer;
 
 public interface WindowsLibC extends LibC {
     public static final int STD_INPUT_HANDLE = -10;
     public static final int STD_OUTPUT_HANDLE = -11;
     public static final int STD_ERROR_HANDLE = -12;
-    
+
     public static final int NORMAL_PRIORITY_CLASS = 0x00000020;
+    public static final int CREATE_UNICODE_ENVIRONMENT = 0x00000400;
     
     public static final int INFINITE = -1;
+
     
     public int _open_osfhandle(int handle, int flags);
 
     public int _wmkdir(@In byte[] path);
     
     @StdCall
-    public boolean CreateProcessA(String applicationName, 
-                                 String commandLine, 
+    public boolean CreateProcessW(byte[] applicationName, 
+                                 @In @Out ByteBuffer buffer, 
                                  WindowsSecurityAttributes processAttributes,
                                  WindowsSecurityAttributes threadAttributes,
                                  int inheritHandles,
                                  int creationFlags,
-                                 Pointer environment,
-                                 String currentDirectory,
+                                 @In Pointer envp,
+                                 @In byte[] currentDirectory,
                                  WindowsStartupInfo startupInfo,
                                  WindowsProcessInformation processInformation);
     

@@ -3,6 +3,7 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.Map;
 
 final class LazyPOSIX implements POSIX {
 
@@ -220,14 +221,6 @@ final class LazyPOSIX implements POSIX {
 
     public int setuid(int uid) {
         return posix().setuid(uid);
-    }
-    
-    public int aspawn(boolean overlay, String program, String[] argv, String path) {
-        return posix().aspawn(overlay, program, argv, path);
-    }
-    
-    public int spawn(boolean ovelay, String command, String program, String path) {
-        return posix().spawn(ovelay, command, program, path);
     }
 
     public FileStat stat(String path) {

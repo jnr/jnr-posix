@@ -7,10 +7,8 @@ import com.kenai.jaffl.Pointer;
 import com.kenai.jaffl.Type;
 import com.kenai.jaffl.provider.jffi.Provider;
 
-import java.io.File;
-
 import java.io.FileDescriptor;
-import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.jruby.ext.posix.util.WindowsHelpers;
@@ -140,9 +138,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int exec(String path, String[] argv) {
-        if (argv.length == 1) return spawn(true, argv[0], null, path);
+        if (argv.length == 1) return spawn(true, argv[0], null, path, null);
 
-        return aspawn(true, null, argv, path);
+        return aspawn(true, null, argv, path, null);
+    }
+    
+    @Override
+    public int exec(String path, String[] argv, String[] envp) {
+        if (argv.length == 1) return spawn(true, argv[0], null, path, envp);
+
+        return aspawn(true, null, argv, path, envp);
     }
     
     @Override
@@ -288,8 +293,8 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // POSIX specified.  Existence is success if overwrite is 0.
         // if (overwrite == 0 && getenv(envName) != null) return 0;
         
-        byte[] wideName = toWString(envName);
-        byte[] wideValue = toWString(envValue);
+        byte[] wideName = WindowsHelpers.toWString(envName);
+        byte[] wideValue = WindowsHelpers.toWString(envValue);
         if (!((WindowsLibC) libc()).SetEnvironmentVariableW(wideName, wideValue)) {
             handler.error(EINVAL, envName);
             return -1;
@@ -300,7 +305,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int unsetenv(String envName) {
-        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(toWString(envName), null)) {
+        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(WindowsHelpers.toWString(envName), null)) {
             handler.error(EINVAL, envName);
             return -1;
         }
@@ -330,7 +335,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         WindowsLibC libc = (WindowsLibC) libc();
-        byte[] wpath = toWPath(path);
+        byte[] wpath = WindowsHelpers.toWPath(path);
         FileTime aTime = atimeval == null ? null : unixTimeToFileTime(atimeval[0]);
         FileTime mTime = mtimeval == null ? null : unixTimeToFileTime(mtimeval[0]);
 
@@ -450,7 +455,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int mkdir(String path, int mode) {
         // TODO: somehow handle the mode
-        byte[] widePath = toWPath(path);
+        byte[] widePath = WindowsHelpers.toWPath(path);
         int res = ((WindowsLibC)libc())._wmkdir(widePath);
         if (res < 0) {
             int error = errno();
@@ -461,8 +466,8 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int link(String oldpath, String newpath) {
-        byte[] oldWPath = toWPath(oldpath);
-        byte[] newWPath = toWPath(newpath);
+        byte[] oldWPath = WindowsHelpers.toWPath(oldpath);
+        byte[] newWPath = WindowsHelpers.toWPath(newpath);
 
         boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkW(newWPath, oldWPath, null);
 
@@ -482,14 +487,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
      * @param path is path to be searched when needed (delimited by ; on windows)
      * @return the pid
      */    
-    @Override
-    public int aspawn(boolean overlay, String program, String[] argv, String path) {
+    public int aspawn(boolean overlay, String program, String[] argv, String path, String[] envp) {
         try {
         if (argv.length == 0) return -1;
         
         String[] cmds = WindowsHelpers.processCommandArgs(this, program, argv, path);
  
-        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null), overlay);
+        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null, envp), overlay);
         } catch (Exception e) {
             return -1;
         }
@@ -502,13 +506,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
      * @param path is path to be searched when needed (delimited by ; on windows)     * 
      * @return the pid
      */
-    @Override
-    public int spawn(boolean overlay, String command, String program, String path) {
+    public int spawn(boolean overlay, String command, String program, String path, String[] envp) {
         if (command == null) return -1;
 
         String[] cmds = WindowsHelpers.processCommandLine(this, command, program, path);
 
-        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null), overlay);
+        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null, envp), overlay);
     }
     
     private int childResult(WindowsChildRecord child, boolean overlay) {
@@ -537,31 +540,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return errno;
     }
 
-    private static byte[] toWPath(String path) {
-        boolean absolute = new File(path).isAbsolute();
-        if (absolute) {
-            path = "//?/" + path;
-        }
-
-        return toWString(path);
-    }
-
-    private static byte[] toWString(String string) {
-        string += (char) 0;
-
-        try {
-            return string.getBytes("UTF-16LE");
-        } catch (UnsupportedEncodingException e) {
-            return null; // JVM mandates this encoding. Not reached
-        }
-    }
-    
     private static final int STARTF_USESTDHANDLES = 0x00000100;
     
-    // Used by spawn and aspawn
+    // Used by spawn and aspawn (Note: See fixme below...envp not hooked up yet)
     private WindowsChildRecord createProcess(String command, String program, 
             WindowsSecurityAttributes securityAttributes, Pointer input,
-            Pointer output, Pointer error) {
+            Pointer output, Pointer error, String[] envp) {
         if (command == null || program == null) {
             handler.error(EFAULT, "no command or program specified");
             return null;
@@ -582,12 +566,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         startupInfo.setStandardError(error != null ? input :
                 libc.GetStdHandle(WindowsLibC.STD_ERROR_HANDLE));
         
-        int creationFlags = WindowsLibC.NORMAL_PRIORITY_CLASS;
+        int creationFlags = WindowsLibC.NORMAL_PRIORITY_CLASS | WindowsLibC.CREATE_UNICODE_ENVIRONMENT;
         WindowsProcessInformation processInformation = new WindowsProcessInformation();
-        
-        boolean returnValue = libc.CreateProcessA(program, command, 
+
+        // FIXME: Convert envp into useful wideEnv
+        Pointer wideEnv = null;
+        byte[] programW = WindowsHelpers.toWString(program);
+        ByteBuffer commandW = ByteBuffer.wrap(WindowsHelpers.toWString(command));
+        boolean returnValue = libc.CreateProcessW(programW, commandW, 
                 securityAttributes, securityAttributes, 
-                securityAttributes.getInheritHandle() ? 1: 0, creationFlags, null, null, 
+                securityAttributes.getInheritHandle() ? 1: 0, creationFlags, wideEnv, null, 
                 startupInfo, processInformation);
         
         if (!returnValue) return null;

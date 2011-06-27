@@ -2,6 +2,7 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.Map;
 
 public interface POSIX {
     FileStat allocateStat();
@@ -12,6 +13,11 @@ public interface POSIX {
      * preparation of a command line or command list.
      */
     int exec(String path, String... argv);
+    
+    /**
+     * Shell expanding and escaping version of exec which handles all the
+     * preparation of a command line or command list.
+     */    
     int exec(String path, String[] argv, String[] envp);
     
     int execv(String path, String[] argv);  
@@ -67,8 +73,6 @@ public interface POSIX {
     int errno();
     void errno(int value);
     boolean isNative();
-    int aspawn(boolean overlay, String program, String[] argv, String path);
-    int spawn(boolean ovelay, String command, String program, String path);
     /** Returns null if isNative returns false. */
     LibC libc();
 }

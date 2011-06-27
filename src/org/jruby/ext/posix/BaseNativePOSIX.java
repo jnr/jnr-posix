@@ -15,6 +15,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 abstract class BaseNativePOSIX implements POSIX {
     private final LibC libc;
@@ -292,18 +293,6 @@ abstract class BaseNativePOSIX implements POSIX {
 
     public void errno(int value) {
         LastError.setLastError(value);
-    }
-    
-    public int aspawn(boolean overlay, String program, String[] argv, String path) {
-        handler.unimplementedError("aspawn only on windows platforms");
-        
-        return -1;        
-    }    
-    
-    public int spawn(boolean overlay, String command, String program, String path) {
-        handler.unimplementedError("spawn only on windows platforms");
-        
-        return -1;
     }
 
     public boolean isNative() {

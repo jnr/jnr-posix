@@ -325,17 +325,6 @@ final class JavaPOSIX implements POSIX {
         
         return -1;
     }
-    public int aspawn(boolean overlay, String program, String[] argv, String path) {
-        handler.unimplementedError("No spawn in Java");
-        
-        return -1;        
-    }
-    
-    public int spawn(boolean ovelay, String command, String program, String path) {
-        handler.unimplementedError("No spawn in Java");
-        
-        return -1;
-    }
     
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
