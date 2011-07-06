@@ -2,11 +2,14 @@ package org.jruby.ext.posix;
 
 import com.kenai.jaffl.Library;
 import com.kenai.jaffl.LibraryOption;
+import com.kenai.jaffl.struct.Struct;
 import java.util.HashMap;
 import org.jruby.ext.posix.util.Platform;
 import java.util.Map;
 
 public class POSIXFactory {
+    // Weird inner-class resolution problem work-around FIXME: JRUBY-5889.  Someone fix JAFFL!
+    private static final Class<Struct> BOGUS_HACK = Struct.class;
     static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : Platform.IS_WINDOWS ? "msvcrt" : "c";
     static final Map<LibraryOption, Object> defaultOptions = new HashMap<LibraryOption, Object>() {{
         put(LibraryOption.TypeMapper, POSIXTypeMapper.INSTANCE);
