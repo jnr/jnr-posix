@@ -9,14 +9,14 @@ package org.jruby.ext.posix;
  *
  * @author enebo
  */
-public class WindowsProcessInformation extends HeapStruct {
-    Pointer hProcess = new Pointer();
-    Pointer hThread = new Pointer();
-    Unsigned32 dwProcessId = new Unsigned32();
-    Unsigned32 dwThreadId = new Unsigned32();
-    
-    public WindowsProcessInformation() {
-        super();
+public class WindowsProcessInformation extends jnr.ffi.struct.Struct {
+    final Pointer hProcess = new Pointer();
+    final Pointer hThread = new Pointer();
+    final Unsigned32 dwProcessId = new Unsigned32();
+    final Unsigned32 dwThreadId = new Unsigned32();
+
+    public WindowsProcessInformation(jnr.ffi.Runtime runtime) {
+        super(runtime);
     }
     
     public int getThread() {

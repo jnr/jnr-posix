@@ -13,7 +13,7 @@ public class WindowsFileStat extends BaseHeapFileStat {
     public final Signed64 st_mtime = new Signed64();
     public final Signed64 st_ctime = new Signed64();
 
-    public WindowsFileStat(POSIX posix) {
+    public WindowsFileStat(NativePOSIX posix) {
         super(posix);
     }
 

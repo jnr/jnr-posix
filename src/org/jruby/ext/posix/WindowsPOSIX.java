@@ -556,7 +556,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             securityAttributes = new WindowsSecurityAttributes();
         }
         
-        WindowsStartupInfo startupInfo = new WindowsStartupInfo();
+        WindowsStartupInfo startupInfo = new WindowsStartupInfo(getRuntime());
         WindowsLibC libc = (WindowsLibC) libc();
         
         startupInfo.setFlags(STARTF_USESTDHANDLES);
@@ -568,7 +568,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
                 libc.GetStdHandle(WindowsLibC.STD_ERROR_HANDLE));
         
         int creationFlags = WindowsLibC.NORMAL_PRIORITY_CLASS | WindowsLibC.CREATE_UNICODE_ENVIRONMENT;
-        WindowsProcessInformation processInformation = new WindowsProcessInformation();
+        WindowsProcessInformation processInformation = new WindowsProcessInformation(getRuntime());
 
         // FIXME: Convert envp into useful wideEnv
         Pointer wideEnv = null;

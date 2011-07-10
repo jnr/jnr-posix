@@ -34,11 +34,11 @@ package org.jruby.ext.posix;
 /**
  *
  */
-public abstract class BaseHeapFileStat extends HeapStruct implements FileStat {
+public abstract class BaseHeapFileStat extends jnr.ffi.struct.Struct implements FileStat {
     protected final POSIX posix;
     
-    public BaseHeapFileStat(POSIX posix) {
-        super();
+    public BaseHeapFileStat(NativePOSIX posix) {
+        super(posix.getRuntime());
         this.posix = posix;
     }
     

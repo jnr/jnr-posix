@@ -50,7 +50,7 @@ public class FileStatTest {
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             if (Platform.IS_32_BIT) {
-                assertEquals("struct size is wrong", 144, StructUtil.getSize(new SolarisHeapFileStat()));
+                assertEquals("struct size is wrong", 144, StructUtil.getSize(new SolarisHeapFileStat((SolarisPOSIX) posix)));
             } else {
                 assertEquals("struct size is wrong", 128, StructUtil.getSize(new Solaris64FileStat()));
             }

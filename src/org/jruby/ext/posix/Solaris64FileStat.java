@@ -5,27 +5,27 @@ package org.jruby.ext.posix;
 public class Solaris64FileStat extends BaseHeapFileStat {
     public static final int _ST_FSTYPSZ = 16;		/* array size for file system type name */
     public final UnsignedLong st_dev = new UnsignedLong();
-    public final Int64 st_ino = new Int64();
-    public final Int32 st_mode = new Int32();
-    public final Int32 st_nlink = new Int32();
-    public final Int32 st_uid = new Int32();
-    public final Int32 st_gid = new Int32();
+    public final Signed64 st_ino = new Signed64();
+    public final Signed32 st_mode = new Signed32();
+    public final Signed32 st_nlink = new Signed32();
+    public final Signed32 st_uid = new Signed32();
+    public final Signed32 st_gid = new Signed32();
     public final UnsignedLong st_rdev = new UnsignedLong();
-    public final Int64 st_size = new Int64();
+    public final Signed64 st_size = new Signed64();
     public final SignedLong st_atim_sec = new SignedLong();
     public final SignedLong st_atim_nsec = new SignedLong();
     public final SignedLong st_mtim_sec = new SignedLong();
     public final SignedLong st_mtim_nsec = new SignedLong();
     public final SignedLong st_ctim_sec = new SignedLong();
     public final SignedLong st_ctim_nsec = new SignedLong();
-    public final Int32 st_blksize = new Int32();
-    public final Int64 st_blocks = new Int64();
+    public final Signed32 st_blksize = new Signed32();
+    public final Signed64 st_blocks = new Signed64();
     public final Signed8[] st_fstype = array(new Signed8[_ST_FSTYPSZ]);
     
     public Solaris64FileStat() {
         this(null);
     }
-    public Solaris64FileStat(POSIX posix) {
+    public Solaris64FileStat(NativePOSIX posix) {
         super(posix);
     }
     

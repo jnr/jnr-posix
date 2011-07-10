@@ -32,31 +32,31 @@
 package org.jruby.ext.posix;
 
 public final class LinuxHeapFileStat extends BaseHeapFileStat {
-    public final Int64 st_dev = new Int64();
-    public final Int16 __pad1 = new Int16();
-    public final Int32 st_ino = new Int32();
-    public final Int32 st_mode = new Int32();
-    public final Int32 st_nlink = new Int32();
-    public final Int32 st_uid = new Int32();
-    public final Int32 st_gid = new Int32();
-    public final Int64 st_rdev = new Int64();
-    public final Int16 __pad2 = new Int16();
-    public final Int64 st_size = new Int64();
-    public final Int32 st_blksize = new Int32();
-    public final Int32 st_blocks = new Int32();
-    public final Int32 __unused4 = new Int32();
-    public final Int32 st_atim_sec = new Int32();     // Time of last access (time_t)
-    public final Int32 st_atim_nsec = new Int32(); // Time of last access (nanoseconds)
-    public final Int32 st_mtim_sec = new Int32();     // Last data modification time (time_t)
-    public final Int32 st_mtim_nsec = new Int32(); // Last data modification time (nanoseconds)
-    public final Int32 st_ctim_sec = new Int32();     // Time of last status change (time_t)
-    public final Int32 st_ctim_nsec = new Int32(); // Time of last status change (nanoseconds)
-    public final Int64 __unused5 = new Int64();
+    public final Signed64 st_dev = new Signed64();
+    public final Signed16 __pad1 = new Signed16();
+    public final Signed32 st_ino = new Signed32();
+    public final Signed32 st_mode = new Signed32();
+    public final Signed32 st_nlink = new Signed32();
+    public final Signed32 st_uid = new Signed32();
+    public final Signed32 st_gid = new Signed32();
+    public final Signed64 st_rdev = new Signed64();
+    public final Signed16 __pad2 = new Signed16();
+    public final Signed64 st_size = new Signed64();
+    public final Signed32 st_blksize = new Signed32();
+    public final Signed32 st_blocks = new Signed32();
+    public final Signed32 __unused4 = new Signed32();
+    public final Signed32 st_atim_sec = new Signed32();     // Time of last access (time_t)
+    public final Signed32 st_atim_nsec = new Signed32(); // Time of last access (nanoseconds)
+    public final Signed32 st_mtim_sec = new Signed32();     // Last data modification time (time_t)
+    public final Signed32 st_mtim_nsec = new Signed32(); // Last data modification time (nanoseconds)
+    public final Signed32 st_ctim_sec = new Signed32();     // Time of last status change (time_t)
+    public final Signed32 st_ctim_nsec = new Signed32(); // Time of last status change (nanoseconds)
+    public final Signed64 __unused5 = new Signed64();
     
     public LinuxHeapFileStat() {
         this(null);
     }
-    public LinuxHeapFileStat(POSIX posix) {
+    public LinuxHeapFileStat(BaseNativePOSIX posix) {
         super(posix);
     }
     

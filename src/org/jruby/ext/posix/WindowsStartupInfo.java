@@ -9,7 +9,7 @@ package org.jruby.ext.posix;
  *
  * @author enebo
  */
-public class WindowsStartupInfo extends HeapStruct {
+public class WindowsStartupInfo extends jnr.ffi.struct.Struct {
     Unsigned32  cb = new Unsigned32();
     Pointer lpReserved = new Pointer(); //new UTF8String();
     Pointer lpDesktop = new Pointer(); //UTF8String();
@@ -29,8 +29,8 @@ public class WindowsStartupInfo extends HeapStruct {
     Pointer standardOutput = new Pointer();
     Pointer standardError = new Pointer();
   
-    public WindowsStartupInfo() {
-        super();
+    public WindowsStartupInfo(jnr.ffi.Runtime runtime) {
+        super(runtime);
     }
   
     public void setFlags(int value) {

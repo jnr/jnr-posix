@@ -17,8 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Map;
 
-abstract class BaseNativePOSIX implements POSIX {
-    final jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
+abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
     
     protected final String libraryName;
@@ -257,7 +256,7 @@ abstract class BaseNativePOSIX implements POSIX {
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
-            times = StructUtil.newArray(runtime, DefaultNativeTimeval.class, 2);
+            times = StructUtil.newArray(getRuntime(), DefaultNativeTimeval.class, 2);
             times[0].setTime(atimeval);
             times[1].setTime(mtimeval);
         }
