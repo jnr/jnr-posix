@@ -1,9 +1,11 @@
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.Pointer;
-import com.kenai.jaffl.annotations.In;
-import com.kenai.jaffl.annotations.Out;
-import com.kenai.jaffl.annotations.StdCall;
+import jnr.ffi.Pointer;
+import jnr.ffi.annotations.In;
+import jnr.ffi.annotations.Out;
+import jnr.ffi.annotations.StdCall;
+import jnr.ffi.byref.IntByReference;
+
 import java.nio.ByteBuffer;
 
 public interface WindowsLibC extends LibC {
@@ -34,7 +36,10 @@ public interface WindowsLibC extends LibC {
                                  WindowsProcessInformation processInformation);
     
     @StdCall
-    public boolean GetExitCodeProcess(int handle, Pointer exitCode);
+    public boolean GetExitCodeProcess(int handle, @Out Pointer exitCode);
+
+    @StdCall
+    public boolean GetExitCodeProcess(int handle, @Out IntByReference exitCode);
 
     @StdCall
     public int GetFileType(int handle);

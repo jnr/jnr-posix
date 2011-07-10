@@ -5,7 +5,7 @@
 
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.struct.Struct.Pointer;
+import jnr.ffi.struct.Struct.Pointer;
 
 /**
  *

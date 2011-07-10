@@ -37,15 +37,15 @@ public class WindowsStartupInfo extends HeapStruct {
         dwFlags.set(value);
     }
             
-    public void setStandardInput(com.kenai.jaffl.Pointer standardInput) {
+    public void setStandardInput(jnr.ffi.Pointer standardInput) {
         this.standardInput.set(standardInput);
     }
     
-    public void setStandardOutput(com.kenai.jaffl.Pointer standardOutput) {
+    public void setStandardOutput(jnr.ffi.Pointer standardOutput) {
         this.standardOutput.set(standardOutput);
     }
     
-    public void setStandardError(com.kenai.jaffl.Pointer standardError) {
+    public void setStandardError(jnr.ffi.Pointer standardError) {
         this.standardError.set(standardError);
     }
 }

@@ -37,12 +37,13 @@ import java.util.List;
  * </p>
  */
 public final class DefaultNativeGroup extends NativeGroup implements Group {
+    static final jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
     public final UTF8StringRef gr_name = new UTF8StringRef();   // name
     public final UTF8StringRef gr_passwd = new UTF8StringRef(); // group password (encrypted)
     public final Signed32 gr_gid = new Signed32();       // group id
     public final Pointer gr_mem = new Pointer();
     
-    DefaultNativeGroup(com.kenai.jaffl.Pointer memory) {
+    DefaultNativeGroup(jnr.ffi.Pointer memory) {
         useMemory(memory);
     }
     
@@ -56,10 +57,10 @@ public final class DefaultNativeGroup extends NativeGroup implements Group {
         return gr_gid.get();
     }
     public java.lang.String[] getMembers() {
-        int size = com.kenai.jaffl.Pointer.SIZE / 8;
+        int size = runtime.addressSize();
         int i=0;
         List<java.lang.String> lst = new ArrayList<java.lang.String>();
-        com.kenai.jaffl.Pointer ptr = gr_mem.get();
+        jnr.ffi.Pointer ptr = gr_mem.get();
         while (ptr.getPointer(i) != null) {
             lst.add(ptr.getPointer(i).getString(0));
             i+=size;

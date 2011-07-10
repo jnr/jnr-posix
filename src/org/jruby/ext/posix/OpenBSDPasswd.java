@@ -44,7 +44,7 @@ public class OpenBSDPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
     public final SignedLong pw_expire = new SignedLong();    // account expiration
 
-    OpenBSDPasswd(com.kenai.jaffl.Pointer memory) {
+    OpenBSDPasswd(jnr.ffi.Pointer memory) {
         useMemory(memory);
     }
 

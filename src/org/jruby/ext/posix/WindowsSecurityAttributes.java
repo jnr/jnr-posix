@@ -1,11 +1,11 @@
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.struct.StructUtil;
+import jnr.ffi.struct.StructUtil;
 
 /**
  *
  */
-public class WindowsSecurityAttributes extends HeapStruct {
+public class WindowsSecurityAttributes extends jnr.ffi.struct.Struct {
     public final Unsigned32 length = new Unsigned32();
     public final Pointer securityDescriptor = new Pointer();
     public final WBOOL inheritHandle = new WBOOL();

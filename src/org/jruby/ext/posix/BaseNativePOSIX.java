@@ -3,14 +3,14 @@ package org.jruby.ext.posix;
 import static com.kenai.constantine.platform.Errno.*;
 
 import com.kenai.constantine.platform.Errno;
-import com.kenai.jaffl.LastError;
-import com.kenai.jaffl.mapper.FromNativeContext;
-import com.kenai.jaffl.mapper.FromNativeConverter;
-import com.kenai.jaffl.Pointer;
-import com.kenai.jaffl.mapper.ToNativeContext;
-import com.kenai.jaffl.mapper.ToNativeConverter;
-import com.kenai.jaffl.struct.Struct;
-import com.kenai.jaffl.struct.StructUtil;
+import jnr.ffi.LastError;
+import jnr.ffi.mapper.FromNativeContext;
+import jnr.ffi.mapper.FromNativeConverter;
+import jnr.ffi.Pointer;
+import jnr.ffi.mapper.ToNativeContext;
+import jnr.ffi.mapper.ToNativeConverter;
+import jnr.ffi.struct.Struct;
+import jnr.ffi.struct.StructUtil;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -18,6 +18,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 abstract class BaseNativePOSIX implements POSIX {
+    final jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
     private final LibC libc;
     
     protected final String libraryName;
@@ -256,7 +257,7 @@ abstract class BaseNativePOSIX implements POSIX {
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
-            times = StructUtil.newArray(DefaultNativeTimeval.class, 2);
+            times = StructUtil.newArray(runtime, DefaultNativeTimeval.class, 2);
             times[0].setTime(atimeval);
             times[1].setTime(mtimeval);
         }

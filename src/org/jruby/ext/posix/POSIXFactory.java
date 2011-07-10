@@ -1,8 +1,8 @@
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.Library;
-import com.kenai.jaffl.LibraryOption;
-import com.kenai.jaffl.struct.Struct;
+import jnr.ffi.Library;
+import jnr.ffi.LibraryOption;
+import jnr.ffi.struct.Struct;
 import java.util.HashMap;
 import org.jruby.ext.posix.util.Platform;
 import java.util.Map;

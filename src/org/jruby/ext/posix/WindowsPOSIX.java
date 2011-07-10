@@ -3,9 +3,10 @@ package org.jruby.ext.posix;
 import com.kenai.constantine.platform.Errno;
 import static com.kenai.constantine.platform.Errno.*;
 import static com.kenai.constantine.platform.windows.LastError.*;
-import com.kenai.jaffl.Pointer;
-import com.kenai.jaffl.Type;
-import com.kenai.jaffl.provider.jffi.Provider;
+import jnr.ffi.Pointer;
+import jnr.ffi.Type;
+import jnr.ffi.byref.IntByReference;
+import jnr.ffi.provider.jffi.Provider;
 
 import java.io.FileDescriptor;
 import java.nio.ByteBuffer;
@@ -518,7 +519,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         if (child == null) return -1;
 
         if (overlay) {
-            Pointer exitCode = Provider.getProvider().getMemoryManager().allocate(Type.UINT.size());
+            IntByReference exitCode = new IntByReference();
 
             WindowsLibC libc = (WindowsLibC) libc();
             int handle = child.getProcess().intValue();
@@ -526,7 +527,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             libc.WaitForSingleObject(handle, WindowsLibC.INFINITE);
             libc.GetExitCodeProcess(handle, exitCode);
             libc.CloseHandle(handle);
-            System.exit(exitCode.getInt(0));
+            System.exit(exitCode.getValue());
         }
 
         return child.getPid();

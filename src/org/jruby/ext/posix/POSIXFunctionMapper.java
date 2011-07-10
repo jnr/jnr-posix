@@ -1,7 +1,7 @@
 
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.mapper.FunctionMapper;
+import jnr.ffi.mapper.FunctionMapper;
 
 final class POSIXFunctionMapper implements FunctionMapper {
     public static final FunctionMapper INSTANCE = new POSIXFunctionMapper();

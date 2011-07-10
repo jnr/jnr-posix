@@ -4,8 +4,8 @@
  */
 package org.jruby.ext.posix.util;
 
-import com.kenai.jaffl.MemoryIO;
-import com.kenai.jaffl.Pointer;
+import jnr.ffi.*;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -18,7 +18,8 @@ import org.jruby.ext.posix.POSIX;
  * @author enebo
  */
 public class WindowsHelpers {
-    static final int WORDSIZE = Pointer.SIZE / 8;
+    static final jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
+    static final int WORDSIZE = jnr.ffi.Runtime.getSystemRuntime().addressSize();
     
     public static byte[] toWPath(String path) {
         boolean absolute = new File(path).isAbsolute();
@@ -48,17 +49,17 @@ public class WindowsHelpers {
         int envLength = envp.length;
 
         // Allocate pointer for env pointer entries plus last \0\0 marker
-        Pointer result = MemoryIO.allocateDirect(WORDSIZE * (envLength + 1));
+        Pointer result = Memory.allocateDirect(runtime, WORDSIZE * (envLength + 1));
         
         for (int i = 0; i < envLength; i++) {
             byte[] bytes = toWString(envp[i]);
-            Pointer envElement = MemoryIO.allocateDirect(bytes.length + 1);
+            Pointer envElement = Memory.allocateDirect(runtime, bytes.length + 1);
             envElement.put(0, bytes, 0, bytes.length);
             envElement.put(bytes.length, marker, 0, marker.length);
             result.putPointer(i * WORDSIZE, envElement);
         }
 
-        Pointer nullMarker = MemoryIO.allocateDirect(marker.length);
+        Pointer nullMarker = Memory.allocateDirect(runtime, marker.length);
         nullMarker.put(0, marker, 0, marker.length);
         result.putPointer(WORDSIZE * envLength, nullMarker);
 

@@ -2,8 +2,8 @@ package org.jruby.ext.posix;
 
 import static com.kenai.constantine.platform.Errno.*;
 
-import com.kenai.jaffl.mapper.FromNativeContext;
-import com.kenai.jaffl.Pointer;
+import jnr.ffi.mapper.FromNativeContext;
+import jnr.ffi.Pointer;
 import java.io.FileDescriptor;
 import org.jruby.ext.posix.util.Platform;
 

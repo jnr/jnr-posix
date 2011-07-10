@@ -1,9 +1,9 @@
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.annotations.In;
-import com.kenai.jaffl.annotations.NulTerminate;
-import com.kenai.jaffl.annotations.Out;
-import com.kenai.jaffl.annotations.Transient;
+import jnr.ffi.annotations.In;
+import jnr.ffi.annotations.NulTerminate;
+import jnr.ffi.annotations.Out;
+import jnr.ffi.annotations.Transient;
 import java.nio.ByteBuffer;
 
 public interface LinuxLibC extends LibC {

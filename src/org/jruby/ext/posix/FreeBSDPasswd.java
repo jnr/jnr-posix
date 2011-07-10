@@ -46,7 +46,7 @@ public class FreeBSDPasswd extends NativePasswd implements Passwd {
     public final Signed32 pw_fields = new Signed32();    // internal: fields filled in
 
     public FreeBSDPasswd() {}
-    FreeBSDPasswd(com.kenai.jaffl.Pointer memory) {
+    FreeBSDPasswd(jnr.ffi.Pointer memory) {
         useMemory(memory);
     }
 

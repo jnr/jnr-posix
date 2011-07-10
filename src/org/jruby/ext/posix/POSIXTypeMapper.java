@@ -1,9 +1,9 @@
 package org.jruby.ext.posix;
 
 
-import com.kenai.jaffl.mapper.FromNativeConverter;
-import com.kenai.jaffl.mapper.ToNativeConverter;
-import com.kenai.jaffl.mapper.TypeMapper;
+import jnr.ffi.mapper.FromNativeConverter;
+import jnr.ffi.mapper.ToNativeConverter;
+import jnr.ffi.mapper.TypeMapper;
 import org.jruby.ext.posix.util.Platform;
 
 final class POSIXTypeMapper implements TypeMapper {

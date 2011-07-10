@@ -1,7 +1,7 @@
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.mapper.FromNativeContext;
-import com.kenai.jaffl.Pointer;
+import jnr.ffi.mapper.FromNativeContext;
+import jnr.ffi.Pointer;
 
 
 final class MacOSPOSIX extends BaseNativePOSIX {

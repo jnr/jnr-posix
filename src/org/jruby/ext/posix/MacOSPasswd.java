@@ -18,7 +18,7 @@ public final class MacOSPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
     public final SignedLong pw_expire = new SignedLong();    // account expiration
     
-    MacOSPasswd(com.kenai.jaffl.Pointer memory) {
+    MacOSPasswd(jnr.ffi.Pointer memory) {
         useMemory(memory);
     }
     

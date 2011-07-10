@@ -11,7 +11,7 @@ public final class LinuxPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
 
     public LinuxPasswd() {}
-    LinuxPasswd(com.kenai.jaffl.Pointer memory) {
+    LinuxPasswd(jnr.ffi.Pointer memory) {
         useMemory(memory);
     }
     

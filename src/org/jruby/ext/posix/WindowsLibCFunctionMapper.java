@@ -1,7 +1,7 @@
 
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.mapper.FunctionMapper;
+import jnr.ffi.mapper.FunctionMapper;
 import java.util.HashMap;
 import java.util.Map;
 

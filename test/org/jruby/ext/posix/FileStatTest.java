@@ -1,7 +1,7 @@
 
 package org.jruby.ext.posix;
 
-import com.kenai.jaffl.struct.StructUtil;
+import jnr.ffi.struct.StructUtil;
 import java.io.File;
 import org.jruby.ext.posix.util.Platform;
 import org.junit.After;
