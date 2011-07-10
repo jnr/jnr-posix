@@ -288,11 +288,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int errno() {
-        return LastError.getLastError();
+        return LastError.getLastError(getRuntime());
     }
 
     public void errno(int value) {
-        LastError.setLastError(value);
+        LastError.setLastError(getRuntime(), value);
     }
 
     public boolean isNative() {
