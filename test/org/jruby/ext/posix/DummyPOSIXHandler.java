@@ -5,7 +5,7 @@
 
 package org.jruby.ext.posix;
 
-import com.kenai.constantine.platform.Errno;
+import jnr.constants.platform.Errno;
 
 import java.io.File;
 import java.io.InputStream;

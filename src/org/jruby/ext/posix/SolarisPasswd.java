@@ -13,7 +13,7 @@ public class SolarisPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
     
     public SolarisPasswd(jnr.ffi.Pointer memory) {
-        useMemory(memory);
+        super(memory);
     }
     
     public java.lang.String getAccessClass() {

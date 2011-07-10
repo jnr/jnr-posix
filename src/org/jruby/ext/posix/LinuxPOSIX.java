@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import static com.kenai.constantine.platform.Errno.*;
+import static jnr.constants.platform.Errno.*;
 
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;

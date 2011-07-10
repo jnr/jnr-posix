@@ -1,8 +1,8 @@
 package org.jruby.ext.posix;
 
-import static com.kenai.constantine.platform.Errno.*;
+import static jnr.constants.platform.Errno.*;
 
-import com.kenai.constantine.platform.Errno;
+import jnr.constants.platform.Errno;
 import jnr.ffi.LastError;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;

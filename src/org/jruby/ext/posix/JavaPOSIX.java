@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import static com.kenai.constantine.platform.Errno.*;
+import static jnr.constants.platform.Errno.*;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,8 +1,8 @@
 package org.jruby.ext.posix;
 
-import com.kenai.constantine.platform.Errno;
-import static com.kenai.constantine.platform.Errno.*;
-import static com.kenai.constantine.platform.windows.LastError.*;
+import jnr.constants.platform.Errno;
+import static jnr.constants.platform.Errno.*;
+import static jnr.constants.platform.windows.LastError.*;
 import jnr.ffi.Pointer;
 import jnr.ffi.Type;
 import jnr.ffi.byref.IntByReference;
@@ -366,7 +366,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // 116444736000000000 = 10000000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
         long ft = (unixTime + 11644473600L) * 10000000L;
 
-        FileTime fileTime = new FileTime();
+        FileTime fileTime = new FileTime(getRuntime());
         fileTime.dwLowDateTime.set(ft & 0xFFFFFFFFL);
         fileTime.dwHighDateTime.set((ft >> 32) & 0xFFFFFFFFL);
         return fileTime;
@@ -553,7 +553,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         }
         
         if (securityAttributes == null) {
-            securityAttributes = new WindowsSecurityAttributes();
+            securityAttributes = new WindowsSecurityAttributes(getRuntime());
         }
         
         WindowsStartupInfo startupInfo = new WindowsStartupInfo(getRuntime());

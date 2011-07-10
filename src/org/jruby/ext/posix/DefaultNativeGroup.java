@@ -37,16 +37,18 @@ import java.util.List;
  * </p>
  */
 public final class DefaultNativeGroup extends NativeGroup implements Group {
-    static final jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
+    final jnr.ffi.Runtime runtime;
     public final UTF8StringRef gr_name = new UTF8StringRef();   // name
     public final UTF8StringRef gr_passwd = new UTF8StringRef(); // group password (encrypted)
     public final Signed32 gr_gid = new Signed32();       // group id
     public final Pointer gr_mem = new Pointer();
     
     DefaultNativeGroup(jnr.ffi.Pointer memory) {
+        super(memory.getRuntime());
+        this.runtime = memory.getRuntime();
         useMemory(memory);
     }
-    
+
     public java.lang.String getName() {
         return gr_name.get();
     }

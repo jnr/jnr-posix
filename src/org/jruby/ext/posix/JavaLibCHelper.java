@@ -28,7 +28,7 @@
  ***** END LICENSE BLOCK *****/
 package org.jruby.ext.posix;
 
-import static com.kenai.constantine.platform.Errno.*;
+import static jnr.constants.platform.Errno.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

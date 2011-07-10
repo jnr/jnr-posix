@@ -10,9 +10,8 @@ public final class LinuxPasswd extends NativePasswd implements Passwd {
     public final UTF8StringRef pw_dir = new UTF8StringRef();    // home directory
     public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
 
-    public LinuxPasswd() {}
     LinuxPasswd(jnr.ffi.Pointer memory) {
-        useMemory(memory);
+        super(memory);
     }
     
     public java.lang.String getAccessClass() {

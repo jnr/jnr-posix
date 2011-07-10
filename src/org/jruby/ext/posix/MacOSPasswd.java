@@ -19,7 +19,7 @@ public final class MacOSPasswd extends NativePasswd implements Passwd {
     public final SignedLong pw_expire = new SignedLong();    // account expiration
     
     MacOSPasswd(jnr.ffi.Pointer memory) {
-        useMemory(memory);
+        super(memory);
     }
     
     public java.lang.String getAccessClass() {

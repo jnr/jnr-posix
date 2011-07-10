@@ -45,9 +45,8 @@ public class FreeBSDPasswd extends NativePasswd implements Passwd {
     public final SignedLong pw_expire = new SignedLong();    // account expiration
     public final Signed32 pw_fields = new Signed32();    // internal: fields filled in
 
-    public FreeBSDPasswd() {}
     FreeBSDPasswd(jnr.ffi.Pointer memory) {
-        useMemory(memory);
+        super(memory);
     }
 
     public java.lang.String getAccessClass() {
