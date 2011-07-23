@@ -1,8 +1,9 @@
 
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.StructUtil;
 import java.io.File;
+
+import jnr.ffi.Struct;
 import org.jruby.ext.posix.util.Platform;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -50,9 +51,9 @@ public class FileStatTest {
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             if (Platform.IS_32_BIT) {
-                assertEquals("struct size is wrong", 144, StructUtil.getSize(new SolarisHeapFileStat((SolarisPOSIX) posix)));
+                assertEquals("struct size is wrong", 144, Struct.size(new SolarisHeapFileStat((SolarisPOSIX) posix)));
             } else {
-                assertEquals("struct size is wrong", 128, StructUtil.getSize(new Solaris64FileStat()));
+                assertEquals("struct size is wrong", 128, Struct.size(new Solaris64FileStat()));
             }
         }
     }
