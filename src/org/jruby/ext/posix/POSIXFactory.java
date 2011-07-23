@@ -2,7 +2,7 @@ package org.jruby.ext.posix;
 
 import jnr.ffi.Library;
 import jnr.ffi.LibraryOption;
-import jnr.ffi.struct.Struct;
+import jnr.ffi.Struct;
 import java.util.HashMap;
 import org.jruby.ext.posix.util.Platform;
 import java.util.Map;

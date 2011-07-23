@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.Struct;
+import jnr.ffi.Struct;
 
 public final class UTimBuf64 extends Struct {
     public final Signed64 actime = new Signed64();

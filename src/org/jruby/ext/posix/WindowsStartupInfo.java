@@ -9,7 +9,7 @@ package org.jruby.ext.posix;
  *
  * @author enebo
  */
-public class WindowsStartupInfo extends jnr.ffi.struct.Struct {
+public class WindowsStartupInfo extends jnr.ffi.Struct {
     Unsigned32  cb = new Unsigned32();
     Pointer lpReserved = new Pointer(); //new UTF8String();
     Pointer lpDesktop = new Pointer(); //UTF8String();

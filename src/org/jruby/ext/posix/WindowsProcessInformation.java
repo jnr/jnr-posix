@@ -9,7 +9,7 @@ package org.jruby.ext.posix;
  *
  * @author enebo
  */
-public class WindowsProcessInformation extends jnr.ffi.struct.Struct {
+public class WindowsProcessInformation extends jnr.ffi.Struct {
     final Pointer hProcess = new Pointer();
     final Pointer hThread = new Pointer();
     final Unsigned32 dwProcessId = new Unsigned32();

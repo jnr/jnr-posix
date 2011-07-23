@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.Struct;
+import jnr.ffi.Struct;
 
 public class FileTime extends Struct {
     public final Unsigned32 dwLowDateTime = new Unsigned32();

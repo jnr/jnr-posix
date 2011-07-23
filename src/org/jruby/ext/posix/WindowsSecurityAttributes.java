@@ -1,12 +1,11 @@
 package org.jruby.ext.posix;
 
 import jnr.ffi.*;
-import jnr.ffi.struct.StructUtil;
 
 /**
  *
  */
-public class WindowsSecurityAttributes extends jnr.ffi.struct.Struct {
+public class WindowsSecurityAttributes extends jnr.ffi.Struct {
     public final Unsigned32 length = new Unsigned32();
     public final Pointer securityDescriptor = new Pointer();
     public final WBOOL inheritHandle = new WBOOL();
@@ -15,7 +14,7 @@ public class WindowsSecurityAttributes extends jnr.ffi.struct.Struct {
         super(runtime);
         
         // This seems like the sensible defaults for this.
-        length.set(StructUtil.getSize(this));
+        length.set(Struct.size(this));
         inheritHandle.set(true);
     }
     

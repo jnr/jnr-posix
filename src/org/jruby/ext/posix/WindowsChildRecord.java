@@ -5,7 +5,7 @@
 
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.Struct.Pointer;
+import jnr.ffi.Struct.Pointer;
 
 /**
  *

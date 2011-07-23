@@ -9,8 +9,7 @@ import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.ToNativeContext;
 import jnr.ffi.mapper.ToNativeConverter;
-import jnr.ffi.struct.Struct;
-import jnr.ffi.struct.StructUtil;
+import jnr.ffi.Struct;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -256,7 +255,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
-            times = StructUtil.newArray(getRuntime(), DefaultNativeTimeval.class, 2);
+            times = Struct.arrayOf(getRuntime(), DefaultNativeTimeval.class, 2);
             times[0].setTime(atimeval);
             times[1].setTime(mtimeval);
         }

@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.Struct;
+import jnr.ffi.Struct;
 
 
 public abstract class NativePasswd extends Struct implements Passwd {

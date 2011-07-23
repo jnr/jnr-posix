@@ -1,6 +1,6 @@
 package org.jruby.ext.posix;
 
-import jnr.ffi.struct.Struct;
+import jnr.ffi.Struct;
 
 abstract public class Timeval extends Struct {
     public Timeval(jnr.ffi.Runtime runtime) {
