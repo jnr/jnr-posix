@@ -81,8 +81,8 @@
   </developers>
 
   <properties>
-<!--    <maven.test.skip>true</maven.test.skip> -->
     <maven.test.failure.ignore>true</maven.test.failure.ignore>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <dependencies>
