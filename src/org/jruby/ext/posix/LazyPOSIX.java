@@ -3,6 +3,7 @@ package org.jruby.ext.posix;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 final class LazyPOSIX implements POSIX {
@@ -265,5 +266,9 @@ final class LazyPOSIX implements POSIX {
 
     public int unsetenv(String envName) {
         return posix().unsetenv(envName);
+    }
+
+    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions, List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
+        return posix().posix_spawnp(path, fileActions, argv, envp);
     }
 }

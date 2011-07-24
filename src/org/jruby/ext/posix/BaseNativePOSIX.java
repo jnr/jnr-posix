@@ -4,6 +4,8 @@ import static jnr.constants.platform.Errno.*;
 
 import jnr.constants.platform.Errno;
 import jnr.ffi.LastError;
+import jnr.ffi.Memory;
+import jnr.ffi.byref.IntByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.Pointer;
@@ -14,7 +16,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.List;
 
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -296,6 +298,45 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public boolean isNative() {
         return true;
+    }
+
+    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
+            List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
+        
+        CharSequence[] nativeArgv = new CharSequence[argv.size()];
+        argv.toArray(nativeArgv);
+
+        CharSequence[] nativeEnv = new CharSequence[envp.size()];
+        envp.toArray(nativeEnv);
+
+        return posix_spawnp(path, fileActions, argv, envp);
+    }
+
+    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
+            CharSequence[] argv, CharSequence[] envp) {
+        IntByReference pid = new IntByReference(-1);
+        Pointer nativeFileActions = nativeFileActions(fileActions);
+
+        try {
+            if (libc().posix_spawnp(pid, path, nativeFileActions, null, argv, envp) < 0) {
+                Errno e = Errno.valueOf(errno());
+                handler.error(e, e.description());
+            }
+        } finally {
+            libc.posix_spawn_file_actions_destroy(nativeFileActions);
+        }
+
+        return pid.getValue();
+    }
+
+    private final Pointer nativeFileActions(List<? extends SpawnFileAction> fileActions) {
+        Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);
+        libc().posix_spawn_file_actions_init(nativeFileActions);
+        for (SpawnFileAction action : fileActions) {
+            action.act(this, nativeFileActions);
+        }
+
+        return nativeFileActions;
     }
 
     public abstract BaseHeapFileStat allocateStat();

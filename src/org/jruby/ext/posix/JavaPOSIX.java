@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import org.jruby.ext.posix.util.Platform;
 
@@ -302,6 +303,10 @@ final class JavaPOSIX implements POSIX {
     
     public int setpriority(int which, int who, int prio) {
         return unimplementedInt("setpriority");
+    }
+
+    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions, List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
+        return unimplementedInt("posix_spawnp");
     }
 
     public int errno() {
