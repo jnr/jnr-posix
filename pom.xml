@@ -107,8 +107,6 @@
   </dependencies>
 
   <build>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>test</testSourceDirectory>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
