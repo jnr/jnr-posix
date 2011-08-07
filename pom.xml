@@ -86,6 +86,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
         <configuration>
           <archive>
             <manifestFile>MANIFEST.MF</manifestFile>
