@@ -21,7 +21,7 @@ final class SolarisPOSIX extends BaseNativePOSIX {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
 
-        if ((Platform.IS_64_BIT ? libc().fstat(fd, stat) : libc().fstat64(fd, stat)) < 0) handler.error(ENOENT, ""+fd);
+        if ((Platform.IS_64_BIT ? libc().fstat64(fd, stat) : libc().fstat(fd, stat)) < 0) handler.error(ENOENT, ""+fd);
         
         return stat;
     }
@@ -34,21 +34,13 @@ final class SolarisPOSIX extends BaseNativePOSIX {
     }
     
     @Override
-    public FileStat lstat(String path) {
-        FileStat stat = allocateStat();
-
-        if ((Platform.IS_64_BIT ? libc().lstat(path, stat) : libc().lstat64(path, stat)) < 0) handler.error(ENOENT, path);
-        
-        return stat;
+    public int lstat(String path, FileStat stat) {
+        return Platform.IS_64_BIT ? libc().lstat64(path, stat) : libc().lstat(path, stat);
     }
     
     @Override
-    public FileStat stat(String path) {
-        FileStat stat = allocateStat(); 
-
-        if ((Platform.IS_64_BIT ? libc().stat(path, stat) : libc().stat64(path, stat)) < 0) handler.error(ENOENT, path);
-        
-        return stat;
+    public int stat(String path, FileStat stat) {
+        return Platform.IS_64_BIT ? libc().stat64(path, stat) : libc().stat(path, stat);
     }
     
     public static final PointerConverter PASSWD = new PointerConverter() {

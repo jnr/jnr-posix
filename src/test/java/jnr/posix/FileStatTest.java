@@ -1,12 +1,6 @@
 
 package jnr.posix;
 
-import jnr.posix.Solaris64FileStat;
-import jnr.posix.SolarisPOSIX;
-import jnr.posix.POSIX;
-import jnr.posix.SolarisHeapFileStat;
-import jnr.posix.FileStat;
-import jnr.posix.POSIXFactory;
 import java.io.File;
 
 import jnr.ffi.Struct;
@@ -49,9 +43,17 @@ public class FileStatTest {
     // public void hello() {}
     @Test public void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
-        FileStat st = posix.stat(f.getAbsolutePath());
-        f.delete();
-        assertNotNull("posix.stat failed", st);
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertNotNull("posix.stat failed", st);
+        
+            FileStat stat = posix.allocateStat();
+            int result = posix.stat(f.getAbsolutePath(), stat);
+            assertNotNull("posix.stat failed", st);
+            assertEquals(0, result);
+        } finally {
+            f.delete();
+        }
     }
 
     @Test public void structStatSize() throws Throwable {
@@ -60,6 +62,20 @@ public class FileStatTest {
                 assertEquals("struct size is wrong", 144, Struct.size(new SolarisHeapFileStat((SolarisPOSIX) posix)));
             } else {
                 assertEquals("struct size is wrong", 128, Struct.size(new Solaris64FileStat()));
+            }
+        }
+        
+        if (Platform.IS_SOLARIS) {
+            File f = File.createTempFile("stat", null);
+            try {
+                FileStat st = posix.stat(f.getAbsolutePath());
+                if (Platform.IS_32_BIT) {
+                    assertEquals("struct size is wrong", 144, Struct.size((SolarisHeapFileStat)posix.stat(f.getAbsolutePath())));
+                } else {
+                    assertEquals("struct size is wrong", 128, Struct.size((Solaris64FileStat)posix.stat(f.getAbsolutePath())));
+                }
+            } finally {
+                f.delete();
             }
         }
     }
