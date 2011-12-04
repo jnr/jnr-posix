@@ -4,7 +4,7 @@ public final class DefaultNativeTimeval extends Timeval {
     public final SignedLong tv_sec = new SignedLong();
     public final SignedLong tv_usec = new SignedLong();
 
-    DefaultNativeTimeval(jnr.ffi.Runtime runtime) {
+    public DefaultNativeTimeval(jnr.ffi.Runtime runtime) {
         super(runtime);
     }
 

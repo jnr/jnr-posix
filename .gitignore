@@ -8,3 +8,4 @@ dist
 target
 lib/nblibraries-private.properties
 /nbproject/
+/.redcar/
