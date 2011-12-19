@@ -138,7 +138,7 @@ public class WindowsHelpers {
         
         if (length < 5) return false;
         
-        String end = value.substring(length - 5);
+        String end = value.substring(length - 4);
         
         return end.equalsIgnoreCase(".bat") || end.equalsIgnoreCase(".cmd");
     }
