@@ -133,6 +133,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int chmod(String filename, int mode) {
+        byte[] wpath = WindowsHelpers.toWPath(filename);
+        return ((WindowsLibC) libc())._wchmod(wpath, mode);
+    }
+    
+    @Override
     public int chown(String filename, int user, int group) {
         return 0;
     }
@@ -455,12 +461,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int mkdir(String path, int mode) {
-        // TODO: somehow handle the mode
         byte[] widePath = WindowsHelpers.toWPath(path);
-        int res = ((WindowsLibC)libc())._wmkdir(widePath);
+        int res = -1;
+        
+        if (((WindowsLibC)libc())._wmkdir(widePath) == 0) {
+            res = ((WindowsLibC) libc())._wchmod(widePath, mode);
+        }
+        
         if (res < 0) {
-            int error = errno();
-            handler.error(mapErrorToErrno(error), path);
+            int errno = errno();
+            handler.error(Errno.valueOf(errno), path);
         }
         return res;
     }
@@ -573,10 +583,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // FIXME: Convert envp into useful wideEnv
         Pointer wideEnv = null;
         byte[] programW = WindowsHelpers.toWString(program);
+        byte[] cwd = WindowsHelpers.toWString(WindowsHelpers.escapePath(handler.getCurrentWorkingDirectory().toString()) +"\\");
         ByteBuffer commandW = ByteBuffer.wrap(WindowsHelpers.toWString(command));
         boolean returnValue = libc.CreateProcessW(programW, commandW, 
                 securityAttributes, securityAttributes, 
-                securityAttributes.getInheritHandle() ? 1: 0, creationFlags, wideEnv, null, 
+                securityAttributes.getInheritHandle() ? 1: 0, creationFlags, wideEnv, cwd, 
                 startupInfo, processInformation);
         
         if (!returnValue) return null;

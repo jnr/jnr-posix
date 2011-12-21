@@ -305,6 +305,18 @@ public class WindowsHelpers {
         return i;
     }
     
+    public static String escapePath(String path) {
+        StringBuilder buf = new StringBuilder();
+        
+        for (int i = 0; i < path.length(); i++) {
+            char c = path.charAt(i);
+            
+            buf.append(c);
+            if (c == '\\') buf.append(c);
+        }
+        return buf.toString() + "\\\\";
+    }    
+    
     private final static String COMMAND_DOT_COM = "command.com";
     private final static int CDC_LENGTH = COMMAND_DOT_COM.length();
     private enum InternalType { SHELL, COMMAND, BOTH };
