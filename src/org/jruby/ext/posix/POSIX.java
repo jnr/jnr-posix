@@ -24,6 +24,7 @@ public interface POSIX {
     int execve(String path, String[] argv, String[] envp);    
     int fork();
     FileStat fstat(FileDescriptor descriptor);
+    int fstat(FileDescriptor descriptor, FileStat stat);
     String getenv(String envName);
     int getegid();
     int geteuid();
@@ -53,6 +54,7 @@ public interface POSIX {
     int lchown(String filename, int user, int group);
     int link(String oldpath,String newpath);
     FileStat lstat(String path);
+    int lstat(String path, FileStat stat);
     int mkdir(String path, int mode);
     String readlink(String path) throws IOException;
     int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
@@ -64,6 +66,7 @@ public interface POSIX {
     int setpriority(int which, int who, int prio);
     int setuid(int uid);
     FileStat stat(String path);
+    int stat(String path, FileStat stat);
     int symlink(String oldpath,String newpath);
     int umask(int mask);
     int unsetenv(String envName);

@@ -63,11 +63,16 @@ abstract class BaseNativePOSIX implements POSIX {
 
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();
-        int fd = helper.getfd(fileDescriptor);
 
-        if (libc().fstat(fd, stat) < 0) handler.error(ENOENT, ""+fd);
+        if (fstat(fileDescriptor, stat) < 0) handler.error(Errno.valueOf(errno()), "" + helper.getfd(fileDescriptor));
         
         return stat;
+    }
+
+    public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
+        int fd = helper.getfd(fileDescriptor);
+
+        return libc().fstat(fd, stat);
     }
     
     public String getenv(String envName) {
@@ -202,10 +207,14 @@ abstract class BaseNativePOSIX implements POSIX {
     
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
-
-        if (libc().lstat(path, stat) < 0) handler.error(ENOENT, path);
+        
+        if (lstat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
         
         return stat;
+    }
+    
+    public int lstat(String path, FileStat stat) {
+        return libc().lstat(path, stat);
     }
 
     public int mkdir(String path, int mode) {
@@ -222,11 +231,15 @@ abstract class BaseNativePOSIX implements POSIX {
     }
 
     public FileStat stat(String path) {
-        FileStat stat = allocateStat(); 
+        FileStat stat = allocateStat();
 
-        if (libc().stat(path, stat) < 0) handler.error(ENOENT, path);
+        if (stat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
         
         return stat;
+    }
+
+    public int stat(String path, FileStat stat) {
+        return libc().stat(path, stat);
     }
 
     public int symlink(String oldpath, String newpath) {

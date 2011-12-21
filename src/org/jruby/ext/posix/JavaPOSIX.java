@@ -62,6 +62,12 @@ final class JavaPOSIX implements POSIX {
         
         return null;
     }
+    
+    public int fstat(FileDescriptor descriptor, FileStat stat) {
+        handler.unimplementedError("fstat unimplemented");
+        
+        return -1;
+    }
 
     public int getegid() {
         return LoginInfo.GID;
@@ -176,9 +182,13 @@ final class JavaPOSIX implements POSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
 
-        if (helper.lstat(path, stat) < 0) handler.error(ENOENT, path);
+        if (lstat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
+    }
+
+    public int lstat(String path, FileStat stat) {
+        return helper.lstat(path, stat);
     }
 
     public int mkdir(String path, int mode) {
@@ -223,6 +233,10 @@ final class JavaPOSIX implements POSIX {
         if (helper.stat(path, stat) < 0) handler.error(ENOENT, path);
         
         return stat;
+    }
+
+    public int stat(String path, FileStat stat) {
+        return helper.stat(path, stat);
     }
 
     public int symlink(String oldpath, String newpath) {

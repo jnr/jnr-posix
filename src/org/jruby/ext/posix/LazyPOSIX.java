@@ -83,6 +83,10 @@ final class LazyPOSIX implements POSIX {
         return posix().fstat(descriptor);
     }
 
+    public int fstat(FileDescriptor descriptor, FileStat stat) {
+        return posix().fstat(descriptor, stat);
+    }
+
     public int getegid() {
         return posix().getegid();
     }
@@ -175,6 +179,10 @@ final class LazyPOSIX implements POSIX {
         return posix().lstat(path);
     }
 
+    public int lstat(String path, FileStat stat) {
+        return posix().lstat(path, stat);
+    }
+
     public int mkdir(String path, int mode) {
         return posix().mkdir(path, mode);
     }
@@ -225,6 +233,10 @@ final class LazyPOSIX implements POSIX {
 
     public FileStat stat(String path) {
         return posix().stat(path);
+    }
+
+    public int stat(String path, FileStat stat) {
+        return posix().stat(path, stat);
     }
 
     public int symlink(String oldpath, String newpath) {
