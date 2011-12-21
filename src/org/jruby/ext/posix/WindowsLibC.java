@@ -16,10 +16,10 @@ public interface WindowsLibC extends LibC {
     
     public static final int INFINITE = -1;
 
-    
     public int _open_osfhandle(int handle, int flags);
 
     public int _wmkdir(@In byte[] path);
+    public int _wchmod(@In byte[] path, int pmode);
     
     @StdCall
     public boolean CreateProcessW(byte[] applicationName, 
@@ -35,7 +35,7 @@ public interface WindowsLibC extends LibC {
     
     @StdCall
     public boolean GetExitCodeProcess(int handle, Pointer exitCode);
-
+    
     @StdCall
     public int GetFileType(int handle);
 

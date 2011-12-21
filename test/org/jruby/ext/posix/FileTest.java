@@ -38,11 +38,22 @@ public class FileTest {
         f1.delete();
         f2.delete();
     }
-
+    
+    @Test
+    public void mkdirPermissionsTest() throws Throwable {
+        File dir = new File("tmp");
+        int rval = posix.mkdir(dir.getPath(), 0777);
+        assertEquals("mkdir did not return 0", 0, rval);
+        rval = posix.chmod(dir.getPath(), 0777);
+        assertTrue("Directory was not created", dir.exists());
+        assertEquals("chmod did not return 0", 0, rval);
+        dir.delete();
+    }
+    
     @Test
     public void mkdirRelativeTest() throws Throwable {
         File dir = new File("tmp");
-        int rval = posix.mkdir(dir.getPath(), 0);
+        int rval = posix.mkdir(dir.getPath(), 0777);
         assertEquals("mkdir did not return 0", 0, rval);
         assertTrue("Directory was not created", dir.exists());
         dir.delete();
@@ -51,7 +62,7 @@ public class FileTest {
     @Test
     public void mkdirAbsoluteTest() throws Throwable {
         File dir = new File("tmp");
-        int rval = posix.mkdir(dir.getAbsolutePath(), 0);
+        int rval = posix.mkdir(dir.getAbsolutePath(), 0777);
         assertEquals("mkdir did not return 0", 0, rval);
         assertTrue("Directory was not created", dir.exists());
         dir.delete();
