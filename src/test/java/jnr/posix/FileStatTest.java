@@ -1,6 +1,10 @@
 
 package jnr.posix;
 
+import java.lang.reflect.Field;
+import jnr.posix.util.FieldAccess;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.File;
 
 import jnr.ffi.Struct;
@@ -56,6 +60,31 @@ public class FileStatTest {
         }
     }
 
+    
+    @Test
+    public void filestatInt() throws Throwable {
+        File f = File.createTempFile("stat", null);
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            FileDescriptor desc = fis.getFD();
+            int fd = -1;
+            try {
+                Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
+                fd = fdField.getInt(desc);
+            } catch (SecurityException e) {
+            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException e) {
+            }
+            FileStat stat = posix.allocateStat();
+            int result = posix.fstat(fd, stat);
+            assertTrue(fd > 2); // should not be stdin, stdout, stderr
+            assertEquals(0,result);
+        } finally {
+            f.delete();
+        }
+    }
+
+    
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             if (Platform.IS_32_BIT) {

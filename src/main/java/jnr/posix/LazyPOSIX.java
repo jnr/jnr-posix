@@ -80,6 +80,14 @@ final class LazyPOSIX implements POSIX {
         return posix().fork();
     }
 
+    public FileStat fstat(int fd) {
+        return posix().fstat(fd);
+    }
+
+    public int fstat(int fd, FileStat stat) {
+        return posix().fstat(fd, stat);
+    }
+
     public FileStat fstat(FileDescriptor descriptor) {
         return posix().fstat(descriptor);
     }
