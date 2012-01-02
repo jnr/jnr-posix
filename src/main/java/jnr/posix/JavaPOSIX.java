@@ -63,10 +63,21 @@ final class JavaPOSIX implements POSIX {
         
         return null;
     }
-    
-    public int fstat(FileDescriptor descriptor, FileStat stat) {
+
+    public FileStat fstat(int descriptor) {
         handler.unimplementedError("fstat unimplemented");
         
+        return null;
+    }
+
+    @Override
+    public int fstat(int fd, FileStat stat) {
+        handler.unimplementedError("fstat unimplemented");
+        return -1;
+    }
+
+    public int fstat(FileDescriptor descriptor, FileStat stat) {
+        handler.unimplementedError("fstat unimplemented");
         return -1;
     }
 

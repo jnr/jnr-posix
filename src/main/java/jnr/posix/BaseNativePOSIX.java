@@ -70,9 +70,19 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return stat;
     }
 
+    public FileStat fstat(int fd) {
+        FileStat stat = allocateStat();
+        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "" + fd);  
+        return stat;
+    }
+
+    
     public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
         int fd = helper.getfd(fileDescriptor);
+        return libc().fstat(fd, stat);
+    }
 
+    public int fstat(int fd, FileStat stat) {
         return libc().fstat(fd, stat);
     }
     

@@ -27,7 +27,9 @@ public interface POSIX {
     int execve(String path, String[] argv, String[] envp);    
     int fork();
     FileStat fstat(FileDescriptor descriptor);
+    FileStat fstat(int descriptor);
     int fstat(FileDescriptor descriptor, FileStat stat);
+    int fstat(int fd, FileStat stat);
     String getenv(String envName);
     int getegid();
     int geteuid();
