@@ -80,10 +80,6 @@
     </developer>
   </developers>
 
-  <properties>
-    <maven.test.failure.ignore>true</maven.test.failure.ignore>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -94,7 +90,7 @@
     <dependency>
       <groupId>org.jruby.extras</groupId>
       <artifactId>jaffl</artifactId>
-      <version>0.5.9</version>
+      <version>0.5.11</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
