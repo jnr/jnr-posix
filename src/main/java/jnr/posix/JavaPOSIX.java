@@ -11,7 +11,10 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+
+import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.Platform;
+import jnr.posix.util.ProcessMaker;
 
 final class JavaPOSIX implements POSIX {
     private final POSIXHandler handler;
@@ -20,6 +23,14 @@ final class JavaPOSIX implements POSIX {
     JavaPOSIX(POSIXHandler handler) {
         this.handler = handler;
         this.helper = new JavaLibCHelper(handler);
+    }
+
+    public ProcessMaker newProcessMaker(String... command) {
+        return new Java5ProcessMaker(handler, command);
+    }
+
+    public ProcessMaker newProcessMaker() {
+        return new Java5ProcessMaker(handler);
     }
     
     public FileStat allocateStat() {

@@ -1,6 +1,8 @@
 
 package jnr.posix;
 
+import jnr.posix.util.ProcessMaker;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +32,14 @@ final class LazyPOSIX implements POSIX {
         return posix != null
                 ? posix
                 : (posix = POSIXFactory.loadPOSIX(handler, useNativePosix));
+    }
+
+    public ProcessMaker newProcessMaker(String... command) {
+        return posix().newProcessMaker(command);
+    }
+
+    public ProcessMaker newProcessMaker() {
+        return posix().newProcessMaker();
     }
     
     public FileStat allocateStat() {

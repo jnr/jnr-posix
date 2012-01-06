@@ -12,6 +12,9 @@ import jnr.ffi.Pointer;
 import jnr.ffi.mapper.ToNativeContext;
 import jnr.ffi.mapper.ToNativeConverter;
 import jnr.ffi.Struct;
+import jnr.posix.util.Java5ProcessMaker;
+import jnr.posix.util.ProcessMaker;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -30,6 +33,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         this.libraryName = libraryName;
         this.libc = libcProvider.getLibC();
         this.helper = new JavaLibCHelper(handler);
+    }
+
+    public ProcessMaker newProcessMaker(String... command) {
+        return new Java5ProcessMaker(handler, command);
+    }
+
+    public ProcessMaker newProcessMaker() {
+        return new Java5ProcessMaker(handler);
     }
 
     public final LibC libc() {

@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.ffi.Pointer;
+import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -83,6 +84,8 @@ public interface POSIX {
     boolean isNative();
     /** Returns null if isNative returns false. */
     LibC libc();
+    ProcessMaker newProcessMaker(String... command);
+    ProcessMaker newProcessMaker();
 
     public static abstract class SpawnFileAction {
         abstract boolean act(POSIX posix, Pointer nativeFileActions);
