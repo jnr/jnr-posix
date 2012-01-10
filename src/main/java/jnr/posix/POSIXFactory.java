@@ -4,6 +4,8 @@ import jnr.ffi.Library;
 import jnr.ffi.LibraryOption;
 import jnr.ffi.Struct;
 import java.util.HashMap;
+
+import jnr.posix.util.DefaultPOSIXHandler;
 import jnr.posix.util.Platform;
 import java.util.Map;
 
@@ -18,6 +20,15 @@ public class POSIXFactory {
 
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
         return new LazyPOSIX(handler, useNativePOSIX);
+    }
+
+    /**
+     * This will use {@link DefaultPOSIXHandler} and the native POSIX implementation
+     *
+     * @return a POSIX implementation
+     */
+    public static POSIX getPOSIX() {
+        return getPOSIX(new DefaultPOSIXHandler(), true);
     }
 
     static POSIX loadPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
@@ -125,7 +136,7 @@ public class POSIXFactory {
     }
 
     private static final class WindowsLibCProvider implements LibCProvider {
-        
+
         static final class SingletonHolder {
             public static LibC libc = Library.loadLibrary(WindowsLibC.class, getOptions(),  "msvcrt", "kernel32");
         }
