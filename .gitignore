@@ -1,3 +1,5 @@
+.idea
+*.iml
 *.orig$
 *.rej$
 *.class$
