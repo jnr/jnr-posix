@@ -71,13 +71,11 @@
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
       <version>0.6.1-SNAPSHOT</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-constants</artifactId>
       <version>0.8.2</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 
