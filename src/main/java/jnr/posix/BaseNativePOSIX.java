@@ -23,11 +23,11 @@ import java.util.List;
 
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
-    
+
     protected final String libraryName;
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
-    
+
     BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
         this.libraryName = libraryName;
@@ -54,21 +54,21 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }
-    
+
     public int exec(String path, String... args) {
         handler.unimplementedError("exec unimplemented");
         return -1;
     }
-    
+
     public int exec(String path, String[] args, String[] envp) {
         handler.unimplementedError("exec unimplemented");
         return -1;
     }
-    
+
     public int execv(String path, String[] args) {
         return libc().execv(path, args);
     }
-    
+
     public int execve(String path, String[] args, String[] env) {
         return libc().execve(path, args, env);
     }
@@ -77,17 +77,17 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         FileStat stat = allocateStat();
 
         if (fstat(fileDescriptor, stat) < 0) handler.error(Errno.valueOf(errno()), "" + helper.getfd(fileDescriptor));
-        
+
         return stat;
     }
 
     public FileStat fstat(int fd) {
         FileStat stat = allocateStat();
-        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "" + fd);  
+        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "" + fd);
         return stat;
     }
 
-    
+
     public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
         int fd = helper.getfd(fileDescriptor);
         return libc().fstat(fd, stat);
@@ -96,7 +96,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int fstat(int fd, FileStat stat) {
         return libc().fstat(fd, stat);
     }
-    
+
     public String getenv(String envName) {
         return libc().getenv(envName);
     }
@@ -112,7 +112,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int getgid() {
         return libc().getgid();
     }
-    
+
     public String getlogin() {
         return libc().getlogin();
     }
@@ -132,7 +132,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int getppid() {
         return libc().getppid();
     }
-    
+
     public Passwd getpwent() {
         return libc().getpwent();
     }
@@ -186,7 +186,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int setgid(int gid) {
         return libc().setgid(gid);
     }
-    
+
     public int getfd(FileDescriptor descriptor) {
         return helper.getfd(descriptor);
     }
@@ -226,15 +226,15 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int link(String oldpath, String newpath) {
         return libc().link(oldpath, newpath);
     }
-    
+
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
-        
+
         if (lstat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
-        
+
         return stat;
     }
-    
+
     public int lstat(String path, FileStat stat) {
         return libc().lstat(path, stat);
     }
@@ -247,7 +247,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
         return res;
     }
-    
+
     public int setenv(String envName, String envValue, int overwrite) {
         return libc().setenv(envName, envValue, overwrite);
     }
@@ -256,7 +256,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         FileStat stat = allocateStat();
 
         if (stat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
-        
+
         return stat;
     }
 
@@ -267,27 +267,27 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int symlink(String oldpath, String newpath) {
         return libc().symlink(oldpath, newpath);
     }
-    
+
     public String readlink(String oldpath) throws IOException {
         // TODO: this should not be hardcoded to 256 bytes
         ByteBuffer buffer = ByteBuffer.allocate(256);
         int result = libc().readlink(oldpath, buffer, buffer.capacity());
-        
+
         if (result == -1) return null;
-        
+
         buffer.position(0);
         buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
     }
-    
+
     public int unsetenv(String envName) {
         return libc().unsetenv(envName);
     }
-    
+
     public int umask(int mask) {
         return libc().umask(mask);
     }
-    
+
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {
@@ -301,19 +301,19 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int fork() {
         return libc().fork();
     }
-    
+
     public int waitpid(int pid, int[] status, int flags) {
         return libc().waitpid(pid, status, flags);
     }
-    
+
     public int wait(int[] status) {
         return libc().wait(status);
     }
-    
+
     public int getpriority(int which, int who) {
         return libc().getpriority(which, who);
     }
-    
+
     public int setpriority(int which, int who, int prio) {
         return libc().setpriority(which, who, prio);
     }
@@ -336,14 +336,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
             List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
-        
+
         CharSequence[] nativeArgv = new CharSequence[argv.size()];
         argv.toArray(nativeArgv);
 
         CharSequence[] nativeEnv = new CharSequence[envp.size()];
         envp.toArray(nativeEnv);
 
-        return posix_spawnp(path, fileActions, argv, envp);
+        return posix_spawnp(path, fileActions, nativeArgv, nativeEnv);
     }
 
     public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
@@ -374,13 +374,13 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public abstract BaseHeapFileStat allocateStat();
-    
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;
         }
     }
-    
+
     public static final PointerConverter GROUP = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new DefaultNativeGroup((Pointer) arg) : null;
