@@ -32,15 +32,15 @@
 package jnr.posix;
 
 public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
-    public final class time_t extends SignedLong {}
+    public final class time_t extends Signed32 {}
     public final class dev_t extends Signed32 {}
 
     public final dev_t  st_dev = new dev_t();
-    public final Signed32  st_ino = new Signed32();
-    public final Signed16  st_mode = new Signed16();
-    public final Signed16  st_nlink = new Signed16();
-    public final Signed32  st_uid = new Signed32();
-    public final Signed32  st_gid = new Signed32();
+    public final Unsigned32  st_ino = new Unsigned32();
+    public final Unsigned32  st_mode = new Unsigned32();
+    public final Unsigned32  st_nlink = new Unsigned32();
+    public final Unsigned32  st_uid = new Unsigned32();
+    public final Unsigned32  st_gid = new Unsigned32();
     public final dev_t  st_rdev = new dev_t();
     public final time_t st_atime = new time_t();
     public final SignedLong   st_atimensec = new SignedLong();
@@ -50,9 +50,9 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     public final SignedLong   st_ctimensec = new SignedLong();
     public final Signed64  st_size = new Signed64();
     public final Signed64  st_blocks = new Signed64();
-    public final Signed32  st_blksize = new Signed32();
-    public final Signed32  st_flags = new Signed32();
-    public final Signed32  st_gen = new Signed32();
+    public final Unsigned32  st_blksize = new Unsigned32();
+    public final Unsigned32  st_flags = new Unsigned32();
+    public final Unsigned32  st_gen = new Unsigned32();
     public final Signed32  st_lspare = new Signed32();
     public final time_t st_birthtime = new time_t();
     public final SignedLong   st_birthtimensec = new SignedLong();
