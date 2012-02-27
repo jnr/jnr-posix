@@ -83,7 +83,7 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     }
 
     public int gid() {
-        return st_gid.get();
+        return (int)st_gid.get();
     }
 
     public long ino() {
@@ -91,7 +91,7 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     }
 
     public int mode() {
-        return st_mode.get() & 0xffff;
+        return (int)(st_mode.get() & 0xffff);
     }
 
     public long mtime() {
@@ -99,7 +99,7 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     }
 
     public int nlink() {
-        return st_nlink.get();
+        return (int)st_nlink.get();
     }
 
     public long rdev() {
@@ -111,6 +111,6 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     }
 
     public int uid() {
-        return st_uid.get();
+        return (int)st_uid.get();
     }
 }
