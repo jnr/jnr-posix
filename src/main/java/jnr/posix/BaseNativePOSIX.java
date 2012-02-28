@@ -343,7 +343,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         CharSequence[] nativeEnv = new CharSequence[envp.size()];
         envp.toArray(nativeEnv);
 
-        return posix_spawnp(path, fileActions, argv, envp);
+        return posix_spawnp(path, fileActions, nativeArgv, nativeEnv);
     }
 
     public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
