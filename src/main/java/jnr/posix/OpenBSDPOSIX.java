@@ -40,7 +40,7 @@ final class OpenBSDPOSIX extends BaseNativePOSIX {
     }
     
     public BaseHeapFileStat allocateStat() {
-        return new FreeBSDHeapFileStat(this);
+        return new OpenBSDHeapFileStat(this);
     }
     
     public static final PointerConverter PASSWD = new PointerConverter() {
