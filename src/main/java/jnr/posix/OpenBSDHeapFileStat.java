@@ -42,6 +42,7 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     public final Unsigned32  st_uid = new Unsigned32();
     public final Unsigned32  st_gid = new Unsigned32();
     public final dev_t  st_rdev = new dev_t();
+    public final Signed32  st_lspare0 = new Signed32();
     public final time_t st_atime = new time_t();
     public final SignedLong   st_atimensec = new SignedLong();
     public final time_t st_mtime = new time_t();
@@ -53,7 +54,7 @@ public final class OpenBSDHeapFileStat extends BaseHeapFileStat {
     public final Unsigned32  st_blksize = new Unsigned32();
     public final Unsigned32  st_flags = new Unsigned32();
     public final Unsigned32  st_gen = new Unsigned32();
-    public final Signed32  st_lspare = new Signed32();
+    public final Signed32  st_lspare1 = new Signed32();
     public final time_t st_birthtime = new time_t();
     public final SignedLong   st_birthtimensec = new SignedLong();
     public final Signed64  st_qspare0 = new Signed64();
