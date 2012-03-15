@@ -87,7 +87,12 @@ public class Platform {
     public static final boolean IS_32_BIT = "32".equals(getProperty("sun.arch.data.model", "32"));
     public static final boolean IS_64_BIT = "64".equals(getProperty("sun.arch.data.model", "64"));
 
-    public static final String ARCH = System.getProperty("os.arch");
+    public static final String ARCH;
+    static {
+        String arch = System.getProperty("os.arch");
+        if (arch.equals("amd64")) arch = "x86_64";
+        ARCH = arch;
+    }
     
     public static final Map<String, String> OS_NAMES = new HashMap<String, String>();
     static {
