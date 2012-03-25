@@ -1,19 +1,15 @@
 
 package jnr.posix;
 
-import java.lang.reflect.Field;
 import jnr.posix.util.FieldAccess;
+import jnr.posix.util.Platform;
+import org.junit.*;
+
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.File;
+import java.lang.reflect.Field;
 
-import jnr.ffi.Struct;
-import jnr.posix.util.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class FileStatTest {
@@ -87,10 +83,11 @@ public class FileStatTest {
     
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
+            jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
             if (Platform.IS_32_BIT) {
-                assertEquals("struct size is wrong", 144, Struct.size(new SolarisHeapFileStat((SolarisPOSIX) posix)));
+                assertEquals("struct size is wrong", 144, new SolarisFileStat32.Layout(runtime).size());
             } else {
-                assertEquals("struct size is wrong", 128, Struct.size(new Solaris64FileStat()));
+                assertEquals("struct size is wrong", 128, new SolarisFileStat64.Layout(runtime).size());
             }
         }
         
@@ -98,10 +95,11 @@ public class FileStatTest {
             File f = File.createTempFile("stat", null);
             try {
                 FileStat st = posix.stat(f.getAbsolutePath());
+
                 if (Platform.IS_32_BIT) {
-                    assertEquals("struct size is wrong", 144, Struct.size((SolarisHeapFileStat)posix.stat(f.getAbsolutePath())));
+                    assertSame("incorrect stat instance returned", SolarisFileStat32.class, st.getClass());
                 } else {
-                    assertEquals("struct size is wrong", 128, Struct.size((Solaris64FileStat)posix.stat(f.getAbsolutePath())));
+                    assertSame("incorrect stat instance returned", SolarisFileStat64.class, st.getClass());
                 }
             } finally {
                 f.delete();

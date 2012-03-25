@@ -4,9 +4,9 @@ package jnr.posix;
 import jnr.ffi.StructLayout;
 
 public class SolarisFileStat32 extends BaseFileStat {
-    private static final class Layout extends StructLayout {
+    static final class Layout extends StructLayout {
 
-        private Layout(jnr.ffi.Runtime runtime) {
+        Layout(jnr.ffi.Runtime runtime) {
             super(runtime);
         }
         public static final int _ST_FSTYPSZ = 16;		/* array size for file system type name */

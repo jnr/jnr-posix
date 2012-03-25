@@ -5,9 +5,9 @@ package jnr.posix;
 import jnr.ffi.*;
 
 public class SolarisFileStat64 extends BaseFileStat {
-    private static final class Layout extends StructLayout {
+    static final class Layout extends StructLayout {
 
-        private Layout(jnr.ffi.Runtime runtime) {
+        Layout(jnr.ffi.Runtime runtime) {
             super(runtime);
         }
 

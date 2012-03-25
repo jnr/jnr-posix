@@ -5,11 +5,9 @@ import jnr.ffi.mapper.FromNativeContext;
 
 
 final class MacOSPOSIX extends BaseNativePOSIX {
-    final MacOSStatLayout statLayout;
 
     MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         super(libraryName, libcProvider, handler);
-        statLayout = new MacOSStatLayout(getRuntime());
     }
 
     public FileStat allocateStat() {
