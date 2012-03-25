@@ -70,7 +70,7 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>0.6.1-SNAPSHOT</version>
+      <version>0.7.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
