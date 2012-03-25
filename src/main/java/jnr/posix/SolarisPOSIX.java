@@ -1,19 +1,20 @@
 package jnr.posix;
 
-import static jnr.constants.platform.Errno.*;
-
-import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
-import java.io.FileDescriptor;
+import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.Platform;
+
+import java.io.FileDescriptor;
+
+import static jnr.constants.platform.Errno.ENOENT;
 
 final class SolarisPOSIX extends BaseNativePOSIX {
     SolarisPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
         super(libraryName, libc, handler);
     }
     
-    public BaseHeapFileStat allocateStat() {
-        return Platform.IS_32_BIT ? new SolarisHeapFileStat(this) : new Solaris64FileStat(this);
+    public FileStat allocateStat() {
+        return Platform.IS_32_BIT ? new SolarisFileStat32(this) : new SolarisFileStat64(this);
     }
     
     @Override

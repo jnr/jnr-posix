@@ -1,11 +1,12 @@
 package jnr.posix;
 
-import static jnr.constants.platform.Errno.*;
-
-import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
-import java.io.FileDescriptor;
+import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.Platform;
+
+import java.io.FileDescriptor;
+
+import static jnr.constants.platform.Errno.ENOENT;
 
 final class LinuxPOSIX extends BaseNativePOSIX {
     private volatile boolean use_fxstat64 = true;
@@ -21,11 +22,11 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     }
     
     @Override
-    public BaseHeapFileStat allocateStat() {
+    public FileStat allocateStat() {
         if (Platform.IS_32_BIT) {
-            return new LinuxHeapFileStat(this);
+            return new LinuxFileStat32(this);
         } else {
-            return new Linux64HeapFileStat(this);
+            return new LinuxFileStat64(this);
         }
     }
 
