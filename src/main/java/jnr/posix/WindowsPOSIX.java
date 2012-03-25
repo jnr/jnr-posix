@@ -121,7 +121,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
     
     @Override
-    public BaseHeapFileStat allocateStat() {
+    public FileStat allocateStat() {
         return new WindowsFileStat(this);
     }
 

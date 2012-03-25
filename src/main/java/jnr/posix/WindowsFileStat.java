@@ -1,24 +1,34 @@
 package jnr.posix;
 
-public class WindowsFileStat extends BaseHeapFileStat {
-    public final Signed32 st_dev = new Signed32();
-    public final Signed16 st_ino = new Signed16();
-    public final Signed16 st_mode = new Signed16();
-    public final Signed16 st_nlink = new Signed16();
-    public final Signed16 st_uid = new Signed16();
-    public final Signed16 st_gid = new Signed16();
-    public final Signed32 st_rdev = new Signed32();
-    public final Signed64 st_size = new Signed64();
-    public final Signed64 st_atime = new Signed64();
-    public final Signed64 st_mtime = new Signed64();
-    public final Signed64 st_ctime = new Signed64();
+import jnr.ffi.StructLayout;
+
+public class WindowsFileStat extends BaseFileStat {
+    private static final class Layout extends StructLayout {
+
+        private Layout(jnr.ffi.Runtime runtime) {
+            super(runtime);
+        }
+
+        public final Signed32 st_dev = new Signed32();
+        public final Signed16 st_ino = new Signed16();
+        public final Signed16 st_mode = new Signed16();
+        public final Signed16 st_nlink = new Signed16();
+        public final Signed16 st_uid = new Signed16();
+        public final Signed16 st_gid = new Signed16();
+        public final Signed32 st_rdev = new Signed32();
+        public final Signed64 st_size = new Signed64();
+        public final Signed64 st_atime = new Signed64();
+        public final Signed64 st_mtime = new Signed64();
+        public final Signed64 st_ctime = new Signed64();
+    }
+    private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
     public WindowsFileStat(NativePOSIX posix) {
-        super(posix);
+        super(posix, layout);
     }
 
     public long atime() {
-        return st_atime.get();
+        return layout.st_atime.get(memory);
     }
 
     public long blockSize() {
@@ -26,55 +36,55 @@ public class WindowsFileStat extends BaseHeapFileStat {
     }
 
     public long blocks() {
-        return (st_size.get() + 512 - 1) / 512;
+        return (layout.st_size.get(memory) + 512 - 1) / 512;
     }
 
     public long ctime() {
-        return st_ctime.get();
+        return layout.st_ctime.get(memory);
     }
 
     public long dev() {
-        return st_dev.get();
+        return layout.st_dev.get(memory);
     }
 
     public int gid() {
-        return st_gid.get();
+        return layout.st_gid.get(memory);
     }
 
     public long ino() {
-        return st_ino.get();
+        return layout.st_ino.get(memory);
     }
 
     public int mode() {
-        return st_mode.get() & ~(S_IWGRP | S_IWOTH) & 0xffff;
+        return layout.st_mode.get(memory) & ~(S_IWGRP | S_IWOTH) & 0xffff;
     }
 
     public long mtime() {
-        return st_mtime.get();
+        return layout.st_mtime.get(memory);
     }
 
     public int nlink() {
-        return st_nlink.get();
+        return layout.st_nlink.get(memory);
     }
 
     public long rdev() {
-        return st_rdev.get();
+        return layout.st_rdev.get(memory);
     }
 
     public long st_size() {
-        return st_size.get();
+        return layout.st_size.get(memory);
     }
 
     public int uid() {
-        return st_uid.get();
+        return layout.st_uid.get(memory);
     }
 
-    // FIXME: Implement 
+    // FIXME: Implement
     @Override
     public boolean groupMember(int gid) {
         return true;
     }
-    
+
     @Override
     public boolean isExecutable() {
         if (isOwned()) return (mode() & S_IXUSR) != 0;
@@ -98,7 +108,7 @@ public class WindowsFileStat extends BaseHeapFileStat {
     public boolean isOwned() {
         return true;
     }
-    
+
     // FIXME: Implement
     @Override
     public boolean isROwned() {
@@ -112,7 +122,7 @@ public class WindowsFileStat extends BaseHeapFileStat {
 
         return true;
     }
-    
+
     @Override
     public boolean isReadableReal() {
         if (isROwned()) return (mode() & S_IRUSR) != 0;
@@ -142,16 +152,16 @@ public class WindowsFileStat extends BaseHeapFileStat {
 
     @Override
     public java.lang.String toString() {
-        return "st_dev: " + st_dev.get() +
+        return "st_dev: " + layout.st_dev.get(memory) +
                 ", st_mode: " + Integer.toOctalString(mode()) +
-                ", st_nlink: " + st_nlink.get() +
-                ", st_rdev: " + st_rdev.get() +
-                ", st_size: " + st_size.get() +
-                ", st_uid: " + st_uid.get() +
-                ", st_gid: " + st_gid.get() +
-                ", st_atime: " + st_atime.get() +
-                ", st_ctime: " + st_ctime.get() +
-                ", st_mtime: " + st_mtime.get() +
-                ", st_ino: " + st_ino.get();
+                ", layout.st_nlink: " + layout.st_nlink.get(memory) +
+                ", layout.st_rdev: " + layout.st_rdev.get(memory) +
+                ", layout.st_size: " + layout.st_size.get(memory) +
+                ", layout.st_uid: " + layout.st_uid.get(memory) +
+                ", layout.st_gid: " + layout.st_gid.get(memory) +
+                ", layout.st_atime: " + layout.st_atime.get(memory) +
+                ", layout.st_ctime: " + layout.st_ctime.get(memory) +
+                ", layout.st_mtime: " + layout.st_mtime.get(memory) +
+                ", layout.st_ino: " + layout.st_ino.get(memory);
     }
 }
