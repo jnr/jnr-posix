@@ -1,17 +1,15 @@
 package jnr.posix;
 
-import static jnr.constants.platform.Errno.*;
-
 import jnr.constants.platform.Errno;
 import jnr.ffi.LastError;
 import jnr.ffi.Memory;
+import jnr.ffi.Pointer;
+import jnr.ffi.Struct;
 import jnr.ffi.byref.IntByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
-import jnr.ffi.Pointer;
 import jnr.ffi.mapper.ToNativeContext;
 import jnr.ffi.mapper.ToNativeConverter;
-import jnr.ffi.Struct;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.ProcessMaker;
 
@@ -373,7 +371,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return nativeFileActions;
     }
 
-    public abstract BaseHeapFileStat allocateStat();
+    public abstract FileStat allocateStat();
     
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
@@ -387,17 +385,24 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
     };
 
-    public static final ToNativeConverter<FileStat, Struct> FileStatConverter = new ToNativeConverter<FileStat, Struct>() {
+    public static final ToNativeConverter<FileStat, Pointer> FileStatConverter = new ToNativeConverter<FileStat, Pointer>() {
 
-        public Struct toNative(FileStat value, ToNativeContext context) {
-            if (!(value instanceof Struct)) {
-                throw new IllegalArgumentException("FileStat instance is not a struct");
+        public Pointer toNative(FileStat value, ToNativeContext context) {
+            if (value instanceof BaseFileStat) {
+                return ((BaseFileStat) value).memory;
+
+            } else if (value instanceof Struct) {
+                return Struct.getMemory((Struct) value);
+
+            } else if (value == null) {
+                return null;
             }
-            return (Struct) value;
+
+            throw new IllegalArgumentException("instance of " + value.getClass() + " is not a struct");
         }
 
-        public Class<Struct> nativeType() {
-            return Struct.class;
+        public Class<Pointer> nativeType() {
+            return Pointer.class;
         }
 
     };

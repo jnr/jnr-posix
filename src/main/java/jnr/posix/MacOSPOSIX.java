@@ -1,16 +1,19 @@
 package jnr.posix;
 
+import jnr.ffi.*;
 import jnr.ffi.mapper.FromNativeContext;
-import jnr.ffi.Pointer;
 
 
 final class MacOSPOSIX extends BaseNativePOSIX {
+    final MacOSStatLayout statLayout;
+
     MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         super(libraryName, libcProvider, handler);
+        statLayout = new MacOSStatLayout(getRuntime());
     }
 
-    public BaseHeapFileStat allocateStat() {
-        return new MacOSHeapFileStat(this);
+    public FileStat allocateStat() {
+        return new MacOSFileStat(this);
     }
     
     @Override

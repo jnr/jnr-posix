@@ -31,83 +31,63 @@
 
 package jnr.posix;
 
-public final class MacOSHeapFileStat extends BaseHeapFileStat {
-    public final class time_t extends SignedLong {
+public final class MacOSFileStat extends BaseFileStat {
+    private final MacOSStatLayout layout;
+
+    public MacOSFileStat(MacOSPOSIX posix) {
+        super(posix, posix.statLayout);
+        layout = posix.statLayout;
     }
-    public final Signed32  st_dev = new Signed32();
-    public final Signed32  st_ino = new Signed32();
-    public final Signed16  st_mode = new Signed16();
-    public final Signed16  st_nlink = new Signed16();
-    public final Signed32  st_uid = new Signed32();
-    public final Signed32  st_gid = new Signed32();
-    public final Signed32  st_rdev = new Signed32();
-    public final time_t st_atime = new time_t();
-    public final SignedLong   st_atimensec = new SignedLong();
-    public final time_t st_mtime = new time_t();
-    public final SignedLong   st_mtimensec = new SignedLong();
-    public final time_t st_ctime = new time_t();
-    public final SignedLong   st_ctimensec = new SignedLong();
-    public final Signed64  st_size = new Signed64();
-    public final Signed64  st_blocks = new Signed64();
-    public final Signed32  st_blksize = new Signed32();
-    public final Signed32  st_flags = new Signed32();
-    public final Signed32  st_gen = new Signed32();
-    public final Signed32  st_lspare = new Signed32();
-    public final Signed64  st_qspare0 = new Signed64();
-    public final Signed64  st_qspare1 = new Signed64();
-    
-    public MacOSHeapFileStat(NativePOSIX posix) {
-        super(posix);
-    }
+
     public long atime() {
-        return st_atime.get();
+        return layout.st_atime.get(memory);
     }
 
     public long blocks() {
-        return st_blocks.get();
+        return layout.st_blocks.get(memory);
     }
 
     public long blockSize() {
-        return st_blksize.get();
+        return layout.st_blksize.get(memory);
     }
 
     public long ctime() {
-        return st_ctime.get();
+        return layout.st_ctime.get(memory);
     }
 
     public long dev() {
-        return st_dev.get();
+        return layout.st_dev.get(memory);
     }
 
     public int gid() {
-        return st_gid.get();
+        return layout.st_gid.get(memory);
     }
 
     public long ino() {
-        return st_ino.get();
+        return layout.st_ino.get(memory);
     }
 
     public int mode() {
-        return st_mode.get() & 0xffff;
+        return layout.st_mode.get(memory) & 0xffff;
     }
 
     public long mtime() {
-        return st_mtime.get();
+        return layout.st_mtime.get(memory);
     }
 
     public int nlink() {
-        return st_nlink.get();
+        return layout.st_nlink.get(memory);
     }
 
     public long rdev() {
-        return st_rdev.get();
+        return layout.st_rdev.get(memory);
     }
 
     public long st_size() {
-        return st_size.get();
+        return layout.st_size.get(memory);
     }
 
     public int uid() {
-        return st_uid.get();
+        return layout.st_uid.get(memory);
     }
 }
