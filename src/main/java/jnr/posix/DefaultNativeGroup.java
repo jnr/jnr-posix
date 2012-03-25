@@ -26,6 +26,8 @@
 
 package jnr.posix;
 
+import jnr.ffi.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,37 +39,48 @@ import java.util.List;
  * </p>
  */
 public final class DefaultNativeGroup extends NativeGroup implements Group {
-    final jnr.ffi.Runtime runtime;
-    public final UTF8StringRef gr_name = new UTF8StringRef();   // name
-    public final UTF8StringRef gr_passwd = new UTF8StringRef(); // group password (encrypted)
-    public final Signed32 gr_gid = new Signed32();       // group id
-    public final Pointer gr_mem = new Pointer();
-    
+    static final class Layout extends StructLayout {
+        public Layout(jnr.ffi.Runtime runtime) {
+            super(runtime);
+        }
+
+        public final UTF8StringRef gr_name = new UTF8StringRef();   // name
+        public final UTF8StringRef gr_passwd = new UTF8StringRef(); // group password (encrypted)
+        public final Signed32 gr_gid = new Signed32();       // group id
+        public final Pointer gr_mem = new Pointer();
+    }
+
+    static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
+    private final Pointer memory;
+
     DefaultNativeGroup(jnr.ffi.Pointer memory) {
-        super(memory.getRuntime());
-        this.runtime = memory.getRuntime();
-        useMemory(memory);
+        super(memory.getRuntime(), layout);
+        this.memory = memory;
     }
 
     public java.lang.String getName() {
-        return gr_name.get();
+        return layout.gr_name.get(memory);
     }
+
     public java.lang.String getPassword() {
-        return gr_passwd.get();
+        return layout.gr_passwd.get(memory);
     }
+
     public long getGID() {
-        return gr_gid.get();
+        return layout.gr_gid.get(memory);
     }
+
     public java.lang.String[] getMembers() {
-        int size = runtime.addressSize();
-        int i=0;
         List<java.lang.String> lst = new ArrayList<java.lang.String>();
-        jnr.ffi.Pointer ptr = gr_mem.get();
-        while (ptr.getPointer(i) != null) {
-            lst.add(ptr.getPointer(i).getString(0));
-            i+=size;
+
+        jnr.ffi.Pointer ptr = layout.gr_mem.get(memory);
+        Pointer member;
+        int ptrSize = runtime.addressSize();
+        for (int i = 0; (member = ptr.getPointer(i)) != null; i += ptrSize) {
+            lst.add(member.getString(0));
         }
-        return lst.toArray(new java.lang.String[0]);
+
+        return lst.toArray(new java.lang.String[lst.size()]);
     }
 
 }

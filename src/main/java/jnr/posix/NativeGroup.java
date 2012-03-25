@@ -1,9 +1,12 @@
 package jnr.posix;
 
-import jnr.ffi.Struct;
+import jnr.ffi.StructLayout;
 
-public abstract class NativeGroup extends Struct implements Group {
-    NativeGroup(jnr.ffi.Runtime runtime) {
-        super(runtime);
+public abstract class NativeGroup implements Group {
+    protected final jnr.ffi.Runtime runtime;
+    protected final StructLayout structLayout;
+    NativeGroup(jnr.ffi.Runtime runtime, StructLayout structLayout) {
+        this.runtime = runtime;
+        this.structLayout = structLayout;
     }
 }
