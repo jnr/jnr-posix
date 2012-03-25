@@ -1,14 +1,12 @@
 package jnr.posix;
 
-import jnr.ffi.Struct;
+import jnr.ffi.Pointer;
 
 
-public abstract class NativePasswd extends Struct implements Passwd {
-    NativePasswd(jnr.ffi.Runtime runtime) {
-        super(runtime);
-    }
+public abstract class NativePasswd implements Passwd {
+    protected final Pointer memory;
+
     NativePasswd(jnr.ffi.Pointer pointer) {
-        super(pointer.getRuntime());
-        useMemory(pointer);
+        this.memory = pointer;
     }
 }
