@@ -452,11 +452,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         int handle = (int)helper.gethandle(fd);
 
         int type = ((WindowsLibC)libc()).GetFileType(handle);
-        if (type == FILE_TYPE_CHAR) {
-            return true;
-        } else {
-            return false;
-        }
+        return type == FILE_TYPE_CHAR;
     }
 
     @Override
