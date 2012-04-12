@@ -51,6 +51,7 @@ public class Chmod {
             // group and setuid/gid are ignored, no way to do them fast. Should we fall back on slow?
             if (!setPermissions(file, other, false)) return -1;
             if (!setPermissions(file, user, true)) return -1;
+            return 0;
         } else {
             // slow version
             try {

@@ -5,6 +5,9 @@
 
 package jnr.posix;
 
+import java.io.File;
+import java.io.IOException;
+
 import jnr.posix.JavaPOSIX;
 import jnr.posix.POSIX;
 import jnr.posix.Passwd;
@@ -50,6 +53,20 @@ public class JavaPOSIXTest {
     @Test public void uid() {
         
     }
+
+	@Test
+	public void chmodTest() throws IOException {
+		// create a tmp file
+		String fName = "test.dat";
+		File file = new File(fName);
+		file.createNewFile();
+		// test ..
+		assertEquals("chmod: ", 0, posix.chmod(fName, 0));
+		assertEquals("chmod: ", 0, posix.chmod(fName, 0777));
+		// .. and delete
+		file.delete();
+	}
+
     @Test public void getpwuid() {
         Passwd pwd = posix.getpwuid(posix.getuid());
         assertNotNull("getpwuid failed", pwd);
