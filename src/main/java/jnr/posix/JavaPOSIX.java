@@ -12,6 +12,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
+import jnr.constants.platform.Errno;
+import jnr.constants.platform.Sysconf;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.Platform;
 import jnr.posix.util.ProcessMaker;
@@ -365,6 +367,21 @@ final class JavaPOSIX implements POSIX {
         handler.unimplementedError(message);
         
         return -1;
+    }
+
+    public long sysconf(Sysconf name) {
+        switch (name) {
+            case _SC_CLK_TCK:
+                return JavaTimes.HZ;
+
+            default:
+                errno(Errno.EOPNOTSUPP.intValue());
+                return -1;
+        }
+    }
+
+    public Times times() {
+        return new JavaTimes();
     }
     
     static final class LoginInfo {

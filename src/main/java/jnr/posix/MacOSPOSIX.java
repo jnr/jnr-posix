@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
 import jnr.ffi.mapper.FromNativeContext;
 
@@ -32,6 +33,14 @@ final class MacOSPOSIX extends BaseNativePOSIX {
             handler.unimplementedError("lchown");
             return -1;
         }
+    }
+
+    public long sysconf(Sysconf name) {
+        return libc().sysconf(name);
+    }
+
+    public Times times() {
+        return NativeTimes.times(this);
     }
     
     public static final PointerConverter PASSWD = new PointerConverter() {

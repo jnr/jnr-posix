@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.Platform;
@@ -43,7 +44,17 @@ final class SolarisPOSIX extends BaseNativePOSIX {
     public int stat(String path, FileStat stat) {
         return libc().stat64(path, stat);
     }
-    
+
+
+    public long sysconf(Sysconf name) {
+        return libc().sysconf(name);
+    }
+
+    public Times times() {
+        return NativeTimes.times(this);
+    }
+
+
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new SolarisPasswd((Pointer) arg) : null;

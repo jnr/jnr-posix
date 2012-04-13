@@ -1,6 +1,8 @@
 package jnr.posix;
 
+import com.sun.tools.corba.se.idl.constExpr.*;
 import jnr.constants.platform.Errno;
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.LastError;
 import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
@@ -43,6 +45,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public final LibC libc() {
         return libc;
+    }
+
+    POSIXHandler handler() {
+        return handler;
     }
 
     public int chmod(String filename, int mode) {
@@ -372,7 +378,22 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public abstract FileStat allocateStat();
-    
+
+    public long sysconf(Sysconf name) {
+        switch (name) {
+            case _SC_CLK_TCK:
+                return JavaTimes.HZ;
+
+            default:
+                errno(Errno.EOPNOTSUPP.intValue());
+                return -1;
+        }
+    }
+
+    public Times times() {
+        return new JavaTimes();
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;
@@ -405,5 +426,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             return Pointer.class;
         }
 
+    };
+
+    public static final ToNativeConverter<NativeTimes, Pointer> TimesConverter = new ToNativeConverter<NativeTimes, Pointer>() {
+
+        public Pointer toNative(NativeTimes value, ToNativeContext context) {
+            return value.memory;
+        }
+
+        public Class<Pointer> nativeType() {
+            return Pointer.class;
+        }
     };
 }

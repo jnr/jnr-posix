@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.Platform;
@@ -120,6 +121,14 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         } else {
             return old_stat(path);
         }
+    }
+
+    public long sysconf(Sysconf name) {
+        return libc().sysconf(name);
+    }
+
+    public Times times() {
+        return NativeTimes.times(this);
     }
     
     public static final PointerConverter PASSWD = new PointerConverter() {

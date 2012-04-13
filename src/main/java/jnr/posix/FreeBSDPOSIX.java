@@ -31,6 +31,7 @@
 
 package jnr.posix;
 
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
 
@@ -42,7 +43,16 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
     public FileStat allocateStat() {
         return new FreeBSDFileStat(this);
     }
-    
+
+    public long sysconf(Sysconf name) {
+        return libc().sysconf(name);
+    }
+
+    public Times times() {
+        return NativeTimes.times(this);
+    }
+
+
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new FreeBSDPasswd((Pointer) arg) : null;

@@ -1,12 +1,12 @@
 package jnr.posix;
 
+import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public interface POSIX {
     FileStat allocateStat();
@@ -86,6 +86,9 @@ public interface POSIX {
     LibC libc();
     ProcessMaker newProcessMaker(String... command);
     ProcessMaker newProcessMaker();
+
+    public long sysconf(Sysconf name);
+    public Times times();
 
     public static abstract class SpawnFileAction {
         abstract boolean act(POSIX posix, Pointer nativeFileActions);
