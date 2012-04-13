@@ -115,14 +115,35 @@ public class Finder {
                     continue;
                 }
                 
-                FileStat stat = posix.allocateStat(); 
-                int value = posix.libc().stat(filename, stat);
-                if (value >= 0) {
-                    if (!executableOnly) return filename;
-                    
-                    if (!stat.isDirectory() && stat.isExecutable()) {
-                        return filename;
-                    }
+                if (isMatch(posix, executableOnly, filename)) {
+                    return filename;
+                }
+            }
+        } else {
+            if (length > 1 && Character.isLetter(name.charAt(0)) && name.charAt(1) == '/') {
+                if (isMatch(posix, executableOnly, name)) {
+                    return name;
+                } else {
+                    return null;
+                }
+            }
+
+            String[] paths = path.split(PS);
+            for (String currentPath : paths) {
+                int currentPathLength = currentPath.length();
+
+                if (currentPath == null || currentPathLength == 0) {
+                    continue;
+                }
+
+                if (!currentPath.endsWith("/") && !currentPath.endsWith("\\")) {
+                    currentPath += "/";
+                }
+
+                String filename = currentPath + name;
+
+                if (isMatch(posix, executableOnly, filename)) {
+                    return filename;
                 }
             }
         }
@@ -130,6 +151,22 @@ public class Finder {
         return null;
     }
     
+    private static boolean isMatch(POSIX posix, boolean executableOnly, String filename)
+    {
+        FileStat stat = posix.allocateStat();
+        int value = posix.libc().stat(filename, stat);
+        if (value >= 0) {
+            if (!executableOnly) {
+                return true;
+            }
+
+            if (!stat.isDirectory() && stat.isExecutable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static String addExtension(String path) {
         for (String extension : EXECUTABLE_EXTENSIONS.keySet()) {
             String newPath = path + extension;
