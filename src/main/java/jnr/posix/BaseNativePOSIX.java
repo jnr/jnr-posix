@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import com.sun.tools.corba.se.idl.constExpr.*;
+import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.LastError;
@@ -436,6 +437,17 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
         public Class<Pointer> nativeType() {
             return Pointer.class;
+        }
+    };
+
+    public static final ToNativeConverter<Constant, Integer> ConstantConverter = new ToNativeConverter<Constant, Integer>() {
+
+        public Integer toNative(Constant value, ToNativeContext context) {
+            return value.intValue();
+        }
+
+        public Class<Integer> nativeType() {
+            return Integer.class;
         }
     };
 }

@@ -1,6 +1,7 @@
 package jnr.posix;
 
 
+import jnr.constants.Constant;
 import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.mapper.ToNativeConverter;
 import jnr.ffi.mapper.TypeMapper;
@@ -38,6 +39,9 @@ final class POSIXTypeMapper implements TypeMapper {
 
         } else if (NativeTimes.class.isAssignableFrom(klazz)) {
             return BaseNativePOSIX.TimesConverter;
+
+        } else if (Constant.class.isAssignableFrom(klazz)) {
+            return BaseNativePOSIX.ConstantConverter;
         }
 
         return null;
