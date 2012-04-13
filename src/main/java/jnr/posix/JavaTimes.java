@@ -1,6 +1,6 @@
 package jnr.posix;
 
-public class JavaTimes implements Times {
+final class JavaTimes implements Times {
     private static final long startTime = System.currentTimeMillis();
     static final long HZ = 1000;
 
