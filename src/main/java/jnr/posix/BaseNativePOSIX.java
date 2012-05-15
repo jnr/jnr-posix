@@ -1,6 +1,5 @@
 package jnr.posix;
 
-import com.sun.tools.corba.se.idl.constExpr.*;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
