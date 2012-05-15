@@ -6,6 +6,7 @@ import static jnr.constants.platform.windows.LastError.*;
 import jnr.ffi.Pointer;
 import jnr.ffi.Type;
 import jnr.ffi.byref.IntByReference;
+import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.provider.jffi.Provider;
 
 import java.io.FileDescriptor;
@@ -593,4 +594,10 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // TODO: On winnt reverse sign of pid
         return new WindowsChildRecord(processInformation.getProcess(), processInformation.getPid());
     }
+
+    public static final PointerConverter PASSWD = new PointerConverter() {
+        public Object fromNative(Object arg, FromNativeContext ctx) {
+            throw new RuntimeException("no support for native passwd");
+        }
+    };
 }
