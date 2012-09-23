@@ -70,12 +70,12 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>0.7.6</version>
+      <version>0.7.7</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-constants</artifactId>
-      <version>0.8.3</version>
+      <version>0.8.4</version>
     </dependency>
   </dependencies>
 
