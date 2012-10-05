@@ -554,7 +554,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     private WindowsChildRecord createProcess(String command, String program, 
             WindowsSecurityAttributes securityAttributes, Pointer input,
             Pointer output, Pointer error, String[] envp) {
-        if (command == null || program == null) {
+        if (command == null && program == null) {
             handler.error(EFAULT, "no command or program specified");
             return null;
         }

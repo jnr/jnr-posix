@@ -31,6 +31,8 @@ public class WindowsHelpers {
     }
 
     public static byte[] toWString(String string) {
+        if (string == null) return null;
+        
         string += (char) 0;
 
         try {
@@ -114,7 +116,10 @@ public class WindowsHelpers {
     public static String joinArgv(String command, String[] argv, boolean escape) {
         StringBuilder buffer = new StringBuilder();
 
-        if (command != null) buffer.append(command);
+        if (command != null) {
+            buffer.append(command);
+            buffer.append(' ');
+        }
 
         int last_index = argv.length - 1;
         for (int i = 0; i <= last_index; i++) {
