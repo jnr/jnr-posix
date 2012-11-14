@@ -1,21 +1,15 @@
 package jnr.posix.util;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
 
 public class Finder {
-    private static String PS = Platform.IS_WINDOWS == true ? ";" : ":";
-    
-    private static Map<String, String> EXECUTABLE_EXTENSIONS = new HashMap() {{
-       put(".exe", ".exe");
-       put(".com", ".com");
-       put(".cmd", ".cmd");
-       put(".bat", ".bat");
-    }};
-    
+    private static final Collection<String> EXECUTABLE_EXTENSIONS
+            = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(".exe", ".com", ".cmd", ".bat")));
+
     public static String findFileInPath(POSIX posix, String name, String path) {
         if (path == null || path.length() == 0) path = System.getenv("PATH");
         
@@ -66,7 +60,7 @@ public class Finder {
                 c = name.charAt(i);
             }
 
-            if (extensionIndex >= 0 && EXECUTABLE_EXTENSIONS.get(name.substring(extensionIndex).toLowerCase()) == null) {
+            if (extensionIndex >= 0 && !EXECUTABLE_EXTENSIONS.contains(name.substring(extensionIndex).toLowerCase())) {
                 extensionIndex = -1;
             }
             
@@ -84,7 +78,7 @@ public class Finder {
                 return null;
             }
 
-            String[] paths = path.split(PS);
+            String[] paths = path.split(File.pathSeparator);
             for (int p = 0; p < paths.length; p++) {
                 String currentPath = paths[p];
                 int currentPathLength = currentPath.length();
@@ -106,7 +100,7 @@ public class Finder {
                 }
                 
                 String filename = currentPath + name;
-                if (Platform.IS_WINDOWS) filename.replace('/', '\\');
+                if (Platform.IS_WINDOWS) filename = filename.replace('/', '\\');
                 
                 if (Platform.IS_WINDOWS && executableOnly && extensionIndex == -1) {
                     String extendedFilename = addExtension(filename);
@@ -114,16 +108,11 @@ public class Finder {
                     if (extendedFilename != null) return extendedFilename;
                     continue;
                 }
-                
-                FileStat stat = posix.allocateStat(); 
-                int value = posix.libc().stat(filename, stat);
-                if (value >= 0) {
-                    if (!executableOnly) return filename;
-                    
-                    if (!stat.isDirectory() && stat.isExecutable()) {
-                        return filename;
-                    }
-                }
+
+                try {
+                    FileStat stat = posix.stat(filename);
+                    if (!executableOnly || (!stat.isDirectory() && stat.isExecutable())) return filename;
+                } catch (Throwable t) {}
             }
         }
         
@@ -131,7 +120,7 @@ public class Finder {
     }
     
     public static String addExtension(String path) {
-        for (String extension : EXECUTABLE_EXTENSIONS.keySet()) {
+        for (String extension : EXECUTABLE_EXTENSIONS) {
             String newPath = path + extension;
             
             if (new File(newPath).exists()) return newPath;
