@@ -84,7 +84,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
                 FileStat stat = allocateStat();
 
                 if (((LinuxLibC) libc()).__lxstat64(statVersion, path, stat) < 0) {
-                    handler.error(ENOENT, path);
+                    handler.error(Errno.valueOf(errno()), path);
                 }
 
                 return stat;
@@ -114,7 +114,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
                 FileStat stat = allocateStat();
 
                 if (((LinuxLibC) libc()).__xstat64(statVersion, path, stat) < 0) {
-                    handler.error(ENOENT, path);
+                    handler.error(Errno.valueOf(errno()), path);
                 }
 
                 return stat;
