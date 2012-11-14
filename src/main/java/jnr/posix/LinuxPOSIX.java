@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
@@ -31,36 +32,40 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         }
     }
 
-    private final FileStat old_fstat(FileDescriptor fileDescriptor) {
+    private FileStat old_fstat(int fd) {
         try {
-            return super.fstat(fileDescriptor);
+            return super.fstat(fd);
         } catch (UnsatisfiedLinkError ex2) {
             handler.unimplementedError("fstat");
             return null;
         }
     }
 
+
     @Override
-    public FileStat fstat(FileDescriptor fileDescriptor) {
+    public FileStat fstat(int fd) {
         if (use_fxstat64) {
             try {
                 FileStat stat = allocateStat();
-                int fd = helper.getfd(fileDescriptor);
-
                 if (((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat) < 0) {
-                    handler.error(ENOENT, "" + fd);
+                    handler.error(Errno.valueOf(errno()), Integer.toString(fd));
                 }
 
                 return stat;
 
             } catch (UnsatisfiedLinkError ex) {
                 use_fxstat64 = false;
-                return old_fstat(fileDescriptor);
+                return old_fstat(fd);
             }
 
         } else {
-            return old_fstat(fileDescriptor);
+            return old_fstat(fd);
         }
+    }
+
+    @Override
+    public FileStat fstat(FileDescriptor fileDescriptor) {
+        return fstat(helper.getfd(fileDescriptor));
     }
 
     private final FileStat old_lstat(String path) {
