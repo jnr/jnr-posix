@@ -22,6 +22,7 @@ public interface WindowsLibC extends LibC {
     public int _open_osfhandle(int handle, int flags);
 
     public int _wmkdir(@In byte[] path);
+    public int _rmkdir(@In byte[] path);
     public int _wchmod(@In byte[] path, int pmode);
     
     @StdCall

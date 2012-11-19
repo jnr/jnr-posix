@@ -473,6 +473,19 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int rmdir(String path) {
+        byte[] widePath = WindowsHelpers.toWPath(path);
+        int res = ((WindowsLibC)libc())._rmkdir(widePath);
+        
+        if (res < 0) {
+            int errno = errno();
+            handler.error(Errno.valueOf(errno), path);
+        }
+
+        return res;
+    }
+
+    @Override
     public int link(String oldpath, String newpath) {
         byte[] oldWPath = WindowsHelpers.toWPath(oldpath);
         byte[] newWPath = WindowsHelpers.toWPath(newpath);
