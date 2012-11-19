@@ -211,6 +211,10 @@ final class LazyPOSIX implements POSIX {
         return posix().readlink(path);
     }
 
+    public int rmdir(String path) {
+        return posix().rmdir(path);
+    }
+
     public int setegid(int egid) {
         return posix().setegid(egid);
     }

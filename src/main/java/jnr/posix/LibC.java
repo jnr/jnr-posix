@@ -81,6 +81,7 @@ public interface LibC {
     int lstat(CharSequence path, @Out @Transient FileStat stat);
     int lstat64(CharSequence path, @Out @Transient FileStat stat);
     int mkdir(CharSequence path, int mode);
+    int rmdir(CharSequence path);
     int stat(CharSequence path, @Out @Transient FileStat stat);
     int stat64(CharSequence path, @Out @Transient FileStat stat);
     int symlink(CharSequence oldpath, CharSequence newpath);

@@ -220,6 +220,10 @@ final class JavaPOSIX implements POSIX {
         return helper.mkdir(path, mode);
     }
 
+    public int rmdir(String path) {
+        return helper.rmdir(path);
+    }
+
     public String readlink(String path) throws IOException {
         // TODO: this should not be hardcoded to 256 bytes
         ByteBuffer buffer = ByteBuffer.allocateDirect(256);

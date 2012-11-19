@@ -63,6 +63,7 @@ public interface POSIX {
     int lstat(String path, FileStat stat);
     int mkdir(String path, int mode);
     String readlink(String path) throws IOException;
+    int rmdir(String path);
     int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
     int setsid();
     int setgid(int gid);

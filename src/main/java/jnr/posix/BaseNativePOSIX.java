@@ -251,6 +251,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
         return res;
     }
+
+    public int rmdir(String path) {
+        int res = libc().rmdir(path);
+
+        if (res < 0) handler.error(Errno.valueOf(errno()), path);
+
+        return res;
+    }
     
     public int setenv(String envName, String envValue, int overwrite) {
         return libc().setenv(envName, envValue, overwrite);

@@ -175,6 +175,11 @@ public class JavaLibCHelper {
         
         return 0;
     }
+
+    public int rmdir(String path) {
+        return new JavaSecuredFile(path).rmdir() ? 0 : -1;
+    }
+
     
     public int stat(String path, FileStat stat) {
         // FIXME: Bulletproof this or no?
