@@ -475,7 +475,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int rmdir(String path) {
         byte[] widePath = WindowsHelpers.toWPath(path);
-        int res = ((WindowsLibC)libc())._rmkdir(widePath);
+        int res = ((WindowsLibC)libc())._wrmkdir(widePath);
         
         if (res < 0) {
             int errno = errno();
