@@ -177,7 +177,7 @@ public class JavaLibCHelper {
     }
 
     public int rmdir(String path) {
-        return new JavaSecuredFile(path).rmdir() ? 0 : -1;
+        return new JavaSecuredFile(path).delete() ? 0 : -1;
     }
 
     
