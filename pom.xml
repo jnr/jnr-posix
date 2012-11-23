@@ -51,6 +51,11 @@
       <name>Thomas E Enebo</name>
       <email>tom.enebo@gmail.com</email>
     </developer>
+    <developer>
+      <id>wmeissner</id>
+      <name>Wayne Meissner</name>
+      <email>wmeissner@gmail.com</email>
+    </developer>
   </developers>
 
   <properties>
