@@ -83,7 +83,6 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
-    @Override
     public int fstat(int fd, FileStat stat) {
         handler.unimplementedError("fstat unimplemented");
         return -1;
