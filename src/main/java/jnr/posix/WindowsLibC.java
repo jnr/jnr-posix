@@ -22,9 +22,9 @@ public interface WindowsLibC extends LibC {
     
     public int _open_osfhandle(@intptr_t long handle, int flags);
 
-    public int _wmkdir(@In byte[] path);
-    public int _wrmdir(@In byte[] path);
-    public int _wchmod(@In byte[] path, int pmode);
+    public int _wmkdir(@In WString path);
+    public int _wrmdir(@In WString path);
+    public int _wchmod(@In WString path, int pmode);
     
     @StdCall
     public boolean CreateProcessW(byte[] applicationName, 
@@ -54,7 +54,7 @@ public interface WindowsLibC extends LibC {
     public Pointer GetStdHandle(int stdHandle);
 
     @StdCall
-    public boolean CreateHardLinkW(byte[] oldname, byte[] newName, @In byte[] reserved);
+    public boolean CreateHardLinkW(@In WString oldname, @In WString newName, @In WString reserved);
 
     @StdCall
     int CreateFileW(
@@ -69,8 +69,8 @@ public interface WindowsLibC extends LibC {
     
     @StdCall
     boolean SetEnvironmentVariableW(
-            byte[] envName,
-            byte[] envValue);
+            @In WString envName,
+            @In WString envValue);
 
     @StdCall
     boolean SetFileTime(

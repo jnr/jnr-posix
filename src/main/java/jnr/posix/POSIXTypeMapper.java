@@ -44,6 +44,9 @@ final class POSIXTypeMapper implements TypeMapper {
 
         } else if (Constant.class.isAssignableFrom(klazz)) {
             return BaseNativePOSIX.ConstantConverter;
+
+        } else if (WString.class.isAssignableFrom(klazz)) {
+            return WString.Converter;
         }
 
         return null;

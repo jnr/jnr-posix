@@ -135,8 +135,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int chmod(String filename, int mode) {
-        byte[] wpath = WindowsHelpers.toWPath(filename);
-        return ((WindowsLibC) libc())._wchmod(wpath, mode);
+        return ((WindowsLibC) libc())._wchmod(WString.path(filename), mode);
     }
     
     @Override
@@ -301,9 +300,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // POSIX specified.  Existence is success if overwrite is 0.
         // if (overwrite == 0 && getenv(envName) != null) return 0;
         
-        byte[] wideName = WindowsHelpers.toWString(envName);
-        byte[] wideValue = WindowsHelpers.toWString(envValue);
-        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(wideName, wideValue)) {
+        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(new WString(envName), new WString(envValue))) {
             handler.error(EINVAL, envName);
             return -1;
         }
@@ -313,7 +310,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int unsetenv(String envName) {
-        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(WindowsHelpers.toWString(envName), null)) {
+        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(new WString(envName), null)) {
             handler.error(EINVAL, envName);
             return -1;
         }
@@ -458,7 +455,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int mkdir(String path, int mode) {
-        byte[] widePath = WindowsHelpers.toWPath(path);
+        WString widePath = WString.path(path);
         int res = -1;
         
         if (((WindowsLibC)libc())._wmkdir(widePath) == 0) {
@@ -474,8 +471,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int rmdir(String path) {
-        byte[] widePath = WindowsHelpers.toWPath(path);
-        int res = ((WindowsLibC)libc())._wrmdir(widePath);
+        int res = ((WindowsLibC)libc())._wrmdir(WString.path(path));
         
         if (res < 0) {
             int errno = errno();
@@ -487,10 +483,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int link(String oldpath, String newpath) {
-        byte[] oldWPath = WindowsHelpers.toWPath(oldpath);
-        byte[] newWPath = WindowsHelpers.toWPath(newpath);
-
-        boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkW(newWPath, oldWPath, null);
+        boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkW(WString.path(newpath), WString.path(oldpath), null);
 
         if (!linkCreated) {
             int error = errno();
