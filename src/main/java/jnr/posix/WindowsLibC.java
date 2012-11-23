@@ -5,6 +5,7 @@ import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.annotations.StdCall;
 import jnr.ffi.byref.IntByReference;
+import jnr.ffi.types.intptr_t;
 
 import java.nio.ByteBuffer;
 
@@ -19,10 +20,10 @@ public interface WindowsLibC extends LibC {
     public static final int INFINITE = -1;
 
     
-    public int _open_osfhandle(int handle, int flags);
+    public int _open_osfhandle(@intptr_t long handle, int flags);
 
     public int _wmkdir(@In byte[] path);
-    public int _wrmkdir(@In byte[] path);
+    public int _wrmdir(@In byte[] path);
     public int _wchmod(@In byte[] path, int pmode);
     
     @StdCall
