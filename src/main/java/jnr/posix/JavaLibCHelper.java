@@ -30,15 +30,16 @@ package jnr.posix;
 
 import static jnr.constants.platform.Errno.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.IOException;
+import java.io.*;
 
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
+
+import jnr.constants.platform.Errno;
 import jnr.posix.util.Chmod;
 import jnr.posix.util.ExecIt;
 import jnr.posix.util.FieldAccess;
@@ -54,6 +55,8 @@ public class JavaLibCHelper {
     public static final int STDOUT = 1;
     public static final int STDERR = 2;
 
+    private static final ThreadLocal<Integer> errno = new ThreadLocal<Integer>();
+
     private final POSIXHandler handler;
     private final Field fdField, handleField;
     private final Map<String, String> env;
@@ -66,19 +69,32 @@ public class JavaLibCHelper {
         this.fdField = FieldAccess.getProtectedField(FileDescriptor.class,
 						     "fd");
     }
+
+    static int errno() {
+        Integer errno = JavaLibCHelper.errno.get();
+        return errno != null ? errno : 0;
+    }
+
+    static void errno(int errno) {
+        JavaLibCHelper.errno.set(errno);
+    }
+
+    static void errno(Errno errno) {
+        JavaLibCHelper.errno.set(errno.intValue());
+    }
     
     public int chmod(String filename, int mode) {
         return Chmod.chmod(new JavaSecuredFile(filename), Integer.toOctalString(mode));
     }
 
     public int chown(String filename, int user, int group) {
-        ExecIt launcher = new ExecIt(handler);
+        PosixExec launcher = new PosixExec(handler);
         int chownResult = -1;
         int chgrpResult = -1;
         
         try {
-            if (user != -1) chownResult = launcher.runAndWait("chown", ""+user, filename);
-            if (group != -1) chgrpResult = launcher.runAndWait("chgrp ", ""+user, filename);
+            if (user != -1) chownResult = launcher.runAndWait("chown", "" + user, filename);
+            if (group != -1) chgrpResult = launcher.runAndWait("chgrp ", "" + user, filename);
         } catch (Exception e) {}
         
         return chownResult != -1 && chgrpResult != -1 ? 0 : 1;
@@ -144,10 +160,12 @@ public class JavaLibCHelper {
 
     public int link(String oldpath, String newpath) {
         try {
-            return new ExecIt(handler).runAndWait("ln", oldpath, newpath);
-        } catch (Exception e) {}
+            return new PosixExec(handler).runAndWait("ln", oldpath, newpath);
 
-        return -1;  // We tried and failed for some reason. Indicate error.
+        } catch (Exception e) {
+            errno(EINVAL);
+            return -1;  // We tried and failed for some reason. Indicate error.
+        }
     }
     
     public int lstat(String path, FileStat stat) {
@@ -203,16 +221,19 @@ public class JavaLibCHelper {
 
     public int symlink(String oldpath, String newpath) {
         try {
-            return new ExecIt(handler).runAndWait("ln", "-s", oldpath, newpath);
-        } catch (Exception e) {} 
-            
-        return -1;  // We tried and failed for some reason. Indicate error.
+            return new PosixExec(handler).runAndWait("ln", "-s", oldpath, newpath);
+
+        } catch (Exception e) {
+            errno(EEXIST);
+            return -1;  // We tried and failed for some reason. Indicate error.
+        }
+
     }
 
     public int readlink(String oldpath, ByteBuffer buffer, int length) throws IOException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            new ExecIt(handler).runAndWait(baos, "readlink", oldpath);
+            new PosixExec(handler).runAndWait(baos, "readlink", oldpath);
             
             byte[] bytes = baos.toByteArray();
             
@@ -222,12 +243,82 @@ public class JavaLibCHelper {
             
             return buffer.position();
         } catch (InterruptedException e) {
-        } 
+        }
 
+        errno(ENOENT);
         return -1; // We tried and failed for some reason. Indicate error.
     }
 
     public Map<String, String> getEnv() {
         return env;
+    }
+
+    private static class PosixExec extends ExecIt {
+        private final AtomicReference<Errno> errno = new AtomicReference<Errno>(Errno.EINVAL);
+        private final ErrnoParsingOutputStream errorStream = new ErrnoParsingOutputStream(errno);
+
+        public PosixExec(POSIXHandler handler) {
+            super(handler);
+        }
+
+        private int parseResult(int result) {
+            if (result == 0) {
+                return result;
+            }
+            errno(errno.get());
+            return -1;
+        }
+
+        public int runAndWait(String... args) throws IOException, InterruptedException {
+            return runAndWait(handler.getOutputStream(), errorStream, args);
+        }
+
+        public int runAndWait(OutputStream output, String... args) throws IOException, InterruptedException {
+            return runAndWait(output, errorStream, args);
+        }
+
+        public int runAndWait(OutputStream output, OutputStream error, String... args) throws IOException, InterruptedException {
+            return parseResult(super.runAndWait(output, error, args));
+        }
+    }
+
+    private static final class ErrnoParsingOutputStream extends OutputStream {
+        private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        private final AtomicReference<Errno> errno;
+
+        private ErrnoParsingOutputStream(AtomicReference<Errno> errno) {
+            this.errno = errno;
+        }
+
+        @Override
+        public void write(int b) throws IOException {
+            if (b != '\r' && b != '\n' && b != -1) {
+                baos.write(b);
+            } else if (baos.size() > 0) {
+                String errorString = baos.toString();
+                baos.reset();
+                parseError(errorString);
+            }
+        }
+
+        static Map<Pattern, Errno> errorPatterns = new HashMap<Pattern, Errno>();
+        static {
+            errorPatterns.put(Pattern.compile("File exists"), Errno.EEXIST);
+            errorPatterns.put(Pattern.compile("Operation not permitted"), Errno.EPERM);
+            errorPatterns.put(Pattern.compile("No such file or directory"), Errno.ENOENT);
+            errorPatterns.put(Pattern.compile("Input/output error"), Errno.EIO);
+            errorPatterns.put(Pattern.compile("Not a directory"), Errno.ENOTDIR);
+            errorPatterns.put(Pattern.compile("No space left on device"), Errno.ENOSPC);
+            errorPatterns.put(Pattern.compile("Read-only file system"), Errno.EROFS);
+            errorPatterns.put(Pattern.compile("Too many links"), Errno.EMLINK);
+        }
+
+        void parseError(String errorString) {
+            for (Map.Entry<Pattern, Errno> entry : errorPatterns.entrySet()) {
+                if (entry.getKey().matcher(errorString).find()) {
+                    errno.set(entry.getValue());
+                }
+            }
+        }
     }
 }

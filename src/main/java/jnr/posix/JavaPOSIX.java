@@ -351,11 +351,11 @@ final class JavaPOSIX implements POSIX {
     }
 
     public int errno() {
-        return 0;
+        return JavaLibCHelper.errno();
     }
 
     public void errno(int value) {
-        // do nothing, errno is unsupported
+        JavaLibCHelper.errno(value);
     }
 
     public boolean isNative() {

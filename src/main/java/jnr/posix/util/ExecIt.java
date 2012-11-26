@@ -36,7 +36,7 @@ import java.io.OutputStream;
 import jnr.posix.POSIXHandler;
 
 public class ExecIt {
-    POSIXHandler handler;
+    protected final POSIXHandler handler;
 
     /** Creates a new instance of ShellLauncher */
     public ExecIt(POSIXHandler handler) {
@@ -48,10 +48,14 @@ public class ExecIt {
     }
 
     public int runAndWait(OutputStream output, String... args) throws IOException, InterruptedException {
+        return runAndWait(output, handler.getErrorStream(), args);
+    }
+
+    public int runAndWait(OutputStream output, OutputStream error, String... args) throws IOException, InterruptedException {
         Process process = run(args);
-        
-        handleStreams(process, handler.getInputStream(), output, handler.getErrorStream());
-        
+
+        handleStreams(process, handler.getInputStream(), output, error);
+
         return process.waitFor();
     }
 
