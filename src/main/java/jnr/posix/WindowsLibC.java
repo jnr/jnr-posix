@@ -20,7 +20,7 @@ public interface WindowsLibC extends LibC {
     public static final int INFINITE = -1;
 
     
-    public int _open_osfhandle(@intptr_t long handle, int flags);
+    public int _open_osfhandle(HANDLE handle, int flags);
 
     public int _wmkdir(@In WString path);
     public int _wrmdir(@In WString path);
@@ -39,25 +39,25 @@ public interface WindowsLibC extends LibC {
                                  WindowsProcessInformation processInformation);
     
     @StdCall
-    public boolean GetExitCodeProcess(int handle, @Out Pointer exitCode);
+    public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);
 
     @StdCall
-    public boolean GetExitCodeProcess(int handle, @Out IntByReference exitCode);
+    public boolean GetExitCodeProcess(HANDLE handle, @Out IntByReference exitCode);
 
     @StdCall
-    public int GetFileType(int handle);
+    public int GetFileType(HANDLE handle);
 
     @StdCall
-    public int GetFileSize(int handle, Pointer outSizeHigh);
+    public int GetFileSize(HANDLE handle, @Out IntByReference outSizeHigh);
     
     @StdCall
-    public Pointer GetStdHandle(int stdHandle);
+    public HANDLE GetStdHandle(int stdHandle);
 
     @StdCall
     public boolean CreateHardLinkW(@In WString oldname, @In WString newName, @In WString reserved);
 
     @StdCall
-    int CreateFileW(
+    HANDLE CreateFileW(
             byte[] lpFileName,
             int dwDesiredAccess,
             int dwShareMode,
@@ -74,15 +74,15 @@ public interface WindowsLibC extends LibC {
 
     @StdCall
     boolean SetFileTime(
-            int hFile,
+            HANDLE  hFile,
             FileTime lpCreationTime,
             FileTime lpLastAccessTime,
             FileTime lpLastWriteTime
     );
 
     @StdCall
-    boolean CloseHandle(int handle);
+    boolean CloseHandle(HANDLE handle);
     
     @StdCall
-    int WaitForSingleObject(int handle, int milliseconds);
+    int WaitForSingleObject(HANDLE handle, int milliseconds);
 }

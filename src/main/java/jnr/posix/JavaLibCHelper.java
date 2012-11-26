@@ -112,16 +112,16 @@ public class JavaLibCHelper {
         return -1;
     }
 
-    public long gethandle(FileDescriptor descriptor) {
-        if (descriptor == null || handleField == null) return -1;
+    public HANDLE gethandle(FileDescriptor descriptor) {
+        if (descriptor == null || handleField == null) return HANDLE.valueOf(-1);
         try {
-            return handleField.getLong(descriptor);
+            return HANDLE.valueOf(handleField.getLong(descriptor));
         } catch (SecurityException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
         }
 
-        return -1;
+        return HANDLE.valueOf(-1);
     }
 
     public String getlogin() {

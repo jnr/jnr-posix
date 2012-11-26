@@ -30,6 +30,9 @@ final class POSIXTypeMapper implements TypeMapper {
             return null;
         } else if (Group.class.isAssignableFrom(klazz)) {
             return BaseNativePOSIX.GROUP;
+
+        } else if (HANDLE.class.isAssignableFrom(klazz)) {
+            return HANDLE.Converter;
         }
         
         return null;
@@ -47,6 +50,9 @@ final class POSIXTypeMapper implements TypeMapper {
 
         } else if (WString.class.isAssignableFrom(klazz)) {
             return WString.Converter;
+
+        } else if (HANDLE.class.isAssignableFrom(klazz)) {
+            return HANDLE.Converter;
         }
 
         return null;

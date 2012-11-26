@@ -19,12 +19,12 @@ public class WindowsProcessInformation extends jnr.ffi.Struct {
         super(runtime);
     }
     
-    public int getThread() {
-        return hThread.intValue();
+    public HANDLE getThread() {
+        return new HANDLE(hThread.get());
     }
     
-    public Pointer getProcess() {
-        return hProcess;
+    public HANDLE getProcess() {
+        return new HANDLE(hProcess.get());
     }
     
     public int getPid() {

@@ -10,24 +10,24 @@ package jnr.posix;
  * @author enebo
  */
 public class WindowsStartupInfo extends jnr.ffi.Struct {
-    Unsigned32  cb = new Unsigned32();
-    Pointer lpReserved = new Pointer(); //new UTF8String();
-    Pointer lpDesktop = new Pointer(); //UTF8String();
-    Pointer lpTitle = new Pointer(); //new UTF8String();
-    Unsigned32  dwX = new Unsigned32();
-    Unsigned32  dwY = new Unsigned32();
-    Unsigned32  dwXSize = new Unsigned32();
-    Unsigned32  dwYSize = new Unsigned32();
-    Unsigned32  dwXCountChars = new Unsigned32();
-    Unsigned32  dwYCountChars = new Unsigned32();
-    Unsigned32  dwFillAttribute = new Unsigned32();
-    Unsigned32  dwFlags = new Unsigned32();
-    Unsigned16   wShowWindow = new Unsigned16();
-    Unsigned16   cbReserved2 = new Unsigned16();
-    Pointer lpReserved2 = new Pointer();
-    Pointer standardInput = new Pointer();
-    Pointer standardOutput = new Pointer();
-    Pointer standardError = new Pointer();
+    public final Unsigned32  cb = new Unsigned32();
+    public final Pointer lpReserved = new Pointer(); //new UTF8String();
+    public final Pointer lpDesktop = new Pointer(); //UTF8String();
+    public final Pointer lpTitle = new Pointer(); //new UTF8String();
+    public final Unsigned32  dwX = new Unsigned32();
+    public final Unsigned32  dwY = new Unsigned32();
+    public final Unsigned32  dwXSize = new Unsigned32();
+    public final Unsigned32  dwYSize = new Unsigned32();
+    public final Unsigned32  dwXCountChars = new Unsigned32();
+    public final Unsigned32  dwYCountChars = new Unsigned32();
+    public final Unsigned32  dwFillAttribute = new Unsigned32();
+    public final Unsigned32  dwFlags = new Unsigned32();
+    public final Unsigned16   wShowWindow = new Unsigned16();
+    public final Unsigned16   cbReserved2 = new Unsigned16();
+    public final Pointer lpReserved2 = new Pointer();
+    public final Pointer standardInput = new Pointer();
+    public final Pointer standardOutput = new Pointer();
+    public final Pointer standardError = new Pointer();
   
     public WindowsStartupInfo(jnr.ffi.Runtime runtime) {
         super(runtime);
@@ -36,16 +36,16 @@ public class WindowsStartupInfo extends jnr.ffi.Struct {
     public void setFlags(int value) {
         dwFlags.set(value);
     }
-            
-    public void setStandardInput(jnr.ffi.Pointer standardInput) {
-        this.standardInput.set(standardInput);
+
+    public void setStandardInput(HANDLE standardInput) {
+        this.standardInput.set(standardInput.toPointer());
     }
-    
-    public void setStandardOutput(jnr.ffi.Pointer standardOutput) {
-        this.standardOutput.set(standardOutput);
+
+    public void setStandardOutput(HANDLE standardOutput) {
+        this.standardOutput.set(standardOutput.toPointer());
     }
-    
-    public void setStandardError(jnr.ffi.Pointer standardError) {
-        this.standardError.set(standardError);
+
+    public void setStandardError(HANDLE standardError) {
+        this.standardError.set(standardError.toPointer());
     }
 }

@@ -5,22 +5,20 @@
 
 package jnr.posix;
 
-import jnr.ffi.Struct.Pointer;
-
 /**
  *
  * @author enebo
  */
 public class WindowsChildRecord {
-    private Pointer process;
-    int pid;
+    private final HANDLE process;
+    private final int pid;
 
-    public WindowsChildRecord(Pointer process, int pid) {
+    public WindowsChildRecord(HANDLE process, int pid) {
         this.process = process;
         this.pid = pid;
     }
     
-    public Pointer getProcess() {
+    public HANDLE getProcess() {
         return process;
     }
     

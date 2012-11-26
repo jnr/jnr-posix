@@ -318,7 +318,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return 0;
     }
 
-    private static final int INVALID_HANDLE_VALUE = -1;
+
 
     private static final int GENERIC_ALL = 0x10000000;
     private static final int GENERIC_READ = 0x80000000;
@@ -351,9 +351,9 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             if (mTime == null) mTime = nowFile;
         }
 
-        int handle = libc.CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        HANDLE handle = libc.CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
                 null, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
-        if (handle == INVALID_HANDLE_VALUE) {
+        if (!handle.isValid()) {
             return -1;             // TODO proper error handling
         }
 
@@ -447,7 +447,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public boolean isatty(FileDescriptor fd) {
-        int handle = (int)helper.gethandle(fd);
+        HANDLE handle = helper.gethandle(fd);
 
         int type = ((WindowsLibC)libc()).GetFileType(handle);
         return type == FILE_TYPE_CHAR;
@@ -535,7 +535,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             IntByReference exitCode = new IntByReference();
 
             WindowsLibC libc = (WindowsLibC) libc();
-            int handle = child.getProcess().intValue();
+            HANDLE handle = child.getProcess();
             
             libc.WaitForSingleObject(handle, WindowsLibC.INFINITE);
             libc.GetExitCodeProcess(handle, exitCode);
@@ -558,8 +558,8 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     // Used by spawn and aspawn (Note: See fixme below...envp not hooked up yet)
     private WindowsChildRecord createProcess(String command, String program, 
-            WindowsSecurityAttributes securityAttributes, Pointer input,
-            Pointer output, Pointer error, String[] envp) {
+            WindowsSecurityAttributes securityAttributes, HANDLE input,
+            HANDLE output, HANDLE error, String[] envp) {
         if (command == null && program == null) {
             handler.error(EFAULT, "no command or program specified");
             return null;
