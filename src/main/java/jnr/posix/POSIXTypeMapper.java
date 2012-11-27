@@ -2,9 +2,7 @@ package jnr.posix;
 
 
 import jnr.constants.Constant;
-import jnr.ffi.mapper.FromNativeConverter;
-import jnr.ffi.mapper.ToNativeConverter;
-import jnr.ffi.mapper.TypeMapper;
+import jnr.ffi.mapper.*;
 import jnr.posix.util.Platform;
 
 final class POSIXTypeMapper implements TypeMapper {
@@ -56,5 +54,13 @@ final class POSIXTypeMapper implements TypeMapper {
         }
 
         return null;
+    }
+
+    public final ToNativeConverter getToNativeConverter(Class klazz, ToNativeContext context) {
+        return getToNativeConverter(klazz);
+    }
+
+    public final FromNativeConverter getFromNativeConverter(Class klazz, FromNativeContext context) {
+        return getFromNativeConverter(klazz);
     }
 }
