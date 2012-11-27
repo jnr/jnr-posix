@@ -19,6 +19,11 @@ public interface WindowsLibC extends LibC {
     
     public static final int INFINITE = -1;
 
+    public static final int FILE_TYPE_DISK = 0x0001;
+    public static final int FILE_TYPE_CHAR = 0x0002;
+    public static final int FILE_TYPE_PIPE = 0x0003;
+    public static final int FILE_TYPE_REMOTE = 0x8000;
+    public static final int FILE_TYPE_UNKNOWN = 0x0000;
     
     public int _open_osfhandle(HANDLE handle, int flags);
 
