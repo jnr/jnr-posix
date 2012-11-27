@@ -1,6 +1,6 @@
 package jnr.posix;
 
-import jnr.ffi.Platform;
+import jnr.posix.util.Platform;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -24,7 +24,7 @@ public class HANDLETest {
 
     @Test
     public void stdinHandle() {
-        if (!Platform.getNativePlatform().isUnix()) {
+        if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE).isValid());
             assertEquals(WindowsLibC.FILE_TYPE_CHAR, kernel32().GetFileType(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE)));
         }
@@ -32,7 +32,7 @@ public class HANDLETest {
 
     @Test
     public void stdoutHandle() {
-        if (!Platform.getNativePlatform().isUnix()) {
+        if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE).isValid());
             assertEquals(WindowsLibC.FILE_TYPE_CHAR, kernel32().GetFileType(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE)));
         }
@@ -40,7 +40,7 @@ public class HANDLETest {
 
     @Test
     public void stderrHandle() {
-        if (!Platform.getNativePlatform().isUnix()) {
+        if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE).isValid());
             assertEquals(WindowsLibC.FILE_TYPE_CHAR, kernel32().GetFileType(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE)));
         }
