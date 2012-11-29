@@ -3,14 +3,15 @@ package jnr.posix;
 import jnr.ffi.Pointer;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
+import jnr.ffi.byref.ByReference;
 import jnr.ffi.byref.IntByReference;
 import jnr.ffi.byref.ShortByReference;
 
 public interface UnixLibC extends LibC {
-    public int posix_spawn(@Out IntByReference pid, @In CharSequence path, @In Pointer fileActions,
+    public int posix_spawn(@Out ByReference pid, @In CharSequence path, @In Pointer fileActions,
                            @In Pointer attr, @In CharSequence[] argv, @In CharSequence[] envp);
 
-    public int posix_spawnp(@Out IntByReference pid, @In CharSequence path, @In Pointer fileActions,
+    public int posix_spawnp(@Out ByReference pid, @In CharSequence path, @In Pointer fileActions,
                             @In Pointer attr, @In CharSequence[] argv, @In CharSequence[] envp);
 
     public int posix_spawn_file_actions_init(Pointer fileActions);

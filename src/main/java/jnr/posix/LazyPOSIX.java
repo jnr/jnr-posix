@@ -303,7 +303,7 @@ final class LazyPOSIX implements POSIX {
         return posix().unsetenv(envName);
     }
 
-    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions, Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions, Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         return posix().posix_spawnp(path, fileActions, argv, envp);
     }
 

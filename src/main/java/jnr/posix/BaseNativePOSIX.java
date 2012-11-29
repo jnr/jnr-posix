@@ -3,11 +3,11 @@ package jnr.posix;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
-import jnr.ffi.LastError;
-import jnr.ffi.Memory;
-import jnr.ffi.Pointer;
-import jnr.ffi.Struct;
+import jnr.ffi.*;
+import jnr.ffi.byref.AbstractNumberReference;
+import jnr.ffi.byref.ByReference;
 import jnr.ffi.byref.IntByReference;
+import jnr.ffi.byref.LongLongByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.mapper.ToNativeContext;
@@ -346,7 +346,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return true;
     }
 
-    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         
         CharSequence[] nativeArgv = new CharSequence[argv.size()];
@@ -358,9 +358,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return posix_spawnp(path, fileActions, nativeArgv, nativeEnv);
     }
 
-    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
             CharSequence[] argv, CharSequence[] envp) {
-        IntByReference pid = new IntByReference(-1);
+        AbstractNumberReference<? extends Number> pid = Library.getRuntime(libc()).findType(TypeAlias.pid_t).size() == 4
+                ? new IntByReference(-1) : new LongLongByReference(-1);
         Pointer nativeFileActions = nativeFileActions(fileActions);
 
         try {
@@ -372,10 +373,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
         }
 
-        return pid.getValue();
+        return pid.longValue();
     }
 
-    private final Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
+    private Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
         Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);
         ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeFileActions);
         for (SpawnFileAction action : fileActions) {

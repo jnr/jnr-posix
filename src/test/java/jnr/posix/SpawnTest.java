@@ -1,0 +1,147 @@
+package jnr.posix;
+
+import jnr.constants.platform.windows.OpenFlags;
+import jnr.ffi.Library;
+import jnr.ffi.Platform;
+import jnr.ffi.annotations.Out;
+import org.junit.*;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static jnr.posix.SpawnFileAction.*;
+
+public class SpawnTest {
+    private static POSIX posix;
+    private static LibC libc;
+    private static final List<String> emptyEnv = Arrays.asList(new String[0]);
+    private static final List<SpawnFileAction> emptyActions = Arrays.asList(new SpawnFileAction[0]);
+
+    public static interface LibC {
+        int pipe(@Out int[] fds);
+    }
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
+        libc = Library.loadLibrary(LibC.class, "c");
+    }
+
+
+    @Test public void validPid() {
+        if (Platform.getNativePlatform().isUnix()) {
+            long pid = posix.posix_spawnp("true", emptyActions, Arrays.asList("true"), emptyEnv);
+            assertTrue(pid != -1);
+        }
+    }
+
+    @Test public void outputPipe() {
+        if (Platform.getNativePlatform().isUnix()) {
+            int[] fds = { -1, -1 };
+            assertFalse(libc.pipe(fds) < 0);
+            assertNotSame(-1, fds[0]);
+            assertNotSame(-1, fds[1]);
+
+            List<SpawnFileAction> actions = Arrays.asList(dup(fds[1], 1));
+            long pid = posix.posix_spawnp("echo", actions, Arrays.asList("echo", "bar"), emptyEnv);
+            assertTrue(pid != -1);
+            ByteBuffer output = ByteBuffer.allocate(100);
+            long nbytes = posix.libc().read(fds[0], output, output.remaining());
+            assertEquals(4L, nbytes);
+            output.position((int) nbytes).flip();
+            byte[] bytes = new byte[output.remaining()];
+            output.get(bytes);
+            assertEquals("bar", new String(bytes).trim());
+        }
+    }
+
+    @Test public void inputPipe() {
+        if (Platform.getNativePlatform().isUnix()) {
+            int[] outputPipe = { -1, -1 };
+            int[] inputPipe = { -1, -1 };
+            assertFalse(libc.pipe(outputPipe) < 0);
+            assertFalse(libc.pipe(inputPipe) < 0);
+            assertNotSame(-1, outputPipe[0]);
+            assertNotSame(-1, outputPipe[1]);
+            assertNotSame(-1, inputPipe[0]);
+            assertNotSame(-1, inputPipe[1]);
+
+            List<SpawnFileAction> actions = Arrays.asList(dup(inputPipe[0], 0), dup(outputPipe[1], 1));
+            long pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "-"), emptyEnv);
+            assertTrue(pid != -1);
+            assertEquals(3, posix.libc().write(inputPipe[1], ByteBuffer.wrap("foo".getBytes(Charset.forName("US-ASCII"))), 3));
+            posix.libc().close(inputPipe[1]); // send EOF to process
+
+            // close the write side of the output pipe, so read() will return immediately once the process has exited
+            posix.libc().close(outputPipe[1]);
+
+            ByteBuffer output = ByteBuffer.allocate(100);
+            long nbytes = posix.libc().read(outputPipe[0], output, output.remaining());
+            assertEquals(3L, nbytes);
+            output.position((int) nbytes).flip();
+            byte[] bytes = new byte[output.remaining()];
+            output.get(bytes);
+            assertEquals("foo", new String(bytes).trim());
+        }
+    }
+
+    @Test public void inputFile() throws IOException {
+        if (Platform.getNativePlatform().isUnix()) {
+            File inputFile = File.createTempFile("foo", null);
+            FileOutputStream inputStream = new FileOutputStream(inputFile);
+            inputStream.write("foo".getBytes("US-ASCII"));
+            inputStream.close();
+            int[] outputPipe = { -1, -1 };
+            assertFalse(libc.pipe(outputPipe) < 0);
+            assertNotSame(-1, outputPipe[0]);
+            assertNotSame(-1, outputPipe[1]);
+
+            List<SpawnFileAction> actions = Arrays.asList(open(inputFile.getAbsolutePath(), 0, OpenFlags.O_RDONLY.intValue(), 0444),
+                    dup(outputPipe[1], 1));
+            long pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "-"), emptyEnv);
+            assertTrue(pid != -1);
+            ByteBuffer output = ByteBuffer.allocate(100);
+            long nbytes = posix.libc().read(outputPipe[0], output, output.remaining());
+            assertEquals(3L, nbytes);
+            output.position((int) nbytes).flip();
+            byte[] bytes = new byte[output.remaining()];
+            output.get(bytes);
+            assertEquals("foo", new String(bytes).trim());
+        }
+    }
+
+    @Test public void closeInput() throws IOException {
+        if (Platform.getNativePlatform().isUnix()) {
+            int[] outputPipe = { -1, -1 };
+            int[] inputPipe = { -1, -1 };
+            assertFalse(libc.pipe(outputPipe) < 0);
+            assertFalse(libc.pipe(inputPipe) < 0);
+            assertNotSame(-1, outputPipe[0]);
+            assertNotSame(-1, outputPipe[1]);
+            assertNotSame(-1, inputPipe[0]);
+            assertNotSame(-1, inputPipe[1]);
+
+            List<SpawnFileAction> actions = Arrays.asList(dup(outputPipe[1], 1),
+                    open("/dev/null", 2, OpenFlags.O_WRONLY.intValue(), 0444),
+                    close(inputPipe[0]), close(inputPipe[1]));
+            long pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "/dev/fd/" + inputPipe[0]), emptyEnv);
+            assertTrue(pid != -1);
+            assertEquals(3, posix.libc().write(inputPipe[1], ByteBuffer.wrap("foo".getBytes(Charset.forName("US-ASCII"))), 3));
+            posix.libc().close(inputPipe[1]); // send EOF to process
+
+            // close the write side of the output pipe, so read() will return immediately once the process has exited
+            posix.libc().close(outputPipe[1]);
+
+            // Output from the process on stdout should be empty
+            ByteBuffer output = ByteBuffer.allocate(100);
+            long nbytes = posix.libc().read(outputPipe[0], output, output.remaining());
+            assertEquals(0L, nbytes);
+        }
+    }
+}

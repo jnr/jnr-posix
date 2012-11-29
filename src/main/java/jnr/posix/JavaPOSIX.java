@@ -347,7 +347,7 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("setpriority");
     }
 
-    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions, Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions, Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         return unimplementedInt("posix_spawnp");
     }
 

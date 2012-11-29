@@ -91,6 +91,6 @@ public interface POSIX {
     public long sysconf(Sysconf name);
     public Times times();
 
-    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
 }
