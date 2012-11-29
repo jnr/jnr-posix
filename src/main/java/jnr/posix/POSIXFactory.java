@@ -105,7 +105,7 @@ public class POSIXFactory {
     private static final class DefaultLibCProvider implements LibCProvider {
 
         private static final class SingletonHolder {
-            public static LibC libc = Library.loadLibrary(LibC.class, defaultOptions, "c");
+            public static LibC libc = Library.loadLibrary(UnixLibC.class, defaultOptions, "c");
         }
 
         public final LibC getLibC() {

@@ -19,7 +19,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.List;
+import java.util.Collection;
 
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -346,8 +346,8 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return true;
     }
 
-    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
-            List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
+    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+            Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         
         CharSequence[] nativeArgv = new CharSequence[argv.size()];
         argv.toArray(nativeArgv);
@@ -358,26 +358,26 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return posix_spawnp(path, fileActions, nativeArgv, nativeEnv);
     }
 
-    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
+    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
             CharSequence[] argv, CharSequence[] envp) {
         IntByReference pid = new IntByReference(-1);
         Pointer nativeFileActions = nativeFileActions(fileActions);
 
         try {
-            if (libc().posix_spawnp(pid, path, nativeFileActions, null, argv, envp) < 0) {
+            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, null, argv, envp) < 0) {
                 Errno e = Errno.valueOf(errno());
                 handler.error(e, e.description());
             }
         } finally {
-            libc.posix_spawn_file_actions_destroy(nativeFileActions);
+            ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
         }
 
         return pid.getValue();
     }
 
-    private final Pointer nativeFileActions(List<? extends SpawnFileAction> fileActions) {
+    private final Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
         Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);
-        libc().posix_spawn_file_actions_init(nativeFileActions);
+        ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeFileActions);
         for (SpawnFileAction action : fileActions) {
             action.act(this, nativeFileActions);
         }

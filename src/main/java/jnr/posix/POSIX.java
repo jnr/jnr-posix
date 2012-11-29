@@ -6,7 +6,7 @@ import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 public interface POSIX {
     FileStat allocateStat();
@@ -91,52 +91,6 @@ public interface POSIX {
     public long sysconf(Sysconf name);
     public Times times();
 
-    public static abstract class SpawnFileAction {
-        abstract boolean act(POSIX posix, Pointer nativeFileActions);
-    }
-
-    public static final class SpawnDupFileAction extends SpawnFileAction {
-        final int fd, newfd;
-
-        public SpawnDupFileAction(int fd, int newfd) {
-            this.fd = fd;
-            this.newfd = newfd;
-        }
-        
-        public final boolean act(POSIX posix, Pointer nativeFileActions) {
-            return posix.libc().posix_spawn_file_actions_adddup2(nativeFileActions, fd, newfd) == 0;
-        }
-    }
-
-    public static final class SpawnOpenFileAction extends SpawnFileAction {
-        final String path;
-        final int fd;
-        final int flags, mode;
-
-        public SpawnOpenFileAction(String path, int fd, int flags, int mode) {
-            this.path = path;
-            this.fd = fd;
-            this.flags = flags;
-            this.mode = mode;
-        }
-
-        public final boolean act(POSIX posix, Pointer nativeFileActions) {
-            return posix.libc().posix_spawn_file_actions_addopen(nativeFileActions, fd, path, flags, mode) == 0;
-        }
-    }
-
-    public static final class SpawnCloseFileAction extends SpawnFileAction {
-        final int fd;
-
-        public SpawnCloseFileAction(int fd) {
-            this.fd = fd;
-        }
-
-        public final boolean act(POSIX posix, Pointer nativeFileActions) {
-            return posix.libc().posix_spawn_file_actions_addclose(nativeFileActions, fd) == 0;
-        }
-    }
-
-    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions,
-        List<? extends CharSequence> argv, List<? extends CharSequence> envp);
+    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                            Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
 }

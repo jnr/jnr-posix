@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -346,7 +347,7 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("setpriority");
     }
 
-    public int posix_spawnp(String path, List<? extends SpawnFileAction> fileActions, List<? extends CharSequence> argv, List<? extends CharSequence> envp) {
+    public int posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions, Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         return unimplementedInt("posix_spawnp");
     }
 

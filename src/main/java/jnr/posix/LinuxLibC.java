@@ -6,7 +6,7 @@ import jnr.ffi.annotations.Out;
 import jnr.ffi.annotations.Transient;
 import java.nio.ByteBuffer;
 
-public interface LinuxLibC extends LibC {
+public interface LinuxLibC extends UnixLibC {
     public int __fxstat(int version, int fd, @Out @Transient FileStat stat);
     public int __lxstat(int version, CharSequence path, @Out @Transient FileStat stat);
     public int __lxstat(int version, @NulTerminate @In ByteBuffer path, @Out @Transient FileStat stat);
