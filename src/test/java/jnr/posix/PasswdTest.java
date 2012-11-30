@@ -1,14 +1,6 @@
 
 package jnr.posix;
 
-import jnr.posix.LinuxPasswd;
-import jnr.posix.SolarisPasswd;
-import jnr.posix.POSIX;
-import jnr.posix.Passwd;
-import jnr.posix.OpenBSDPasswd;
-import jnr.posix.FreeBSDPasswd;
-import jnr.posix.POSIXFactory;
-import jnr.posix.MacOSPasswd;
 import jnr.posix.util.Platform;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,6 +30,8 @@ public class PasswdTest {
             passwdClass = OpenBSDPasswd.class;
         } else if (Platform.IS_SOLARIS) {
             passwdClass = SolarisPasswd.class;
+        } else if (Platform.IS_WINDOWS) {
+            // Skipping these tests for windows
         } else {
             throw new IllegalArgumentException("Platform not supported");
         }
@@ -57,6 +51,7 @@ public class PasswdTest {
     }
 
     @Test public void getpwnam() {
+        if (Platform.IS_WINDOWS) return;
         final String LOGIN = "root";
         Passwd pwd = posix.getpwnam(LOGIN);
         assertNotNull(pwd);
@@ -65,6 +60,7 @@ public class PasswdTest {
         assertTrue(pwd.getClass().equals(passwdClass));
     }
     @Test public void nonExistantUserReturnsNull() {
+        if (Platform.IS_WINDOWS) return;        
         final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
         assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
     }
