@@ -1,9 +1,7 @@
 
 package jnr.posix;
 
-import jnr.posix.POSIX;
-import jnr.posix.Group;
-import jnr.posix.POSIXFactory;
+import jnr.posix.util.Platform;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -45,6 +43,7 @@ public class GroupTest {
     // @Test
     // public void hello() {}
     @Test public void getgrnam() {
+        if (Platform.IS_WINDOWS) return;
         final String LOGIN = "nogroup";
         Group grp = posix.getgrnam(LOGIN);
         assertNotNull(grp);
@@ -52,11 +51,13 @@ public class GroupTest {
     }
 
     @Test public void nonExistantGroupReturnsNull() {
+        if (Platform.IS_WINDOWS) return;        
         final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
         assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
     }
 
     @Test public void getgrent() {
+        if (Platform.IS_WINDOWS) return;        
         ArrayList<Group> grps = new ArrayList<Group>();
         while (true) {
             Group grp = posix.getgrent();
