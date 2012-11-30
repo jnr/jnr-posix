@@ -59,6 +59,9 @@ public class FileStatTest {
     
     @Test
     public void filestatInt() throws Throwable {
+        // Windows JVM does not embed fd in FileDescriptor so this test as written won't work.
+        if (Platform.IS_WINDOWS) return;
+        
         File f = File.createTempFile("stat", null);
         try {
             FileInputStream fis = new FileInputStream(f);
