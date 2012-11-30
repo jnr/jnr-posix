@@ -59,27 +59,27 @@ public class FileStatTest {
     
     @Test
     public void filestatInt() throws Throwable {
-        // Windows JVM does not embed fd in FileDescriptor so this test as written won't work.
-        if (Platform.IS_WINDOWS) return;
-        
-        File f = File.createTempFile("stat", null);
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            FileDescriptor desc = fis.getFD();
-            int fd = -1;
+        // Windows does not store fd in FileDescriptor so this test wll not work
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            File f = File.createTempFile("stat", null);
             try {
-                Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
-                fd = fdField.getInt(desc);
-            } catch (SecurityException e) {
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalAccessException e) {
+                FileInputStream fis = new FileInputStream(f);
+                FileDescriptor desc = fis.getFD();
+                int fd = -1;
+                try {
+                    Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
+                    fd = fdField.getInt(desc);
+                } catch (SecurityException e) {
+                } catch (IllegalArgumentException e) {
+                } catch (IllegalAccessException e) {
+                }
+                FileStat stat = posix.allocateStat();
+                int result = posix.fstat(fd, stat);
+                assertTrue(fd > 2); // should not be stdin, stdout, stderr
+                assertEquals(0, result);
+            } finally {
+                f.delete();
             }
-            FileStat stat = posix.allocateStat();
-            int result = posix.fstat(fd, stat);
-            assertTrue(fd > 2); // should not be stdin, stdout, stderr
-            assertEquals(0,result);
-        } finally {
-            f.delete();
         }
     }
 

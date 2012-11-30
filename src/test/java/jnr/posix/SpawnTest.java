@@ -29,8 +29,10 @@ public class SpawnTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-        libc = Library.loadLibrary(LibC.class, "c");
+        if (Platform.getNativePlatform().isUnix()) {
+            posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
+            libc = Library.loadLibrary(LibC.class, "c");
+        }
     }
 
 

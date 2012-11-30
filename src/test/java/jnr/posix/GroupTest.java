@@ -1,7 +1,6 @@
 
 package jnr.posix;
 
-import jnr.posix.util.Platform;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -42,36 +41,42 @@ public class GroupTest {
     //
     // @Test
     // public void hello() {}
-    @Test public void getgrnam() {
-        if (Platform.IS_WINDOWS) return;
-        final String LOGIN = "nogroup";
-        Group grp = posix.getgrnam(LOGIN);
-        assertNotNull(grp);
-        assertEquals("Login name not equal", LOGIN, grp.getName());
-    }
-
-    @Test public void nonExistantGroupReturnsNull() {
-        if (Platform.IS_WINDOWS) return;        
-        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-        assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
-    }
-
-    @Test public void getgrent() {
-        if (Platform.IS_WINDOWS) return;        
-        ArrayList<Group> grps = new ArrayList<Group>();
-        while (true) {
-            Group grp = posix.getgrent();
-            if (grp == null) {
-                break;
-            }
-            grps.add(grp);
+    @Test
+    public void getgrnam() {
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            final String LOGIN = "nogroup";
+            Group grp = posix.getgrnam(LOGIN);
+            assertNotNull(grp);
+            assertEquals("Login name not equal", LOGIN, grp.getName());
         }
-        for (Group grp : grps) {
-            assertNotNull(grp.getName());
-            assertNotNull(grp.getPassword());
-            assertNotNull(grp.getGID());
-            for (String member : grp.getMembers()) {
-                assertNotNull(member);
+    }
+
+    @Test
+    public void nonExistantGroupReturnsNull() {
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+            assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
+        }
+    }
+
+    @Test
+    public void getgrent() {
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            ArrayList<Group> grps = new ArrayList<Group>();
+            while (true) {
+                Group grp = posix.getgrent();
+                if (grp == null) {
+                    break;
+                }
+                grps.add(grp);
+            }
+            for (Group grp : grps) {
+                assertNotNull(grp.getName());
+                assertNotNull(grp.getPassword());
+                assertNotNull(grp.getGID());
+                for (String member : grp.getMembers()) {
+                    assertNotNull(member);
+                }
             }
         }
     }

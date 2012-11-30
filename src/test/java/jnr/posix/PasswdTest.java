@@ -51,17 +51,19 @@ public class PasswdTest {
     }
 
     @Test public void getpwnam() {
-        if (Platform.IS_WINDOWS) return;
-        final String LOGIN = "root";
-        Passwd pwd = posix.getpwnam(LOGIN);
-        assertNotNull(pwd);
-        assertEquals("Login name not equal", LOGIN, pwd.getLoginName());
-        
-        assertTrue(pwd.getClass().equals(passwdClass));
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            final String LOGIN = "root";
+            Passwd pwd = posix.getpwnam(LOGIN);
+            assertNotNull(pwd);
+            assertEquals("Login name not equal", LOGIN, pwd.getLoginName());
+
+            assertTrue(pwd.getClass().equals(passwdClass));
+        }
     }
     @Test public void nonExistantUserReturnsNull() {
-        if (Platform.IS_WINDOWS) return;        
-        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-        assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+            assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
+        }
     }
 }
