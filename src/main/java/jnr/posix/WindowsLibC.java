@@ -28,7 +28,7 @@ public interface WindowsLibC extends LibC {
     public int _open_osfhandle(HANDLE handle, int flags);
 
     public int _wmkdir(@In WString path);
-    public int _wrmdir(@In WString path);
+    public boolean RemoveDirectoryW(@In WString path);
     public int _wchmod(@In WString path, int pmode);
     
     @StdCall
@@ -42,6 +42,9 @@ public interface WindowsLibC extends LibC {
                                  @In byte[] currentDirectory,
                                  WindowsStartupInfo startupInfo,
                                  WindowsProcessInformation processInformation);
+
+    public int GetFileAttributesW(@In WString path);
+    public int SetFileAttributesW(@In WString path, int flags);
     
     @StdCall
     public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);

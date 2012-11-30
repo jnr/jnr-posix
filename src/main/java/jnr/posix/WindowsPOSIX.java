@@ -135,7 +135,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int chmod(String filename, int mode) {
-        return ((WindowsLibC) libc())._wchmod(WString.path(filename), mode);
+        return wlibc()._wchmod(WString.path(filename), mode);
     }
     
     @Override
@@ -300,7 +300,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // POSIX specified.  Existence is success if overwrite is 0.
         // if (overwrite == 0 && getenv(envName) != null) return 0;
         
-        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(new WString(envName), new WString(envValue))) {
+        if (!wlibc().SetEnvironmentVariableW(new WString(envName), new WString(envValue))) {
             handler.error(EINVAL, envName);
             return -1;
         }
@@ -310,7 +310,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int unsetenv(String envName) {
-        if (!((WindowsLibC) libc()).SetEnvironmentVariableW(new WString(envName), null)) {
+        if (!wlibc().SetEnvironmentVariableW(new WString(envName), null)) {
             handler.error(EINVAL, envName);
             return -1;
         }
@@ -339,7 +339,6 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
-        WindowsLibC libc = (WindowsLibC) libc();
         byte[] wpath = WindowsHelpers.toWPath(path);
         FileTime aTime = atimeval == null ? null : unixTimeToFileTime(atimeval[0]);
         FileTime mTime = mtimeval == null ? null : unixTimeToFileTime(mtimeval[0]);
@@ -351,14 +350,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             if (mTime == null) mTime = nowFile;
         }
 
-        HANDLE handle = libc.CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        HANDLE handle = wlibc().CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
                 null, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
         if (!handle.isValid()) {
             return -1;             // TODO proper error handling
         }
 
-        boolean timeSet = libc.SetFileTime(handle, null, aTime, mTime);
-        libc.CloseHandle(handle);
+        boolean timeSet = wlibc().SetFileTime(handle, null, aTime, mTime);
+        wlibc().CloseHandle(handle);
 
         return timeSet ? 0 : -1;
     }
@@ -449,7 +448,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     public boolean isatty(FileDescriptor fd) {
         HANDLE handle = helper.gethandle(fd);
 
-        int type = ((WindowsLibC)libc()).GetFileType(handle);
+        int type = wlibc().GetFileType(handle);
         return type == FILE_TYPE_CHAR;
     }
 
@@ -458,8 +457,8 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         WString widePath = WString.path(path);
         int res = -1;
         
-        if (((WindowsLibC)libc())._wmkdir(widePath) == 0) {
-            res = ((WindowsLibC) libc())._wchmod(widePath, mode);
+        if (wlibc()._wmkdir(widePath) == 0) {
+            res = wlibc()._wchmod(widePath, mode);
         }
         
         if (res < 0) {
@@ -468,22 +467,43 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         }
         return res;
     }
-
+    
+    // FIXME: Should this and other fields be part of constantine/jnr-constants?
+    static final int FILE_ATTRIBUTE_READONLY = 1;
+    static final int INVALID_FILE_ATTRIBUTES = -1;
+    
+    /**
+     * The logic here is a bit strange and this copies MRI (Ruby) which may not be language
+     * agnostic, but windows (win7 and others) automatically mark folders as read-only when 
+     * it contains other files and folders within it.  This document explains more: 
+     * http://support.microsoft.com/kb/326549
+     * I think the logic is based around idea that if you removed all other files it would
+     * be empty but will stay marked as read-only.
+     */
     @Override
     public int rmdir(String path) {
-        int res = ((WindowsLibC)libc())._wrmdir(WString.path(path));
+        WString pathW = WString.path(path);
+        int attr = wlibc().GetFileAttributesW(pathW);
+        boolean isReadOnly = attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_READONLY) != 0;
         
-        if (res < 0) {
+        if (isReadOnly) wlibc().SetFileAttributesW(pathW, attr & ~FILE_ATTRIBUTE_READONLY);
+        
+        if (!wlibc().RemoveDirectoryW(pathW)) {
             int errno = errno();
-            handler.error(Errno.valueOf(errno), path);
+
+            if (isReadOnly) wlibc().SetFileAttributesW(pathW, attr & FILE_ATTRIBUTE_READONLY);
+            
+            handler.error(mapErrorToErrno(errno), path);
+            
+            return -1;
         }
 
-        return res;
+        return 0;
     }
 
     @Override
     public int link(String oldpath, String newpath) {
-        boolean linkCreated =  ((WindowsLibC)libc()).CreateHardLinkW(WString.path(newpath), WString.path(oldpath), null);
+        boolean linkCreated =  wlibc().CreateHardLinkW(WString.path(newpath), WString.path(oldpath), null);
 
         if (!linkCreated) {
             int error = errno();
@@ -511,6 +531,10 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         } catch (Exception e) {
             return -1;
         }
+    }
+    
+    private WindowsLibC wlibc() {
+        return (WindowsLibC) libc();
     }
     
     /**
@@ -570,15 +594,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         }
         
         WindowsStartupInfo startupInfo = new WindowsStartupInfo(getRuntime());
-        WindowsLibC libc = (WindowsLibC) libc();
         
         startupInfo.setFlags(STARTF_USESTDHANDLES);
         startupInfo.setStandardInput(input != null ? input :
-                libc.GetStdHandle(WindowsLibC.STD_INPUT_HANDLE));
+                wlibc().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE));
         startupInfo.setStandardOutput(output != null ? output :
-                libc.GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE));
+                wlibc().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE));
         startupInfo.setStandardError(error != null ? input :
-                libc.GetStdHandle(WindowsLibC.STD_ERROR_HANDLE));
+                wlibc().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE));
         
         int creationFlags = WindowsLibC.NORMAL_PRIORITY_CLASS | WindowsLibC.CREATE_UNICODE_ENVIRONMENT;
         WindowsProcessInformation processInformation = new WindowsProcessInformation(getRuntime());
@@ -588,14 +611,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         byte[] programW = WindowsHelpers.toWString(program);
         byte[] cwd = WindowsHelpers.toWString(WindowsHelpers.escapePath(handler.getCurrentWorkingDirectory().toString()) +"\\");
         ByteBuffer commandW = ByteBuffer.wrap(WindowsHelpers.toWString(command));
-        boolean returnValue = libc.CreateProcessW(programW, commandW, 
+        boolean returnValue = wlibc().CreateProcessW(programW, commandW, 
                 securityAttributes, securityAttributes, 
                 securityAttributes.getInheritHandle() ? 1: 0, creationFlags, wideEnv, cwd, 
                 startupInfo, processInformation);
         
         if (!returnValue) return null;
         
-        libc.CloseHandle(processInformation.getThread());
+        wlibc().CloseHandle(processInformation.getThread());
         
         // TODO: On winnt reverse sign of pid
         return new WindowsChildRecord(processInformation.getProcess(), processInformation.getPid());
