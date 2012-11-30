@@ -31,8 +31,6 @@
 
 package jnr.posix;
 
-import jnr.posix.POSIX;
-import jnr.posix.POSIXFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

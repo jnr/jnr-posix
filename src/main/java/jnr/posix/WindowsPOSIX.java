@@ -211,9 +211,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int getgid() {
-        handler.unimplementedError("getgid");
-
-        return -1;
+        return 0;
     }
 
     @Override
