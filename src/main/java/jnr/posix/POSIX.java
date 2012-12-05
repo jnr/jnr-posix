@@ -1,12 +1,12 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
-import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.Collection;
+import jnr.constants.platform.Signal;
 
 public interface POSIX {
     FileStat allocateStat();
@@ -56,6 +56,7 @@ public interface POSIX {
     int getuid();
     boolean isatty(FileDescriptor descriptor);
     int kill(int pid, int signal);
+    SignalHandler signal(Signal sig, SignalHandler handler);
     int lchmod(String filename, int mode);
     int lchown(String filename, int user, int group);
     int link(String oldpath,String newpath);

@@ -40,6 +40,7 @@ import jnr.ffi.byref.ShortByReference;
 import jnr.ffi.types.clock_t;
 
 import java.nio.ByteBuffer;
+import jnr.ffi.annotations.Delegate;
 
 public interface LibC {
     int chmod(CharSequence filename, int mode);
@@ -75,6 +76,10 @@ public interface LibC {
     int setsid();
     int setuid(int uid);
     int kill(int pid, int signal);
+    public interface LibCSignalHandler {
+        @Delegate void signal(int sig);
+    }
+    int signal(int sig, LibCSignalHandler handler);
     int lchmod(CharSequence filename, int mode);
     int lchown(CharSequence filename, int user, int group);
     int link(CharSequence oldpath, CharSequence newpath);

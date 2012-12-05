@@ -18,6 +18,7 @@ import jnr.constants.platform.Sysconf;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.Platform;
 import jnr.posix.util.ProcessMaker;
+import sun.misc.Signal;
 
 final class JavaPOSIX implements POSIX {
     private final POSIXHandler handler;
@@ -190,6 +191,29 @@ final class JavaPOSIX implements POSIX {
 
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
+    }
+    
+    private static class SunMiscSignalHandler implements sun.misc.SignalHandler {
+        final SignalHandler handler;
+        public SunMiscSignalHandler(SignalHandler handler) {
+            this.handler = handler;
+        }
+        
+        public void handle(Signal signal) {
+            handler.handle(signal.getNumber());
+        }
+    }
+    
+    public SignalHandler signal(jnr.constants.platform.Signal sig, final SignalHandler handler) {
+        Signal s = new Signal(sig.name().substring("SIG".length()));
+        
+        sun.misc.SignalHandler oldHandler = Signal.handle(s, new SunMiscSignalHandler(handler));
+        
+        if (oldHandler instanceof SunMiscSignalHandler) {
+            return ((SunMiscSignalHandler)oldHandler).handler;
+        } else {
+            return null;
+        }
     }
 
     public int lchmod(String filename, int mode) {

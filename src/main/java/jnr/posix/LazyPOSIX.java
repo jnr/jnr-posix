@@ -7,7 +7,7 @@ import jnr.posix.util.ProcessMaker;
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
+import jnr.constants.platform.Signal;
 
 final class LazyPOSIX implements POSIX {
 
@@ -181,6 +181,10 @@ final class LazyPOSIX implements POSIX {
 
     public int kill(int pid, int signal) {
         return posix().kill(pid, signal);
+    }
+    
+    public SignalHandler signal(Signal sig, SignalHandler handler) {
+        return posix().signal(sig, handler);
     }
 
     public int lchmod(String filename, int mode) {

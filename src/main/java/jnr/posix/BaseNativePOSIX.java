@@ -5,7 +5,6 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
 import jnr.ffi.byref.AbstractNumberReference;
-import jnr.ffi.byref.ByReference;
 import jnr.ffi.byref.IntByReference;
 import jnr.ffi.byref.LongLongByReference;
 import jnr.ffi.mapper.FromNativeContext;
@@ -20,6 +19,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Hashtable;
+import jnr.constants.platform.Signal;
 
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -27,6 +28,8 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected final String libraryName;
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
+    
+    private final Hashtable<Signal, SignalHandler> signalHandlers = new Hashtable();
     
     BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
@@ -217,6 +220,22 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public int kill(int pid, int signal) {
         return libc().kill(pid, signal);
+    }
+    
+    public SignalHandler signal(Signal sig, final SignalHandler handler) {
+        SignalHandler old = signalHandlers.get(sig);
+        
+        int result = libc().signal(sig.intValue(), new LibC.LibCSignalHandler() {
+            public void signal(int sig) {
+                handler.handle(sig);
+            }
+        });
+        
+        if (result != -1) {
+            signalHandlers.put(sig, handler);
+        }
+        
+        return old;
     }
 
     public int lchmod(String filename, int mode) {
