@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import jnr.constants.platform.Signal;
 
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
@@ -29,7 +30,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
-    private final Hashtable<Signal, SignalHandler> signalHandlers = new Hashtable();
+    protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
     
     BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
@@ -223,19 +224,21 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
     
     public SignalHandler signal(Signal sig, final SignalHandler handler) {
-        SignalHandler old = signalHandlers.get(sig);
-        
-        int result = libc().signal(sig.intValue(), new LibC.LibCSignalHandler() {
-            public void signal(int sig) {
-                handler.handle(sig);
+        synchronized (signalHandlers) {
+            SignalHandler old = signalHandlers.get(sig);
+
+            long result = libc().signal(sig.intValue(), new LibC.LibCSignalHandler() {
+                public void signal(int sig) {
+                    handler.handle(sig);
+                }
+            });
+
+            if (result != -1) {
+                signalHandlers.put(sig, handler);
             }
-        });
-        
-        if (result != -1) {
-            signalHandlers.put(sig, handler);
+
+            return old;
         }
-        
-        return old;
     }
 
     public int lchmod(String filename, int mode) {
