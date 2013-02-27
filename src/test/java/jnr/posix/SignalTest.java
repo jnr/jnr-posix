@@ -5,6 +5,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class SignalTest {
     private static POSIX posix;
     private static POSIX javaPosix;
@@ -15,37 +17,47 @@ public class SignalTest {
         javaPosix = new JavaPOSIX(new DummyPOSIXHandler());
     }
     
+    private static void waitUntilTrue(AtomicBoolean var, long maxWait) {
+        long start = System.currentTimeMillis();
+        while (!var.get() && (System.currentTimeMillis() - start) < maxWait) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+    }
+    
     @Test
     public void testBasicSignal() {
         Signal s = Signal.SIGHUP;
-        final boolean[] fired = {false};
+        final AtomicBoolean fired = new AtomicBoolean(false);
         posix.signal(s, new SignalHandler() {
             public void handle(int signal) {
-                fired[0] = true;
+                fired.set(true);
             }
         });
         
         posix.kill(posix.getpid(), s.intValue());
-        
-        while (!fired[0]);
-        Assert.assertTrue(fired[0]);
+        waitUntilTrue(fired, 200);
+        Assert.assertTrue(fired.get());
     }
     
     @Test
     public void testJavaSignal() {
         Signal s = Signal.SIGHUP;
-        final boolean[] fired = {false};
+        final AtomicBoolean fired = new AtomicBoolean(false);
         javaPosix.signal(s, new SignalHandler() {
             public void handle(int signal) {
-                fired[0] = true;
+                fired.set(true);
             }
         });
         
         // have to use native here; no abstraction for kill in pure Java
         // TODO: sun.misc.Signal.raise can be used to kill current pid
         posix.kill(posix.getpid(), s.intValue());
-        
-        while (!fired[0]);
-        Assert.assertTrue(fired[0]);
+
+        waitUntilTrue(fired, 200);
+        Assert.assertTrue(fired.get());
     }
 }
