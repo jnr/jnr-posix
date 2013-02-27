@@ -26,7 +26,7 @@ final class NativeTimes implements Times {
 
     static NativeTimes times(BaseNativePOSIX posix) {
         NativeTimes tms = new NativeTimes(posix);
-        return posix.libc().times(tms) < 0 ? null : tms;
+        return posix.libc().times(tms) == -1 ? null : tms;
     }
 
     NativeTimes(NativePOSIX posix) {
