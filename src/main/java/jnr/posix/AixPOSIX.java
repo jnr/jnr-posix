@@ -62,10 +62,7 @@ final class AixPOSIX extends BaseNativePOSIX {
     public int stat(String path, FileStat stat) { return unimplementedInt(); }
     public FileStat lstat(String path) { return unimplementedNull(); }
     public int lstat(String path, FileStat stat) { return unimplementedInt(); }
-    public Passwd getpwent() { return unimplementedNull(); }
-    public Passwd getpwuid(int which) { return unimplementedNull(); }
-    public Passwd getpwnam(String which) { return unimplementedNull(); }
-
+    
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
     }

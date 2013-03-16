@@ -43,15 +43,11 @@ public class AixPasswd extends NativePasswd implements Passwd {
 
         public final UTF8StringRef pw_name = new UTF8StringRef();   // user name
         public final UTF8StringRef pw_passwd = new UTF8StringRef(); // password (encrypted)
-        public final Signed32 pw_uid = new Signed32();       // user id
-        public final Signed32 pw_gid = new Signed32();       // user id
-        public final SignedLong pw_change = new SignedLong();// password change time
-        public final UTF8StringRef pw_class = new UTF8StringRef();  // user access class
+        public final uid_t pw_uid = new uid_t();       // user id
+        public final gid_t pw_gid = new gid_t();       // user id
         public final UTF8StringRef pw_gecos = new UTF8StringRef();  // login info
         public final UTF8StringRef pw_dir = new UTF8StringRef();    // home directory
         public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
-        public final SignedLong pw_expire = new SignedLong();    // account expiration
-        public final Signed32 pw_fields = new Signed32();    // internal: fields filled in
     }
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
@@ -60,7 +56,7 @@ public class AixPasswd extends NativePasswd implements Passwd {
     }
 
     public String getAccessClass() {
-        return layout.pw_class.get(memory);
+        return "unknown";
     }
 
     public String getGECOS() {
@@ -80,7 +76,7 @@ public class AixPasswd extends NativePasswd implements Passwd {
     }
 
     public int getPasswdChangeTime() {
-        return layout.pw_change.intValue(memory);
+        return 0;
     }
 
     public String getPassword() {
@@ -96,6 +92,6 @@ public class AixPasswd extends NativePasswd implements Passwd {
     }
 
     public int getExpire() {
-        return layout.pw_expire.intValue(memory);
+        return Integer.MAX_VALUE;
     }
 }
