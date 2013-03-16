@@ -31,34 +31,8 @@
 
 package jnr.posix;
 
-import jnr.constants.platform.Sysconf;
-import jnr.ffi.Pointer;
-import jnr.ffi.mapper.FromNativeContext;
-import jnr.posix.util.MethodName;
-
-import java.io.FileDescriptor;
-
-final class AixPOSIX extends BaseNativePOSIX {
-    AixPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
-    }
-
-    public FileStat allocateStat() { 
-        return new AixFileStat(this); 
-    }
-    
-    public long sysconf(Sysconf name) {
-        return libc().sysconf(name);
-    }
-
-    public Times times() {
-        return NativeTimes.times(this);
-    }
-
-
-    public static final PointerConverter PASSWD = new PointerConverter() {
-        public Object fromNative(Object arg, FromNativeContext ctx) {
-            return arg != null ? new AixPasswd((Pointer) arg) : null;
-        }
-    };
+public interface AixLibC extends UnixLibC {
+    public int stat64x(CharSequence path, AixFileStat stat);
+    public int fstat64x(int fd, AixFileStat stat);
+    public int lstat64x(CharSequence path, AixFileStat stat);
 }

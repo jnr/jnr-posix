@@ -31,8 +31,12 @@
 
 package jnr.posix;
 
+import jnr.ffi.NativeType;
 import jnr.ffi.StructLayout;
 
+/**
+ * This corresponds with struct stat64x on AIX
+ */
 public final class AixFileStat extends BaseFileStat {
     private static final class Layout extends StructLayout {
 
@@ -40,32 +44,36 @@ public final class AixFileStat extends BaseFileStat {
             super(runtime);
         }
 
-        public final class time_t extends SignedLong {}
-        public final class dev_t extends Signed32 {}
-
-        public final dev_t  st_dev = new dev_t();
-        public final Signed32  st_ino = new Signed32();
-        public final Signed16  st_mode = new Signed16();
+        public final Unsigned64 st_dev = new Unsigned64();
+        public final Signed64  st_ino = new Signed64();
+        public final Unsigned32  st_mode = new Unsigned32();
         public final Signed16  st_nlink = new Signed16();
-        public final Signed32  st_uid = new Signed32();
-        public final Signed32  st_gid = new Signed32();
-        public final dev_t  st_rdev = new dev_t();
-        public final time_t st_atime = new time_t();
-        public final SignedLong st_atimensec = new SignedLong();
-        public final time_t st_mtime = new time_t();
-        public final SignedLong st_mtimensec = new SignedLong();
-        public final time_t st_ctime = new time_t();
-        public final SignedLong st_ctimensec = new SignedLong();
+        public final Unsigned16 st_flag = new Unsigned16();
+        public final Unsigned32 st_uid = new Unsigned32();
+        public final Unsigned32 st_gid = new Unsigned32();
+        public final Unsigned64  st_rdev = new Unsigned64();
         public final Signed64  st_size = new Signed64();
-        public final Signed64  st_blocks = new Signed64();
-        public final Signed32  st_blksize = new Signed32();
-        public final Signed32  st_flags = new Signed32();
-        public final Signed32  st_gen = new Signed32();
-        public final Signed32  st_lspare = new Signed32();
-        public final time_t    st_birthtime = new time_t();
-        public final SignedLong st_birthtimensec = new SignedLong();
-        /* FIXME: This padding isn't quite correct */
-        public final Signed64  st_qspare0 = new Signed64();
+        public final Signed64 st_atime = new Signed64();
+        public final Signed32 st_atime_n = new Signed32();
+        public final Signed32 st_pad1 = new Signed32();
+
+        public final Signed64 st_mtime = new Signed64();
+        public final Signed32 st_mtime_n = new Signed32();
+        public final Signed32 st_pad2 = new Signed32();
+
+        public final Signed64 st_ctime = new Signed64();
+        public final Signed32 st_ctime_n = new Signed32();
+        public final Signed32 st_pad3 = new Signed32();
+
+        public final Unsigned64	st_blksize = new Unsigned64();
+        public final Unsigned64	st_blocks = new Unsigned64();
+        public final Signed32 st_vfstype = new Signed32();
+        
+        public final Unsigned32 st_vfs = new Unsigned32();
+        public final Unsigned32 st_type = new Unsigned32();
+        public final Unsigned32 st_gen = new Unsigned32();
+        public final Padding st_reserved = new Padding(NativeType.UINT, 11);
+        /* total size should be 176 bytes */
     }
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
@@ -94,7 +102,7 @@ public final class AixFileStat extends BaseFileStat {
     }
 
     public int gid() {
-        return layout.st_gid.get(memory);
+        return (int) layout.st_gid.get(memory);
     }
 
     public long ino() {
@@ -102,7 +110,7 @@ public final class AixFileStat extends BaseFileStat {
     }
 
     public int mode() {
-        return layout.st_mode.get(memory) & 0xffff;
+        return (int) layout.st_mode.get(memory) & 0xffff;
     }
 
     public long mtime() {
@@ -110,7 +118,7 @@ public final class AixFileStat extends BaseFileStat {
     }
 
     public int nlink() {
-        return layout.st_nlink.get(memory);
+        return (int) layout.st_nlink.get(memory);
     }
 
     public long rdev() {
@@ -122,6 +130,6 @@ public final class AixFileStat extends BaseFileStat {
     }
 
     public int uid() {
-        return layout.st_uid.get(memory);
+        return (int) layout.st_uid.get(memory);
     }
 }

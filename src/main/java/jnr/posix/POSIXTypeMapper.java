@@ -24,6 +24,8 @@ final class POSIXTypeMapper implements TypeMapper {
                 return OpenBSDPOSIX.PASSWD;
             } else if (Platform.IS_WINDOWS) {
                 return WindowsPOSIX.PASSWD;
+            } else if (jnr.ffi.Platform.getNativePlatform().getOS().equals(jnr.ffi.Platform.OS.AIX)) {
+                return AixPOSIX.PASSWD;
             }
             return null;
         } else if (Group.class.isAssignableFrom(klazz)) {

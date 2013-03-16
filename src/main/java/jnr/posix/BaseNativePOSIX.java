@@ -12,6 +12,7 @@ import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.mapper.ToNativeContext;
 import jnr.ffi.mapper.ToNativeConverter;
 import jnr.posix.util.Java5ProcessMaker;
+import jnr.posix.util.MethodName;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
@@ -53,6 +54,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     POSIXHandler handler() {
         return handler;
+    }
+
+    protected <T> T unimplementedNull() {
+        handler().unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
+    protected int unimplementedInt() {
+        handler().unimplementedError(MethodName.getCallerMethodName());
+        return -1;
     }
 
     public int chmod(String filename, int mode) {
