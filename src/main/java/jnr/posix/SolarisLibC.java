@@ -1,4 +1,4 @@
 package jnr.posix;
 
-public interface SolarisLibC extends LibC {
+public interface SolarisLibC extends UnixLibC {
 }
