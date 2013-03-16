@@ -3,10 +3,12 @@ package jnr.posix;
 import jnr.ffi.Library;
 import jnr.ffi.LibraryOption;
 import jnr.ffi.Struct;
+
 import java.util.HashMap;
 
 import jnr.posix.util.DefaultPOSIXHandler;
 import jnr.posix.util.Platform;
+
 import java.util.Map;
 
 public class POSIXFactory {
@@ -48,6 +50,8 @@ public class POSIXFactory {
                     posix = loadSolarisPOSIX(handler);
                 } else if (Platform.IS_WINDOWS) {
                     posix = loadWindowsPOSIX(handler);
+                } else if (jnr.ffi.Platform.OS.AIX.equals(jnr.ffi.Platform.getNativePlatform().getOS())) {
+                    posix = loadAixPOSIX(handler);
                 }
 
                 // ENEBO: Should printing be done through a handler+log method?
@@ -82,30 +86,52 @@ public class POSIXFactory {
     }
 
     public static POSIX loadMacOSPOSIX(POSIXHandler handler) {
-        return new MacOSPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new MacOSPOSIX(LIBC, new UnixLibCProvider(), handler);
     }
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
-        return new SolarisPOSIX(LIBC, new SolarisLibCProvider(), handler);
+        return new SolarisPOSIX(LIBC, new UnixLibCProvider(), handler);
     }
 
     public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
-        return new FreeBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new FreeBSDPOSIX(LIBC, new UnixLibCProvider(), handler);
     }
 
     public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
-        return new OpenBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new OpenBSDPOSIX(LIBC, new UnixLibCProvider(), handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
         return new WindowsPOSIX(LIBC, new WindowsLibCProvider(), handler);
     }
 
+    public static POSIX loadAixPOSIX(POSIXHandler handler) {
+        return new AixPOSIX(LIBC, new UnixLibCProvider(), handler);
+    }
+    
+    private static String[] libraries() {
+        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+            case LINUX:
+                return new String[] { "libc.so.6" };
+            
+            case SOLARIS:
+                return new String[] { "socket", "nsl", "c" };
+            
+            case AIX:
+                return new String[] { "libc.a(shr.o)" };
+            
+            case WINDOWS:
+                return new String[] { "msvcrt", "kernel32" };
+            
+            default:
+                return new String[] { "c" };
+        }
+    }
 
-    private static final class DefaultLibCProvider implements LibCProvider {
+    private static final class UnixLibCProvider implements LibCProvider {
 
         private static final class SingletonHolder {
-            public static LibC libc = Library.loadLibrary(UnixLibC.class, defaultOptions, "c");
+            public static LibC libc = Library.loadLibrary(UnixLibC.class, defaultOptions, libraries());
         }
 
         public final LibC getLibC() {
@@ -117,17 +143,6 @@ public class POSIXFactory {
 
         private static final class SingletonHolder {
             public static LibC libc = Library.loadLibrary(LinuxLibC.class, defaultOptions, "libc.so.6");
-        }
-
-        public final LibC getLibC() {
-            return SingletonHolder.libc;
-        }
-    }
-
-    private static final class SolarisLibCProvider implements LibCProvider {
-
-        private static final class SingletonHolder {
-            public static LibC libc = Library.loadLibrary(LibC.class, defaultOptions, "socket", "nsl", "c");
         }
 
         public final LibC getLibC() {
