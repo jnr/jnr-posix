@@ -168,6 +168,15 @@ public class POSIXFactory {
                         .map("write", "_write")
                         .map("close", "_close")
                         .build();
+            
+            case SOLARIS:
+                return Platform.IS_32_BIT 
+                    ? new SimpleFunctionMapper.Builder()
+                        .map("stat", "stat64")
+                        .map("fstat", "fstat64")
+                        .map("lstat", "lstat64")
+                        .build()
+                    : null;
             default:
                 return null;
         }
