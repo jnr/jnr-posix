@@ -14,26 +14,6 @@ final class MacOSPOSIX extends BaseNativePOSIX {
     public FileStat allocateStat() {
         return new MacOSFileStat(this);
     }
-    
-    @Override
-    public int lchmod(String filename, int mode) {
-        try {
-            return libc().lchmod(filename, mode);
-        } catch (UnsatisfiedLinkError ex) {
-            handler.unimplementedError("lchmod");
-            return -1;
-        }
-    }
-    
-    @Override
-    public int lchown(String filename, int user, int group) {
-        try {
-            return super.lchown(filename, user, group);
-        } catch (UnsatisfiedLinkError ex) {
-            handler.unimplementedError("lchown");
-            return -1;
-        }
-    }
 
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);

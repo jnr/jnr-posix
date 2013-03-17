@@ -251,11 +251,19 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int lchmod(String filename, int mode) {
-        return libc().lchmod(filename, mode);
+        try {
+            return libc().lchmod(filename, mode);
+        } catch (UnsatisfiedLinkError ule) {
+            return unimplementedInt();
+        }
     }
 
     public int lchown(String filename, int user, int group) {
-        return libc().lchown(filename, user, group);
+        try {
+            return libc().lchown(filename, user, group);
+        } catch (UnsatisfiedLinkError ule) {
+            return unimplementedInt();
+        }
     }
 
     public int link(String oldpath, String newpath) {

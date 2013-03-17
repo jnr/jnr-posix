@@ -17,13 +17,6 @@ final class SolarisPOSIX extends BaseNativePOSIX {
     public FileStat allocateStat() {
         return Platform.IS_32_BIT ? new SolarisFileStat32(this) : new SolarisFileStat64(this);
     }
-    
-    @Override
-    public int lchmod(String filename, int mode) {
-        handler.unimplementedError("lchmod");
-        
-        return -1;
-    }
 
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
