@@ -35,21 +35,7 @@ public class POSIXFactory {
 
         if (useNativePOSIX) {
             try {
-                if (Platform.IS_MAC) {
-                    posix = loadMacOSPOSIX(handler);
-                } else if (Platform.IS_LINUX) {
-                    posix = loadLinuxPOSIX(handler);
-                } else if (Platform.IS_FREEBSD) {
-                    posix = loadFreeBSDPOSIX(handler);
-                } else if (Platform.IS_OPENBSD) {
-                    posix = loadOpenBSDPOSIX(handler);
-                } else if (Platform.IS_SOLARIS) {
-                    posix = loadSolarisPOSIX(handler);
-                } else if (Platform.IS_WINDOWS) {
-                    posix = loadWindowsPOSIX(handler);
-                } else if (jnr.ffi.Platform.OS.AIX.equals(jnr.ffi.Platform.getNativePlatform().getOS())) {
-                    posix = loadAixPOSIX(handler);
-                }
+                posix = loadNativePOSIX(handler);
 
                 // ENEBO: Should printing be done through a handler+log method?
                 if (handler.isVerbose()) {
@@ -72,6 +58,33 @@ public class POSIXFactory {
         }
 
         return posix;
+    }
+    
+    private static POSIX loadNativePOSIX(POSIXHandler handler) {
+        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+            case DARWIN:
+                return loadMacOSPOSIX(handler);
+
+            case LINUX:
+                return loadLinuxPOSIX(handler);
+
+            case FREEBSD:
+                return loadFreeBSDPOSIX(handler);
+            
+            case OPENBSD:
+                return loadOpenBSDPOSIX(handler);
+
+            case SOLARIS:
+                return loadSolarisPOSIX(handler);
+            
+            case AIX:
+                return loadAixPOSIX(handler);
+            
+            case WINDOWS:
+                return loadWindowsPOSIX(handler);
+        }
+
+        return null;
     }
 
     public static POSIX getJavaPOSIX(POSIXHandler handler) {
