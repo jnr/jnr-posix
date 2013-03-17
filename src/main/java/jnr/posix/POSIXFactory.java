@@ -36,7 +36,7 @@ public class POSIXFactory {
         if (useNativePOSIX) {
             try {
                 posix = loadNativePOSIX(handler);
-
+                posix = posix != null ? new CheckedPOSIX(posix, handler) : null;
                 // ENEBO: Should printing be done through a handler+log method?
                 if (handler.isVerbose()) {
                     if (posix != null) {
