@@ -39,8 +39,8 @@ import jnr.posix.util.MethodName;
 import java.io.FileDescriptor;
 
 final class AixPOSIX extends BaseNativePOSIX {
-    AixPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
+    AixPOSIX(LibCProvider libc, POSIXHandler handler) {
+        super(libc, handler);
     }
 
     public FileStat allocateStat() { 

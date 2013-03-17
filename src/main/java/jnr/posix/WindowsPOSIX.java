@@ -117,8 +117,8 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         errorToErrnoMapper.put(WSAEMFILE.value(), EMFILE);
     }
 
-    WindowsPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
+    WindowsPOSIX(LibCProvider libc, POSIXHandler handler) {
+        super(libc, handler);
     }
     
     @Override

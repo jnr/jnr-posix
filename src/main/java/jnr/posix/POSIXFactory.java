@@ -16,7 +16,6 @@ import java.util.Map;
 public class POSIXFactory {
     // Weird inner-class resolution problem work-around FIXME: JRUBY-5889.  Someone fix JAFFL!
     private static final Class<Struct> BOGUS_HACK = Struct.class;
-    static final String LIBC = Platform.IS_LINUX ? "libc.so.6" : Platform.IS_WINDOWS ? "msvcrt" : "c";
     
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
         return new LazyPOSIX(handler, useNativePOSIX);
@@ -80,31 +79,31 @@ public class POSIXFactory {
     }
 
     public static POSIX loadLinuxPOSIX(POSIXHandler handler) {
-        return new LinuxPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new LinuxPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadMacOSPOSIX(POSIXHandler handler) {
-        return new MacOSPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new MacOSPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadSolarisPOSIX(POSIXHandler handler) {
-        return new SolarisPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new SolarisPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadFreeBSDPOSIX(POSIXHandler handler) {
-        return new FreeBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new FreeBSDPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
-        return new OpenBSDPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new OpenBSDPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadWindowsPOSIX(POSIXHandler handler) {
-        return new WindowsPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new WindowsPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
     public static POSIX loadAixPOSIX(POSIXHandler handler) {
-        return new AixPOSIX(LIBC, new DefaultLibCProvider(), handler);
+        return new AixPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
     
     private static String[] libraries() {
@@ -190,6 +189,7 @@ public class POSIXFactory {
 
 
     private static final class DefaultLibCProvider implements LibCProvider {
+        public static final LibCProvider INSTANCE = new DefaultLibCProvider();
 
         private static final class SingletonHolder {
             public static LibC libc = Library.loadLibrary(libraryInterface(), options(), libraries());

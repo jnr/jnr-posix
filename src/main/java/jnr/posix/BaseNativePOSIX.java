@@ -27,15 +27,13 @@ import jnr.constants.platform.Signal;
 abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
     
-    protected final String libraryName;
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
     protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
     
-    BaseNativePOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
+    BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
-        this.libraryName = libraryName;
         this.libc = libcProvider.getLibC();
         this.helper = new JavaLibCHelper(handler);
     }

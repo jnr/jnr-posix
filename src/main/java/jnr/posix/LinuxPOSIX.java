@@ -16,8 +16,8 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     private volatile boolean use_xstat64 = true;
     private final int statVersion;
     
-    LinuxPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
-        super(libraryName, libcProvider, handler);
+    LinuxPOSIX(LibCProvider libcProvider, POSIXHandler handler) {
+        super(libcProvider, handler);
 
 
         statVersion = Platform.IS_32_BIT ? 3 : 0;

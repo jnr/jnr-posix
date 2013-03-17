@@ -36,8 +36,8 @@ import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
 
 final class FreeBSDPOSIX extends BaseNativePOSIX {
-    FreeBSDPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
+    FreeBSDPOSIX(LibCProvider libc, POSIXHandler handler) {
+        super(libc, handler);
     }
     
     public FileStat allocateStat() {

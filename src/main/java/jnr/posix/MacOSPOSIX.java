@@ -7,8 +7,8 @@ import jnr.ffi.mapper.FromNativeContext;
 
 final class MacOSPOSIX extends BaseNativePOSIX {
 
-    MacOSPOSIX(String libraryName, LibCProvider libcProvider, POSIXHandler handler) {
-        super(libraryName, libcProvider, handler);
+    MacOSPOSIX(LibCProvider libcProvider, POSIXHandler handler) {
+        super(libcProvider, handler);
     }
 
     public FileStat allocateStat() {

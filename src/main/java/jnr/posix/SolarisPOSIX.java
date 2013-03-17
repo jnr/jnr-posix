@@ -10,8 +10,8 @@ import java.io.FileDescriptor;
 import static jnr.constants.platform.Errno.ENOENT;
 
 final class SolarisPOSIX extends BaseNativePOSIX {
-    SolarisPOSIX(String libraryName, LibCProvider libc, POSIXHandler handler) {
-        super(libraryName, libc, handler);
+    SolarisPOSIX(LibCProvider libc, POSIXHandler handler) {
+        super(libc, handler);
     }
     
     public FileStat allocateStat() {
