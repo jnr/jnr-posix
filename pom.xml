@@ -75,7 +75,7 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>0.7.11</version>
+      <version>1.0.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
