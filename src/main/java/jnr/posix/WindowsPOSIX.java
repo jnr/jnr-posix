@@ -4,10 +4,8 @@ import jnr.constants.platform.Errno;
 import static jnr.constants.platform.Errno.*;
 import static jnr.constants.platform.windows.LastError.*;
 import jnr.ffi.Pointer;
-import jnr.ffi.Type;
 import jnr.ffi.byref.IntByReference;
 import jnr.ffi.mapper.FromNativeContext;
-import jnr.ffi.provider.jffi.Provider;
 
 import java.io.FileDescriptor;
 import java.nio.ByteBuffer;
@@ -273,6 +271,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         handler.unimplementedError("lchown");
         
         return -1;
+    }
+    
+    @Override
+    public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
+        int fd = ((WindowsLibC) libc())._open_osfhandle(helper.gethandle(fileDescriptor), 0);
+        try {
+            return libc().fstat(fd, stat);
+        } finally {
+            ((WindowsLibC) libc())._close();
+        }
     }
     
     @Override
