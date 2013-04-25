@@ -15,20 +15,20 @@ import java.util.logging.Logger;
 /**
  * A POSIXHandler with reasonable default behavior.
  */
-public class DefaultPOSIXHandler implements POSIXHandler
-{
-    public void error(Errno error, String extraData)
-    {
+public class DefaultPOSIXHandler implements POSIXHandler {
+    public void error(Errno error, String extraData) {
         throw new RuntimeException("native error " + error.description() + " " + extraData);
     }
 
-    public void unimplementedError(String methodName)
-    {
+    public void error(Errno error, String methodName, String extraData) {
+        throw new RuntimeException("native error calling " + methodName + ": " + error.description() + " " + extraData);
+    }
+    
+    public void unimplementedError(String methodName) {
         throw new IllegalStateException(methodName + " is not implemented in jnr-posix");
     }
 
-    public void warn(WARNING_ID id, String message, Object... data)
-    {
+    public void warn(WARNING_ID id, String message, Object... data) {
         String msg;
         try {
             msg = String.format(message, data);
@@ -39,18 +39,15 @@ public class DefaultPOSIXHandler implements POSIXHandler
         Logger.getLogger("jnr-posix").log(Level.WARNING, msg);
     }
 
-    public boolean isVerbose()
-    {
+    public boolean isVerbose() {
         return false;
     }
 
-    public File getCurrentWorkingDirectory()
-    {
+    public File getCurrentWorkingDirectory() {
         return new File(".");
     }
 
-    public String[] getEnv()
-    {
+    public String[] getEnv() {
         String[] envp = new String[System.getenv().size()];
         int i = 0;
         for (Map.Entry<String, String> pair : System.getenv().entrySet()) {
@@ -59,23 +56,19 @@ public class DefaultPOSIXHandler implements POSIXHandler
         return envp;
     }
 
-    public InputStream getInputStream()
-    {
+    public InputStream getInputStream() {
         return System.in;
     }
 
-    public PrintStream getOutputStream()
-    {
+    public PrintStream getOutputStream() {
         return System.out;
     }
 
-    public int getPID()
-    {
+    public int getPID() {
         return 0;
     }
 
-    public PrintStream getErrorStream()
-    {
+    public PrintStream getErrorStream() {
         return System.err;
     }
 }

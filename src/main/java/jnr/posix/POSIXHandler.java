@@ -23,6 +23,7 @@ public interface POSIXHandler {
         }
     }
     public void error(Errno error, String extraData);
+    public void error(Errno error, String methodName, String extraData);
     
     /**
      * Specify that posix method is unimplemented.  In JRuby we generate an

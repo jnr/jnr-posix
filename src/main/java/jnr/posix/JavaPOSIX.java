@@ -231,7 +231,7 @@ final class JavaPOSIX implements POSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
 
-        if (lstat(path, stat) < 0) handler.error(ENOENT, path);
+        if (lstat(path, stat) < 0) handler.error(ENOENT, "lstat", path);
         
         return stat;
     }
@@ -268,7 +268,7 @@ final class JavaPOSIX implements POSIX {
         Map<String, String> env = helper.getEnv();
         
         if (envName.contains("=")) {
-            handler.error(EINVAL, envName);
+            handler.error(EINVAL, "setenv", envName);
             return -1;
         }
         
@@ -283,7 +283,7 @@ final class JavaPOSIX implements POSIX {
     public FileStat stat(String path) {
         FileStat stat = allocateStat(); 
 
-        if (helper.stat(path, stat) < 0) handler.error(ENOENT, path);
+        if (helper.stat(path, stat) < 0) handler.error(ENOENT, "stat", path);
         
         return stat;
     }
@@ -336,7 +336,7 @@ final class JavaPOSIX implements POSIX {
 
     public int unsetenv(String envName) {
         if (helper.getEnv().remove(envName) == null) {
-            handler.error(EINVAL, envName);
+            handler.error(EINVAL, "unsetenv", envName);
             return -1;
         }
         

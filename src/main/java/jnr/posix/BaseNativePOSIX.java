@@ -93,14 +93,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();
 
-        if (fstat(fileDescriptor, stat) < 0) handler.error(Errno.valueOf(errno()), "" + helper.getfd(fileDescriptor));
+        if (fstat(fileDescriptor, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + helper.getfd(fileDescriptor));
         
         return stat;
     }
 
     public FileStat fstat(int fd) {
         FileStat stat = allocateStat();
-        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "" + fd);  
+        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + fd);  
         return stat;
     }
 
@@ -273,7 +273,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public FileStat lstat(String path) {
         FileStat stat = allocateStat();
         
-        if (lstat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
+        if (lstat(path, stat) < 0) handler.error(Errno.valueOf(errno()), "lstat", path);
         
         return stat;
     }
@@ -286,7 +286,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         int res = libc().mkdir(path, mode);
         if (res < 0) {
             int errno = errno();
-            handler.error(Errno.valueOf(errno), path);
+            handler.error(Errno.valueOf(errno), "mkdir", path);
         }
         return res;
     }
@@ -294,7 +294,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int rmdir(String path) {
         int res = libc().rmdir(path);
 
-        if (res < 0) handler.error(Errno.valueOf(errno()), path);
+        if (res < 0) handler.error(Errno.valueOf(errno()), "rmdir", path);
 
         return res;
     }
@@ -306,7 +306,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public FileStat stat(String path) {
         FileStat stat = allocateStat();
 
-        if (stat(path, stat) < 0) handler.error(Errno.valueOf(errno()), path);
+        if (stat(path, stat) < 0) handler.error(Errno.valueOf(errno()), "stat", path);
         
         return stat;
     }
@@ -406,7 +406,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         try {
             if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, null, argv, envp) < 0) {
                 Errno e = Errno.valueOf(errno());
-                handler.error(e, e.description());
+                handler.error(e, "posix_spawnp", e.description());
             }
         } finally {
             ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);

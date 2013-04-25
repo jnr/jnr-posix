@@ -290,7 +290,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int setenv(String envName, String envValue, int overwrite) {
         if (envName.contains("=")) {
-            handler.error(EINVAL, envName);
+            handler.error(EINVAL, "setenv", envName);
             return -1;
         }
 
@@ -299,7 +299,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // if (overwrite == 0 && getenv(envName) != null) return 0;
         
         if (!wlibc().SetEnvironmentVariableW(new WString(envName), new WString(envValue))) {
-            handler.error(EINVAL, envName);
+            handler.error(EINVAL, "setenv", envName);
             return -1;
         }
 
@@ -309,7 +309,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int unsetenv(String envName) {
         if (!wlibc().SetEnvironmentVariableW(new WString(envName), null)) {
-            handler.error(EINVAL, envName);
+            handler.error(EINVAL, "unsetenv", envName);
             return -1;
         }
         
@@ -461,7 +461,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         
         if (res < 0) {
             int errno = errno();
-            handler.error(Errno.valueOf(errno), path);
+            handler.error(Errno.valueOf(errno), "mkdir", path);
         }
         return res;
     }
@@ -491,7 +491,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
             if (isReadOnly) wlibc().SetFileAttributesW(pathW, attr & FILE_ATTRIBUTE_READONLY);
             
-            handler.error(mapErrorToErrno(errno), path);
+            handler.error(mapErrorToErrno(errno), "rmdir", path);
             
             return -1;
         }
@@ -505,7 +505,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         if (!linkCreated) {
             int error = errno();
-            handler.error(mapErrorToErrno(error), oldpath + " or " + newpath);
+            handler.error(mapErrorToErrno(error), "link", oldpath + " or " + newpath);
             return error;
         } else {
             return 0;
@@ -525,7 +525,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         
         String[] cmds = WindowsHelpers.processCommandArgs(this, program, argv, path);
  
-        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null, envp), overlay);
+        return childResult(createProcess("aspawn", cmds[0], cmds[1], null, null, null, null, envp), overlay);
         } catch (Exception e) {
             return -1;
         }
@@ -547,7 +547,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         String[] cmds = WindowsHelpers.processCommandLine(this, command, program, path);
 
-        return childResult(createProcess(cmds[0], cmds[1], null, null, null, null, envp), overlay);
+        return childResult(createProcess("spawn", cmds[0], cmds[1], null, null, null, null, envp), overlay);
     }
     
     private int childResult(WindowsChildRecord child, boolean overlay) {
@@ -579,11 +579,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     private static final int STARTF_USESTDHANDLES = 0x00000100;
     
     // Used by spawn and aspawn (Note: See fixme below...envp not hooked up yet)
-    private WindowsChildRecord createProcess(String command, String program, 
+    private WindowsChildRecord createProcess(String callingMethodName, String command, String program, 
             WindowsSecurityAttributes securityAttributes, HANDLE input,
             HANDLE output, HANDLE error, String[] envp) {
         if (command == null && program == null) {
-            handler.error(EFAULT, "no command or program specified");
+            handler.error(EFAULT, callingMethodName, "no command or program specified");
             return null;
         }
         

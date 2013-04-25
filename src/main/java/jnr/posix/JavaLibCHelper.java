@@ -171,7 +171,7 @@ public class JavaLibCHelper {
     public int lstat(String path, FileStat stat) {
         File file = new JavaSecuredFile(path);
 
-        if (!file.exists()) handler.error(ENOENT, path);
+        if (!file.exists()) handler.error(ENOENT, "lstat", path);
         
         // FIXME: Bulletproof this or no?
         JavaFileStat jstat = (JavaFileStat) stat;
@@ -206,7 +206,7 @@ public class JavaLibCHelper {
         try {
             File file = new JavaSecuredFile(path);
             
-            if (!file.exists()) handler.error(ENOENT, path);
+            if (!file.exists()) handler.error(ENOENT, "stat", path);
                 
             jstat.setup(file.getCanonicalPath());
         } catch (IOException e) {

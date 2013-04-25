@@ -17,7 +17,7 @@ final class SolarisPOSIX extends BaseNativePOSIX {
     public FileStat allocateStat() {
         return Platform.IS_32_BIT ? new SolarisFileStat32(this) : new SolarisFileStat64(this);
     }
-
+    
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
     }
