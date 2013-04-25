@@ -279,7 +279,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         try {
             return libc().fstat(fd, stat);
         } finally {
-            ((WindowsLibC) libc())._close();
+            ((WindowsLibC) libc())._close(fd);
         }
     }
     
