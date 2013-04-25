@@ -5,7 +5,6 @@
 
 package jnr.posix;
 
-import jnr.posix.POSIXHandler;
 import jnr.constants.platform.Errno;
 
 import java.io.File;
@@ -21,6 +20,10 @@ public class DummyPOSIXHandler implements POSIXHandler {
     public void error(Errno error, String extraData) {
         throw new UnsupportedOperationException("error: " + error);
     }
+    
+    public void error(Errno error, String methodName, String extraData) {
+        throw new UnsupportedOperationException("error: " + error);
+    }    
 
     public void unimplementedError(String methodName) {
         throw new UnsupportedOperationException("unimplemented method: " + methodName);
