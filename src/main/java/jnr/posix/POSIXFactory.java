@@ -128,7 +128,9 @@ public class POSIXFactory {
                 return new String[] { "socket", "nsl", "c" };
             
             case AIX:
-                return new String[] { "libc.a(shr.o)" };
+                return jnr.ffi.Runtime.getSystemRuntime().addressSize() == 4
+                    ? new String[] { "libc.a(shr.o)" }
+                    : new String[] { "libc.a(shr_64.o)" };
             
             case WINDOWS:
                 return new String[] { "msvcrt", "kernel32" };
