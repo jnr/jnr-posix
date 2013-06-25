@@ -8,6 +8,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.List;
@@ -410,6 +412,10 @@ final class JavaPOSIX implements POSIX {
 
     public Times times() {
         return new JavaTimes();
+    }
+    
+    public int flock(int fd, int mode) {
+        return unimplementedInt("waitpid");
     }
     
     static final class LoginInfo {

@@ -33,7 +33,9 @@ import static jnr.constants.platform.Errno.*;
 import java.io.*;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -60,14 +62,94 @@ public class JavaLibCHelper {
     private final POSIXHandler handler;
     private final Field fdField, handleField;
     private final Map<String, String> env;
+    
+    private static final Class SEL_CH_IMPL;
+    private static final Method SEL_CH_IMPL_GET_FD;
+    private static final Class FILE_CHANNEL_IMPL;
+    private static final Field FILE_CHANNEL_IMPL_FD;
+    private static final Field FILE_DESCRIPTOR_FD;
 
     public JavaLibCHelper(POSIXHandler handler) {
         this.env = new HashMap<String, String>();
         this.handler = handler;
 	this.handleField = FieldAccess.getProtectedField(FileDescriptor.class,
 							 "handle");
-        this.fdField = FieldAccess.getProtectedField(FileDescriptor.class,
-						     "fd");
+        fdField = FILE_DESCRIPTOR_FD;
+    }
+    
+    static {
+        Method getFD;
+        Class selChImpl;
+        try {
+            selChImpl = Class.forName("sun.nio.ch.SelChImpl");
+            try {
+                getFD = selChImpl.getMethod("getFD");
+                getFD.setAccessible(true);
+            } catch (Exception e) {
+                getFD = null;
+            }
+        } catch (Exception e) {
+            selChImpl = null;
+            getFD = null;
+        }
+        SEL_CH_IMPL = selChImpl;
+        SEL_CH_IMPL_GET_FD = getFD;
+        
+        Field fd;
+        Class fileChannelImpl;
+        try {
+            fileChannelImpl = Class.forName("sun.nio.ch.FileChannelImpl");
+            try {
+                fd = fileChannelImpl.getDeclaredField("fd");
+                fd.setAccessible(true);
+            } catch (Exception e) {
+                fd = null;
+            }
+        } catch (Exception e) {
+            fileChannelImpl = null;
+            fd = null;
+        }
+        FILE_CHANNEL_IMPL = fileChannelImpl;
+        FILE_CHANNEL_IMPL_FD = fd;
+        
+        Field ffd;
+        try {
+            ffd = FileDescriptor.class.getDeclaredField("fd");
+            ffd.setAccessible(true);
+        } catch (Exception e) {
+            ffd = null;
+        }
+        FILE_DESCRIPTOR_FD = ffd;
+    }
+    
+    public static FileDescriptor getDescriptorFromChannel(Channel channel) {
+        if (SEL_CH_IMPL_GET_FD != null && SEL_CH_IMPL.isInstance(channel)) {
+            // Pipe Source and Sink, Sockets, and other several other selectable channels
+            try {
+                return (FileDescriptor)SEL_CH_IMPL_GET_FD.invoke(channel);
+            } catch (Exception e) {
+                // return bogus below
+            }
+        } else if (FILE_CHANNEL_IMPL_FD != null && FILE_CHANNEL_IMPL.isInstance(channel)) {
+            // FileChannels
+            try {
+                return (FileDescriptor)FILE_CHANNEL_IMPL_FD.get(channel);
+            } catch (Exception e) {
+                // return bogus below
+            }
+        } else if (FILE_DESCRIPTOR_FD != null) {
+            // anything else that implements a getFD method that returns an int
+            FileDescriptor unixFD = new FileDescriptor();
+            
+                try {
+                    Method getFD = channel.getClass().getMethod("getFD");
+                    FILE_DESCRIPTOR_FD.set(unixFD, (Integer)getFD.invoke(channel));
+                    return unixFD;
+                } catch (Exception e) {
+                    // return bogus below
+                }
+        }
+        return new FileDescriptor();
     }
 
     static int errno() {
@@ -101,9 +183,13 @@ public class JavaLibCHelper {
     }
 
     public int getfd(FileDescriptor descriptor) {
-        if (descriptor == null || fdField == null) return -1;
+        return getfdFromDescriptor(descriptor);
+    }
+
+    public static int getfdFromDescriptor(FileDescriptor descriptor) {
+        if (descriptor == null || FILE_DESCRIPTOR_FD == null) return -1;
         try {
-            return fdField.getInt(descriptor);
+            return FILE_DESCRIPTOR_FD.getInt(descriptor);
         } catch (SecurityException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {

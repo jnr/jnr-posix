@@ -414,6 +414,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
         return pid.longValue();
     }
+    
+    public int flock(int fd, int mode) {
+        return libc().flock(fd, mode);
+    }
 
     private Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
         Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);

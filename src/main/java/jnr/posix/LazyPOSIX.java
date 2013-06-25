@@ -318,4 +318,8 @@ final class LazyPOSIX implements POSIX {
     public Times times() {
         return posix().times();
     }
+    
+    public int flock(int fd, int mode) {
+        return posix().flock(fd, mode);
+    }
 }

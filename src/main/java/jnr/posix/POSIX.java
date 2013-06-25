@@ -94,4 +94,6 @@ public interface POSIX {
 
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
+    
+    public int flock(int fd, int operation);
 }

@@ -316,4 +316,8 @@ final class CheckedPOSIX implements POSIX {
     public Times times() {
         try { return posix.times(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
+    
+    public int flock(int fd, int mode) {
+        return posix.flock(fd, mode);
+    }
 }

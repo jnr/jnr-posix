@@ -6,6 +6,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -57,5 +60,24 @@ public class FileTest {
         assertEquals("mkdir did not return 0", 0, rval);
         assertTrue("Directory was not created", dir.exists());
         dir.delete();
+    }
+    
+    @Test
+    public void flockTest() throws Throwable {
+        File tmp = File.createTempFile("flockTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        RandomAccessFile raf2 = new RandomAccessFile(tmp, "rw");
+        FileChannel fc = raf.getChannel();
+        FileChannel fc2 = raf2.getChannel();
+        FileDescriptor FD = JavaLibCHelper.getDescriptorFromChannel(fc);
+        FileDescriptor FD2 = JavaLibCHelper.getDescriptorFromChannel(fc2);
+        int fd = JavaLibCHelper.getfdFromDescriptor(FD);
+        int fd2 = JavaLibCHelper.getfdFromDescriptor(FD2);
+        
+        assertEquals(0, posix.flock(fd, 1)); // LOCK_SH
+        assertEquals(0, posix.flock(fd, 8)); // LOCK_UN
+        assertEquals(0, posix.flock(fd, 2)); // LOCK_EX
+        assertEquals(-1, posix.flock(fd2, 2 | 4)); // LOCK_EX | LOCK_NB
+        assertEquals(0, posix.flock(fd, 8)); // LOCK_UN
     }
 }

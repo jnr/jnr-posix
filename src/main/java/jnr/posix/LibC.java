@@ -107,4 +107,6 @@ public interface LibC {
 
     public long sysconf(Sysconf name);
     public @clock_t long times(@Out @Transient NativeTimes tms);
+    
+    int flock(int fd, int mode);
 }
