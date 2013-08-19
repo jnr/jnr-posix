@@ -284,6 +284,10 @@ public class JavaLibCHelper {
         return new JavaSecuredFile(path).delete() ? 0 : -1;
     }
 
+    public static int chdir(String path) {
+        System.setProperty("user.dir", path);
+        return 0;
+    }
     
     public int stat(String path, FileStat stat) {
         // FIXME: Bulletproof this or no?
