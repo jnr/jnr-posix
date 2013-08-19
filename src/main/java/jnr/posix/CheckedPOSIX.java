@@ -44,6 +44,10 @@ final class CheckedPOSIX implements POSIX {
     public FileStat allocateStat() {
         try { return posix.allocateStat(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
+    
+    public int chdir(String path) {
+        try { return posix.chdir(path); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 
     public int chmod(String filename, int mode) {
         try { return posix.chmod(filename, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
