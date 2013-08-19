@@ -104,6 +104,7 @@ public interface LibC {
     int close(int fd);
     int execv(CharSequence path, @In CharSequence... argv);
     int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);
+    int chdir(CharSequence path);
 
     public long sysconf(Sysconf name);
     public @clock_t long times(@Out @Transient NativeTimes tms);

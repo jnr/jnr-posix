@@ -384,6 +384,10 @@ final class JavaPOSIX implements POSIX {
     public void errno(int value) {
         JavaLibCHelper.errno(value);
     }
+    
+    public int chdir(String path) {
+        return JavaLibCHelper.chdir(path);
+    }
 
     public boolean isNative() {
         return false;

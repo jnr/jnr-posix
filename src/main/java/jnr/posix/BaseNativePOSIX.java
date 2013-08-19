@@ -380,6 +380,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public void errno(int value) {
         LastError.setLastError(getRuntime(), value);
     }
+    
+    public int chdir(String path) {
+        return libc().chdir(path);
+    }
 
     public boolean isNative() {
         return true;

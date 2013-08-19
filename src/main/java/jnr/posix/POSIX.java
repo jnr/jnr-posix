@@ -83,6 +83,7 @@ public interface POSIX {
     int wait(int[] status);
     int errno();
     void errno(int value);
+    int chdir(String path);
     boolean isNative();
     /** Returns null if isNative returns false. */
     LibC libc();

@@ -46,6 +46,10 @@ final class LazyPOSIX implements POSIX {
     public FileStat allocateStat() {
         return posix().allocateStat();
     }
+    
+    public int chdir(String path) {
+        return posix().chdir(path);
+    }
 
     public int chmod(String filename, int mode) {
         return posix().chmod(filename, mode);
