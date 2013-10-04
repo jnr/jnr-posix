@@ -74,6 +74,9 @@ public interface LibC {
     int setsid();
     int setuid(int uid);
     int kill(int pid, int signal);
+
+    int getdtablesize();
+
     public interface LibCSignalHandler {
         @Delegate void signal(int sig);
     }

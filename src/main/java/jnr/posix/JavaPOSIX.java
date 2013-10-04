@@ -108,7 +108,12 @@ final class JavaPOSIX implements POSIX {
     public int getgid() {
         return LoginInfo.GID;
     }
-    
+
+    public int getdtablesize() {
+        handler.unimplementedError("getdtablesize unimplemented");
+        return -1;
+    }
+
     public String getlogin() {
         return helper.getlogin();
     }

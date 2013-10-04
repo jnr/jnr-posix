@@ -123,6 +123,10 @@ final class LazyPOSIX implements POSIX {
         return posix().getgid();
     }
 
+    public int getdtablesize() {
+        return posix().getdtablesize();
+    }
+
     public Group getgrent() {
         return posix().getgrent();
     }

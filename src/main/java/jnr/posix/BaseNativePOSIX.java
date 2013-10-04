@@ -129,7 +129,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int getgid() {
         return libc().getgid();
     }
-    
+
+    public int getdtablesize() {
+        return libc().getdtablesize();
+    }
+
     public String getlogin() {
         return libc().getlogin();
     }
