@@ -426,6 +426,10 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("dup");
     }
 
+    public int dup2(int oldFd, int newFd) {
+        return unimplementedInt("dup2");
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

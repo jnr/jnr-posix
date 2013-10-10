@@ -427,6 +427,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().dup(fd);
     }
 
+    public int dup2(int oldFd, int newFd) {
+        return libc().dup2(oldFd, newFd);
+    }
+
     private Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
         Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);
         ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeFileActions);

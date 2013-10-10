@@ -101,4 +101,24 @@ public class FileTest {
 
         assertArrayEquals(inContent, outContent);
     }
+
+    @Test
+    public void dup2Test() throws Throwable {
+        File tmp = File.createTempFile("dupTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
+        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+
+        byte[] outContent = "foo".getBytes();
+
+        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.dup2(oldFd, newFd));
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(oldFd)).write(outContent);
+        raf.seek(0);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+
+        assertArrayEquals(inContent, outContent);
+    }
 }
