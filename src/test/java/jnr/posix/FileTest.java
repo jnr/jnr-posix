@@ -1,15 +1,16 @@
 package jnr.posix;
 
-import jnr.posix.POSIX;
-import jnr.posix.POSIXFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -79,5 +80,45 @@ public class FileTest {
         assertEquals(0, posix.flock(fd, 2)); // LOCK_EX
         assertEquals(-1, posix.flock(fd2, 2 | 4)); // LOCK_EX | LOCK_NB
         assertEquals(0, posix.flock(fd, 8)); // LOCK_UN
+    }
+
+    @Test
+    public void dupTest() throws Throwable {
+        File tmp = File.createTempFile("dupTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        FileChannel fileChannel = raf.getChannel();
+        int fileDescriptor = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(fileChannel));
+
+        byte[] outContent = "foo".getBytes();
+
+        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.dup(fileDescriptor));
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(fileDescriptor)).write(outContent);
+        raf.seek(0);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+
+        assertArrayEquals(inContent, outContent);
+    }
+
+    @Test
+    public void dup2Test() throws Throwable {
+        File tmp = File.createTempFile("dupTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
+        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+
+        byte[] outContent = "foo".getBytes();
+
+        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.dup2(oldFd, newFd));
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(oldFd)).write(outContent);
+        raf.seek(0);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+
+        assertArrayEquals(inContent, outContent);
     }
 }

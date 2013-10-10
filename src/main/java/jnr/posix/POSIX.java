@@ -97,4 +97,8 @@ public interface POSIX {
                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
     
     public int flock(int fd, int operation);
+
+    int dup(int fd);
+
+    int dup2(int oldFd, int newFd);
 }
