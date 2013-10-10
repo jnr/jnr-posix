@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
 import jnr.posix.util.MethodName;
@@ -331,5 +332,9 @@ final class CheckedPOSIX implements POSIX {
 
     public int dup2(int oldFd, int newFd) {
         try { return posix.dup2(oldFd, newFd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int fcntl(int fd, Fcntl fcntlConst) {
+        try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 }

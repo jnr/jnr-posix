@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.posix.util.ProcessMaker;
 
@@ -101,4 +102,6 @@ public interface POSIX {
     int dup(int fd);
 
     int dup2(int oldFd, int newFd);
+
+    int fcntl(int fd, Fcntl fcntlConst);
 }

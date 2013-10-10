@@ -77,6 +77,8 @@ public interface LibC {
     int dup(int fd);
     int dup2(int oldFd, int newFd);
 
+    int fcntl(int fd, int fnctl);
+
     public interface LibCSignalHandler {
         @Delegate void signal(int sig);
     }

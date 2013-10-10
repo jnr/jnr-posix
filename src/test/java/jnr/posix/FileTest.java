@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -118,6 +119,25 @@ public class FileTest {
 
         byte[] inContent = new byte[outContent.length];
         new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+
+        assertArrayEquals(inContent, outContent);
+    }
+
+    @Test
+    public void fcntlDupfdTest() throws Throwable {
+        File tmp = File.createTempFile("fcntlTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+
+        byte[] outContent = "foo".getBytes();
+
+        int newFd = posix.fcntl(fd, Fcntl.F_DUPFD);
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
+        raf.seek(0);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(JavaLibCHelper.toFileDescriptor(newFd)).read(inContent, 0, 3);
 
         assertArrayEquals(inContent, outContent);
     }
