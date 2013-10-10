@@ -101,4 +101,6 @@ public interface POSIX {
     int dup(int fd);
 
     int dup2(int oldFd, int newFd);
+
+    int close(int fd);
 }
