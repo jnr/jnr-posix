@@ -334,7 +334,7 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.dup2(oldFd, newFd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
-    public int fcntl(int fd, Fcntl fcntlConst) {
+    public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 }

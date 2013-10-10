@@ -8,11 +8,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.channels.OverlappingFileLockException;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import jnr.constants.platform.Errno;
@@ -431,7 +428,7 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("dup2");
     }
 
-    public int fcntl(int fd, Fcntl fcntlConst) {
+    public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return unimplementedInt("fcntl");
     }
 

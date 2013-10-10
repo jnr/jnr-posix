@@ -432,7 +432,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().dup2(oldFd, newFd);
     }
 
-    public int fcntl(int fd, Fcntl fcntl) {
+    public int fcntl(int fd, Fcntl fcntl, int... arg) {
         return libc().fcntl(fd, fcntl.intValue());
     }
 

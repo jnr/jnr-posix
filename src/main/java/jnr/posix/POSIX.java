@@ -103,5 +103,5 @@ public interface POSIX {
 
     int dup2(int oldFd, int newFd);
 
-    int fcntl(int fd, Fcntl fcntlConst);
+    int fcntl(int fd, Fcntl fcntlConst, int... arg);
 }
