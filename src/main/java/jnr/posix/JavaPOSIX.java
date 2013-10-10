@@ -421,7 +421,11 @@ final class JavaPOSIX implements POSIX {
     public int flock(int fd, int mode) {
         return unimplementedInt("waitpid");
     }
-    
+
+    public int dup(int fd) {
+        return unimplementedInt("dup");
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

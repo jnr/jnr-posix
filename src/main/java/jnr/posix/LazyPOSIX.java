@@ -326,4 +326,8 @@ final class LazyPOSIX implements POSIX {
     public int flock(int fd, int mode) {
         return posix().flock(fd, mode);
     }
+
+    public int dup(int fd) {
+        return posix().dup(fd);
+    }
 }
