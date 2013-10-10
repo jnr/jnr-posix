@@ -145,20 +145,21 @@ public class FileTest {
     @Test
     public void fcntlDupfdWithArgTest() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
-        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
-        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
-        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                new RandomAccessFile(tmp, "rw").getChannel()));
+        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                new RandomAccessFile(tmp, "rw").getChannel()));
 
         byte[] outContent = "foo".getBytes();
 
-        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.fcntl(oldFd, Fcntl.F_DUPFD, newFd));
+        int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, newFd);
 
         new FileOutputStream(JavaLibCHelper.toFileDescriptor(newFd)).write(outContent);
-        raf.seek(0);
 
         byte[] inContent = new byte[outContent.length];
-        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+        new FileInputStream(JavaLibCHelper.toFileDescriptor(dupFd)).read(inContent, 0, 3);
 
+        assertTrue(dupFd > newFd);
         assertArrayEquals(inContent, outContent);
     }
 }
