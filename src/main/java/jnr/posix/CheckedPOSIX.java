@@ -328,4 +328,12 @@ final class CheckedPOSIX implements POSIX {
     public int flock(int fd, int mode) {
         return posix.flock(fd, mode);
     }
+
+    public int dup(int fd) {
+        try { return posix.dup(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int dup2(int oldFd, int newFd) {
+        try { return posix.dup2(oldFd, newFd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }
