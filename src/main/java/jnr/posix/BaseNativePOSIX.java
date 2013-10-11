@@ -130,7 +130,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int getgid() {
         return libc().getgid();
     }
-    
+
+    public int getdtablesize() {
+        return libc().getdtablesize();
+    }
+
     public String getlogin() {
         return libc().getlogin();
     }
@@ -434,6 +438,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public int fcntl(int fd, Fcntl fcntl, int... arg) {
         return libc().fcntl(fd, fcntl.intValue());
+    }
+
+    public int close(int fd) {
+        return libc().close(fd);
     }
 
     private Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {

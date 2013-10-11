@@ -37,6 +37,7 @@ public interface POSIX {
     int geteuid();
     int seteuid(int euid);
     int getgid();
+    int getdtablesize();
     String getlogin();
     int getpgid();
     int getpgid(int pid);
@@ -104,4 +105,5 @@ public interface POSIX {
     int dup2(int oldFd, int newFd);
 
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
+    int close(int fd);
 }

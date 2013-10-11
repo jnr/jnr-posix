@@ -122,6 +122,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.getgid(); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int getdtablesize() {
+        try { return posix.getdtablesize(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
     public Group getgrent() {
         try { return posix.getgrent(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
@@ -336,5 +340,9 @@ final class CheckedPOSIX implements POSIX {
 
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int close(int fd) {
+        try { return posix.close(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 }

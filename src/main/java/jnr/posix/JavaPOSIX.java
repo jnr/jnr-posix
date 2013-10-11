@@ -106,7 +106,12 @@ final class JavaPOSIX implements POSIX {
     public int getgid() {
         return LoginInfo.GID;
     }
-    
+
+    public int getdtablesize() {
+        handler.unimplementedError("getdtablesize unimplemented");
+        return -1;
+    }
+
     public String getlogin() {
         return helper.getlogin();
     }
@@ -430,6 +435,10 @@ final class JavaPOSIX implements POSIX {
 
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return unimplementedInt("fcntl");
+    }
+
+    public int close(int fd) {
+        return unimplementedInt("close");
     }
 
     static final class LoginInfo {

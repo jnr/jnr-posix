@@ -124,6 +124,10 @@ final class LazyPOSIX implements POSIX {
         return posix().getgid();
     }
 
+    public int getdtablesize() {
+        return posix().getdtablesize();
+    }
+
     public Group getgrent() {
         return posix().getgrent();
     }
@@ -338,5 +342,9 @@ final class LazyPOSIX implements POSIX {
 
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return posix().fcntl(fd, fcntlConst);
+    }
+
+    public int close(int fd) {
+        return posix().close(fd);
     }
 }
