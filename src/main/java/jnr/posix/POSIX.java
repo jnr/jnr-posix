@@ -36,6 +36,7 @@ public interface POSIX {
     int geteuid();
     int seteuid(int euid);
     int getgid();
+    int getdtablesize();
     String getlogin();
     int getpgid();
     int getpgid(int pid);

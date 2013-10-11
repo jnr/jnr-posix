@@ -121,6 +121,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.getgid(); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int getdtablesize() {
+        try { return posix.getdtablesize(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
     public Group getgrent() {
         try { return posix.getgrent(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
