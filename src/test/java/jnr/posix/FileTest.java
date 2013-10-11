@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -124,6 +125,45 @@ public class FileTest {
     }
 
     @Test
+    public void fcntlDupfdTest() throws Throwable {
+        File tmp = File.createTempFile("fcntlTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+
+        byte[] outContent = "foo".getBytes();
+
+        int newFd = posix.fcntl(fd, Fcntl.F_DUPFD);
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
+        raf.seek(0);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(JavaLibCHelper.toFileDescriptor(newFd)).read(inContent, 0, 3);
+
+        assertArrayEquals(inContent, outContent);
+    }
+
+    @Test
+    public void fcntlDupfdWithArgTest() throws Throwable {
+        File tmp = File.createTempFile("dupTest", "tmp");
+        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                new RandomAccessFile(tmp, "rw").getChannel()));
+        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                new RandomAccessFile(tmp, "rw").getChannel()));
+
+        byte[] outContent = "foo".getBytes();
+
+        int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, newFd);
+
+        new FileOutputStream(JavaLibCHelper.toFileDescriptor(newFd)).write(outContent);
+
+        byte[] inContent = new byte[outContent.length];
+        new FileInputStream(JavaLibCHelper.toFileDescriptor(dupFd)).read(inContent, 0, 3);
+
+        assertTrue(dupFd > newFd);
+        assertArrayEquals(inContent, outContent);
+    }
+
     public void closeTest() throws Throwable {
         File tmp = File.createTempFile("closeTest", "tmp");
         int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));

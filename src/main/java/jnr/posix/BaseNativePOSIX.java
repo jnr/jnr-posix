@@ -2,6 +2,7 @@ package jnr.posix;
 
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
 import jnr.ffi.byref.AbstractNumberReference;
@@ -433,6 +434,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public int dup2(int oldFd, int newFd) {
         return libc().dup2(oldFd, newFd);
+    }
+
+    public int fcntl(int fd, Fcntl fcntl, int... arg) {
+        return libc().fcntl(fd, fcntl.intValue());
     }
 
     public int close(int fd) {
