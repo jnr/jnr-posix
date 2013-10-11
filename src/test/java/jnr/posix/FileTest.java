@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Errno;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -120,5 +121,21 @@ public class FileTest {
         new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
 
         assertArrayEquals(inContent, outContent);
+    }
+
+    @Test
+    public void closeTest() throws Throwable {
+        File tmp = File.createTempFile("closeTest", "tmp");
+        int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
+
+        int result;
+
+        result = posix.close(fd);
+        assertEquals(0, result);
+
+        result = posix.close(fd);
+        assertEquals(-1, result);
+
+        assertEquals(Errno.EBADF.intValue(), posix.errno());
     }
 }
