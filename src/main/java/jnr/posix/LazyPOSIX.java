@@ -338,4 +338,8 @@ final class LazyPOSIX implements POSIX {
     public int dup2(int oldFd, int newFd) {
         return posix().dup2(oldFd, newFd);
     }
+
+    public int close(int fd) {
+        return posix().close(fd);
+    }
 }

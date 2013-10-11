@@ -336,4 +336,8 @@ final class CheckedPOSIX implements POSIX {
     public int dup2(int oldFd, int newFd) {
         try { return posix.dup2(oldFd, newFd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public int close(int fd) {
+        try { return posix.close(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }
