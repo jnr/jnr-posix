@@ -78,6 +78,7 @@ public interface LibC {
     int dup(int fd);
     int dup2(int oldFd, int newFd);
 
+    int fcntl(int fd, int fnctl);
     int getdtablesize();
 
     public interface LibCSignalHandler {

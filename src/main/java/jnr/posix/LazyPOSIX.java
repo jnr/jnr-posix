@@ -1,6 +1,7 @@
 
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.posix.util.ProcessMaker;
 
@@ -337,6 +338,10 @@ final class LazyPOSIX implements POSIX {
 
     public int dup2(int oldFd, int newFd) {
         return posix().dup2(oldFd, newFd);
+    }
+
+    public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
+        return posix().fcntl(fd, fcntlConst);
     }
 
     public int close(int fd) {
