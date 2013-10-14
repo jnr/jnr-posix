@@ -5,9 +5,7 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
-import jnr.ffi.byref.AbstractNumberReference;
-import jnr.ffi.byref.IntByReference;
-import jnr.ffi.byref.LongLongByReference;
+import jnr.ffi.byref.NumberByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.mapper.ToNativeContext;
@@ -395,7 +393,18 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
-            Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+                             CharSequence[] argv, CharSequence[] envp) {
+        return posix_spawnp(path, fileActions, null, argv, envp);
+    }
+
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                            Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+        return posix_spawnp(path, fileActions, null, argv, envp);
+    }
+    
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
         
         CharSequence[] nativeArgv = new CharSequence[argv.size()];
         argv.toArray(nativeArgv);
@@ -403,22 +412,24 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         CharSequence[] nativeEnv = new CharSequence[envp.size()];
         envp.toArray(nativeEnv);
 
-        return posix_spawnp(path, fileActions, nativeArgv, nativeEnv);
+        return posix_spawnp(path, fileActions, spawnAttributes, nativeArgv, nativeEnv);
     }
 
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
-            CharSequence[] argv, CharSequence[] envp) {
-        AbstractNumberReference<? extends Number> pid = Library.getRuntime(libc()).findType(TypeAlias.pid_t).size() == 4
-                ? new IntByReference(-1) : new LongLongByReference(-1);
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             CharSequence[] argv, CharSequence[] envp) {
+        NumberByReference pid = new NumberByReference(TypeAlias.pid_t);
         Pointer nativeFileActions = nativeFileActions(fileActions);
+        Pointer nativeSpawnAttributes = nativeSpawnAttributes(spawnAttributes);
 
         try {
-            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, null, argv, envp) < 0) {
+            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, nativeSpawnAttributes, argv, envp) < 0) {
                 Errno e = Errno.valueOf(errno());
                 handler.error(e, "posix_spawnp", e.description());
             }
         } finally {
             ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
+            ((UnixLibC) libc()).posix_spawnattr_destroy(nativeSpawnAttributes);
         }
 
         return pid.longValue();
@@ -452,6 +463,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
 
         return nativeFileActions;
+    }
+
+    private Pointer nativeSpawnAttributes(Collection<? extends SpawnAttribute> spawnAttributes) {
+        Pointer nativeSpawnAttributes = Memory.allocateDirect(getRuntime(), 128);
+        ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeSpawnAttributes);
+        for (SpawnAttribute action : spawnAttributes) {
+            action.set(this, nativeSpawnAttributes);
+        }
+
+        return nativeSpawnAttributes;
     }
 
     public abstract FileStat allocateStat();

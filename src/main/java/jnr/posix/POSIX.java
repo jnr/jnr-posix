@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Collection;
 import jnr.constants.platform.Signal;
 
-public interface POSIX {
+public interface  POSIX {
     FileStat allocateStat();
     int chmod(String filename, int mode);
     int chown(String filename, int user, int group);
@@ -97,6 +97,10 @@ public interface POSIX {
 
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
+
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp);
     
     public int flock(int fd, int operation);
 

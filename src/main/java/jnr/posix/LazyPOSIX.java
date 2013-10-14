@@ -320,6 +320,12 @@ final class LazyPOSIX implements POSIX {
         return posix().posix_spawnp(path, fileActions, argv, envp);
     }
 
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+        return posix().posix_spawnp(path, fileActions, spawnAttributes, argv, envp);
+    }
+
     public long sysconf(Sysconf name) {
         return posix().sysconf(name);
     }

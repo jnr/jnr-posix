@@ -318,6 +318,13 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.posix_spawnp(path, fileActions, argv, envp); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+        try { return posix.posix_spawnp(path, fileActions, spawnAttributes, argv, envp); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+
     public long sysconf(Sysconf name) {
         try { return posix.sysconf(name); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

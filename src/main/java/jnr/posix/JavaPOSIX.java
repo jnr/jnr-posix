@@ -380,6 +380,12 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("posix_spawnp");
     }
 
+    public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
+                             Collection<? extends SpawnAttribute> spawnAttributes,
+                             Collection<? extends CharSequence> argv, Collection<? extends CharSequence> envp) {
+        return unimplementedInt("posix_spawnp");
+    }
+
     public int errno() {
         return JavaLibCHelper.errno();
     }
