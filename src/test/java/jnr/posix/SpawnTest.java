@@ -54,7 +54,7 @@ public class SpawnTest {
     }
 
     private static void killChild(long pid) {
-        if (pid != -1) {
+        if (pid > 0) {
             posix.libc().kill((int) pid, 9); posix.libc().waitpid((int) pid, null, 0);
         }
     }

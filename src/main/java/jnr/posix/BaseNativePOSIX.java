@@ -5,6 +5,9 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
+import jnr.ffi.byref.AbstractNumberReference;
+import jnr.ffi.byref.IntByReference;
+import jnr.ffi.byref.LongLongByReference;
 import jnr.ffi.byref.NumberByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jnr.constants.platform.Signal;
@@ -418,18 +422,20 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,
                              Collection<? extends SpawnAttribute> spawnAttributes,
                              CharSequence[] argv, CharSequence[] envp) {
+//        AbstractNumberReference<? extends Number> pid = getRuntime().findType(TypeAlias.pid_t).size() == 4
+//            ? new IntByReference(-1) : new LongLongByReference(-1);
         NumberByReference pid = new NumberByReference(TypeAlias.pid_t);
-        Pointer nativeFileActions = nativeFileActions(fileActions);
-        Pointer nativeSpawnAttributes = nativeSpawnAttributes(spawnAttributes);
+        Pointer nativeFileActions = fileActions != null && !fileActions.isEmpty() ? nativeFileActions(fileActions) : null;
+        Pointer nativeSpawnAttributes = spawnAttributes != null && !spawnAttributes.isEmpty() ? nativeSpawnAttributes(spawnAttributes) : null;
 
         try {
-            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, nativeSpawnAttributes, argv, envp) < 0) {
+            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, nativeSpawnAttributes, argv, envp) == -1) {
                 Errno e = Errno.valueOf(errno());
                 handler.error(e, "posix_spawnp", e.description());
             }
         } finally {
-            ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
-            ((UnixLibC) libc()).posix_spawnattr_destroy(nativeSpawnAttributes);
+            if (nativeFileActions != null) ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
+            if (nativeSpawnAttributes != null) ((UnixLibC) libc()).posix_spawnattr_destroy(nativeSpawnAttributes);
         }
 
         return pid.longValue();
@@ -467,7 +473,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     private Pointer nativeSpawnAttributes(Collection<? extends SpawnAttribute> spawnAttributes) {
         Pointer nativeSpawnAttributes = Memory.allocateDirect(getRuntime(), 128);
-        ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeSpawnAttributes);
+        ((UnixLibC) libc()).posix_spawnattr_init(nativeSpawnAttributes);
         for (SpawnAttribute action : spawnAttributes) {
             action.set(this, nativeSpawnAttributes);
         }
