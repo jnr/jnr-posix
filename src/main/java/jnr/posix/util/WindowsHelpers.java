@@ -208,7 +208,7 @@ public class WindowsHelpers {
                 } else {
                     if (!shell.contains(" ")) quote = 0;
                     
-                    shell.replace('/', '\\');
+                    shell = shell.replace('/', '\\');
                 }
             }                
         }
