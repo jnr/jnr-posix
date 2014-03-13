@@ -353,4 +353,8 @@ final class LazyPOSIX implements POSIX {
     public int close(int fd) {
         return posix().close(fd);
     }
+
+    public int unlink(CharSequence path) {
+        return posix().unlink(path);
+    }
 }

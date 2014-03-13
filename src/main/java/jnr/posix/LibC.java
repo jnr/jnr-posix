@@ -117,4 +117,5 @@ public interface LibC {
     public @clock_t long times(@Out @Transient NativeTimes tms);
     
     int flock(int fd, int mode);
+    int unlink(CharSequence path);
 }

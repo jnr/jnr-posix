@@ -498,6 +498,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return new JavaTimes();
     }
 
+    public int unlink(CharSequence path) {
+        return libc().unlink(path);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

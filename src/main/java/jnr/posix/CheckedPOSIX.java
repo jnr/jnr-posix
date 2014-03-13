@@ -352,4 +352,8 @@ final class CheckedPOSIX implements POSIX {
     public int close(int fd) {
         try { return posix.close(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public int unlink(CharSequence path) {
+        try { return posix.unlink(path); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

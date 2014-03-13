@@ -14,6 +14,7 @@ import java.nio.channels.FileChannel;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FileTest {
@@ -164,6 +165,7 @@ public class FileTest {
         assertArrayEquals(inContent, outContent);
     }
 
+    @Test
     public void closeTest() throws Throwable {
         File tmp = File.createTempFile("closeTest", "tmp");
         int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
@@ -177,5 +179,29 @@ public class FileTest {
         assertEquals(-1, result);
 
         assertEquals(Errno.EBADF.intValue(), posix.errno());
+    }
+
+    @Test
+    public void unlinkTest() throws Throwable {
+        File tmp = File.createTempFile("unlinkTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+
+        raf.write("hello".getBytes());
+
+        int res = posix.unlink(tmp.getCanonicalPath());
+
+        assertEquals(0, res);
+
+        assertFalse(tmp.exists());
+
+        raf.write("world".getBytes());
+
+        raf.seek(0);
+
+        byte[] actual = new byte[10];
+
+        raf.read(actual);
+
+        assertArrayEquals("helloworld".getBytes(), actual);
     }
 }
