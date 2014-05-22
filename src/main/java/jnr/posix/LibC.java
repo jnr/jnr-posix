@@ -118,4 +118,5 @@ public interface LibC {
     
     int flock(int fd, int mode);
     int unlink(CharSequence path);
+    int open(CharSequence path, int flags, int perm);
 }

@@ -502,6 +502,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().unlink(path);
     }
 
+    public int open(CharSequence path, int flags, int perm) {
+        return libc().open(path, flags, perm);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

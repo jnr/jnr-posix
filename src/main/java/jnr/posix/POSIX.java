@@ -111,4 +111,5 @@ public interface  POSIX {
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
     int close(int fd);
     int unlink(CharSequence path);
+    int open(CharSequence path, int flags, int perm);
 }

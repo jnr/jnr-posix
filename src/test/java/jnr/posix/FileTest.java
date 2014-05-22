@@ -15,6 +15,7 @@ import java.nio.channels.FileChannel;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FileTest {
@@ -203,5 +204,18 @@ public class FileTest {
         raf.read(actual);
 
         assertArrayEquals("helloworld".getBytes(), actual);
+    }
+
+    @Test
+    public void openTest() throws Throwable {
+        int fd = posix.open("pom.xml", 0, 0666);
+
+        assertNotEquals(-1, fd);
+
+        int result = posix.close(fd);
+        assertEquals(0, result);
+
+        result = posix.close(fd);
+        assertEquals(-1, result);
     }
 }

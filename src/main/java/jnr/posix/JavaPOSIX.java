@@ -453,6 +453,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int open(CharSequence path, int flags, int perm) {
+        handler.unimplementedError("open");
+
+        return -1;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
