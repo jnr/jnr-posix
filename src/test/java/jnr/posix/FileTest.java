@@ -232,6 +232,7 @@ public class FileTest {
 
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
         assertEquals(raf.readLine(), new String(buffer.array()));
+        posix.unlink(tmp.getAbsolutePath());
     }
 
     @Test
@@ -251,5 +252,6 @@ public class FileTest {
 
         raf = new RandomAccessFile(tmp, "r");
         assertEquals(raf.readLine(), "Now is the summer of our discontent");
+        posix.unlink(tmp.getAbsolutePath());
     }
 }
