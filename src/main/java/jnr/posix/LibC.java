@@ -108,6 +108,7 @@ public interface LibC {
     @IgnoreError int isatty(int fd);
     int read(int fd, @Out ByteBuffer dst, int len);
     int write(int fd, @In ByteBuffer src, int len);
+    int pwrite(int fd, @In ByteBuffer src, int len, int offset);
     int close(int fd);
     int execv(CharSequence path, @In CharSequence... argv);
     int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);

@@ -10,6 +10,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -217,5 +218,38 @@ public class FileTest {
 
         result = posix.close(fd);
         assertEquals(-1, result);
+    }
+
+    @Test
+    public void writeTest() throws Throwable {
+        String str = "To thine own self be true";
+        File tmp = File.createTempFile("writeTest", "tmp");
+        ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
+
+        int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
+        posix.libc().write(fd, buffer, str.length());
+        posix.close(fd);
+
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        assertEquals(raf.readLine(), new String(buffer.array()));
+    }
+
+    @Test
+    public void pwriteTest() throws Throwable {
+        String str = "Now is the winter of our discontent";
+        File tmp = File.createTempFile("pwriteTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        raf.write(str.getBytes());
+        raf.close();
+
+        String str2 = "summer";
+        ByteBuffer buffer = ByteBuffer.wrap(str2.getBytes());
+
+        int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
+        posix.libc().pwrite(fd, buffer, str2.length(), 11);
+        posix.close(fd);
+
+        raf = new RandomAccessFile(tmp, "r");
+        assertEquals(raf.readLine(), "Now is the summer of our discontent");
     }
 }
