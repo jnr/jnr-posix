@@ -361,6 +361,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
     
     public int waitpid(int pid, int[] status, int flags) {
+        return waitpid((long)pid, status, flags);
+    }
+
+    public int waitpid(long pid, int[] status, int flags) {
         return libc().waitpid(pid, status, flags);
     }
     

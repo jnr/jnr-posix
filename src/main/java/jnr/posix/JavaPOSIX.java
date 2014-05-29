@@ -368,6 +368,10 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("waitpid");
     }
 
+    public int waitpid(long pid, int[] status, int flags) {
+        return unimplementedInt("waitpid");
+    }
+
     public int getpriority(int which, int who) {
         return unimplementedInt("getpriority");
     }

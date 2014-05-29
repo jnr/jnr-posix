@@ -291,6 +291,10 @@ final class CheckedPOSIX implements POSIX {
     }
 
     public int waitpid(int pid, int[] status, int flags) {
+        return waitpid((long)pid, status, flags);
+    }
+
+    public int waitpid(long pid, int[] status, int flags) {
         try { return posix.waitpid(pid, status, flags); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 

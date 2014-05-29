@@ -101,7 +101,7 @@ public interface LibC {
     int unsetenv(CharSequence envName);
     int utimes(CharSequence path, @In Timeval[] times);
     int fork();
-    int waitpid(int pid, @Out int[] status, int options);
+    int waitpid(long pid, @Out int[] status, int options);
     int wait(@Out int[] status);
     int getpriority(int which, int who);
     int setpriority(int which, int who, int prio);

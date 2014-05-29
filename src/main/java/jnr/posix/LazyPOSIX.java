@@ -293,6 +293,10 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int waitpid(int pid, int[] status, int flags) {
+        return waitpid((long)pid, status, flags);
+    }
+
+    public int waitpid(long pid, int[] status, int flags) {
         return posix().waitpid(pid, status, flags);
     }
 

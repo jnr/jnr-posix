@@ -396,6 +396,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int waitpid(long pid, int[] status, int flags) {
+        handler.unimplementedError("waitpid");
+
+        return -1;
+    }
+
+    @Override
     public String getlogin() {
         return helper.getlogin();
     }
