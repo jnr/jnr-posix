@@ -20,6 +20,10 @@ public abstract class SpawnAttribute {
         return new SetFlags(flags);
     }
 
+    public static SpawnAttribute sigdef(long sigdef) {
+        return new Sigdef(sigdef);
+    }
+
     public static SpawnAttribute sigmask(long sigmask) {
         return new Sigmask(sigmask);
     }
@@ -58,6 +62,18 @@ public abstract class SpawnAttribute {
 
         final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
             return ((UnixLibC) posix.libc()).posix_spawnattr_setsigmask(nativeSpawnAttr, new NumberByReference(TypeAlias.u_int32_t, sigmask)) == 0;
+        }
+    }
+
+    private static final class Sigdef extends SpawnAttribute {
+        final long sigdef;
+
+        public Sigdef(long sigdef) {
+            this.sigdef = sigdef;
+        }
+
+        final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
+            return ((UnixLibC) posix.libc()).posix_spawnattr_setsigdefault(nativeSpawnAttr, new NumberByReference(TypeAlias.u_int32_t, sigdef)) == 0;
         }
     }
 
