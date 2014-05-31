@@ -510,6 +510,46 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().open(path, flags, perm);
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+
+    public int write(int fd, byte[] buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+
+    public int read(int fd, ByteBuffer buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+
+    public int write(int fd, ByteBuffer buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
+
+    public int pread(int fd, ByteBuffer buf, int n, int offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+
+    public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
+
+    public int lseek(int fd, int offset, int whence) {
+        return libc().lseek(fd, offset, whence);
+    }
+
+    public int pipe(int[] fds) {
+        return libc().pipe(fds);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

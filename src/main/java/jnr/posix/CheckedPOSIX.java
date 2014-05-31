@@ -8,6 +8,7 @@ import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 final class CheckedPOSIX implements POSIX {
@@ -363,5 +364,45 @@ final class CheckedPOSIX implements POSIX {
 
     public int open(CharSequence path, int flags, int perm) {
         try { return posix.open(path, flags, perm); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int read(int fd, byte[] buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int write(int fd, byte[] buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int read(int fd, ByteBuffer buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int write(int fd, ByteBuffer buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int pread(int fd, ByteBuffer buf, int n, int offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int lseek(int fd, int offset, int whence) {
+        try { return posix.lseek(fd, offset, whence); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int pipe(int[] fds) {
+        try {return posix.pipe(fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 }

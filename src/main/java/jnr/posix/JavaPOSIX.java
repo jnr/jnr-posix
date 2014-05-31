@@ -463,6 +463,66 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+
+    public int write(int fd, byte[] buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+
+    public int read(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+
+    public int write(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pwrite");
+
+        return -1;
+    }
+
+    public int pread(int fd, ByteBuffer buf, int n, int offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+
+    public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
+        handler.unimplementedError("pwrite");
+
+        return -1;
+    }
+
+    public int lseek(int fd, int offset, int whence) {
+        handler.unimplementedError("lseek");
+
+        return -1;
+    }
+
+    public int pipe(int[] fds) {
+        handler.unimplementedError("pipe");
+
+        return -1;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

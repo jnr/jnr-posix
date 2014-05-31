@@ -108,7 +108,13 @@ public interface LibC {
     @IgnoreError int isatty(int fd);
     int read(int fd, @Out ByteBuffer dst, int len);
     int write(int fd, @In ByteBuffer src, int len);
+    int read(int fd, @Out byte[] dst, int len);
+    int write(int fd, @In byte[] src, int len);
+    int pread(int fd, @Out ByteBuffer src, int len, int offset);
+    int pread(int fd, @Out byte[] src, int len, int offset);
     int pwrite(int fd, @In ByteBuffer src, int len, int offset);
+    int pwrite(int fd, @In byte[] src, int len, int offset);
+    int lseek(int fd, int offset, int whence);
     int close(int fd);
     int execv(CharSequence path, @In CharSequence... argv);
     int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);
@@ -120,4 +126,5 @@ public interface LibC {
     int flock(int fd, int mode);
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
+    int pipe(@Out int[] fds);
 }

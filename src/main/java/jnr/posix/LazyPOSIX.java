@@ -7,6 +7,7 @@ import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import jnr.constants.platform.Signal;
 
@@ -364,5 +365,45 @@ final class LazyPOSIX implements POSIX {
 
     public int open(CharSequence path, int flags, int perm) {
         return posix().open(path, flags, perm);
+    }
+
+    public int write(int fd, byte[] buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+
+    public int read(int fd, byte[] buf, int n) {
+        return posix().read(fd, buf, n);
+    }
+
+    public int read(int fd, ByteBuffer buf, int n) {
+        return posix().read(fd, buf, n);
+    }
+
+    public int write(int fd, ByteBuffer buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
+
+    public int pread(int fd, ByteBuffer buf, int n, int offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+
+    public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
+
+    public int lseek(int fd, int offset, int whence) {
+        return posix().lseek(fd, offset, whence);
+    }
+
+    public int pipe(int[] fds) {
+        return posix().pipe(fds);
     }
 }

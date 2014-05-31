@@ -6,6 +6,7 @@ import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import jnr.constants.platform.Signal;
 
@@ -114,4 +115,14 @@ public interface  POSIX {
     int close(int fd);
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
+    int write(int fd, byte[] buf, int n);
+    int read(int fd, byte[] buf, int n);
+    int pwrite(int fd, byte[] buf, int n, int offset);
+    int pread(int fd, byte[] buf, int n, int offset);
+    int write(int fd, ByteBuffer buf, int n);
+    int read(int fd, ByteBuffer buf, int n);
+    int pwrite(int fd, ByteBuffer buf, int n, int offset);
+    int pread(int fd, ByteBuffer buf, int n, int offset);
+    int lseek(int fd, int offset, int whence);
+    int pipe(int[] fds);
 }
