@@ -154,6 +154,8 @@ public interface  POSIX {
     int pipe(int[] fds);
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
+
+    String gethostname();
     int rename(CharSequence oldName, CharSequence newName);
     String getcwd();
 

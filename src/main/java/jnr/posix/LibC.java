@@ -144,6 +144,8 @@ public interface LibC {
     int pipe(@Out int[] fds);
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
+
+    String gethostname();
     int rename(CharSequence oldName, CharSequence newName);
     long getcwd(byte[] cwd, int len);
     int fsync(int fd);

@@ -527,4 +527,8 @@ final class LazyPOSIX implements POSIX {
     public int mkfifo(String path, int mode) {
         return posix().mkfifo(path, mode);
     }
+
+    public String gethostname() {
+        return posix().gethostname();
+    }
 }

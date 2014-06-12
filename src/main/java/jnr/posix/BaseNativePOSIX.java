@@ -644,6 +644,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().socketpair(domain, type, protocol, fds);
     }
 
+    public String gethostname() {
+        return libc().gethostname();
+    }
+
     public int sendmsg(int socket, MsgHdr message, int flags) {
         return libc().sendmsg( socket, message, flags );
     }

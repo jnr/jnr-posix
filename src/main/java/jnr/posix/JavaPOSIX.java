@@ -685,6 +685,11 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("mkfifo not available for Java");
     }
 
+    public String gethostname() {
+        return helper.gethostname();
+    }
+
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
