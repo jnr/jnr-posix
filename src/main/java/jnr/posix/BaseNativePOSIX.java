@@ -550,6 +550,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().pipe(fds);
     }
 
+    public String gethostname() {
+        return libc().gethostname();
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

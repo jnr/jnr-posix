@@ -125,4 +125,6 @@ public interface  POSIX {
     int pread(int fd, ByteBuffer buf, int n, int offset);
     int lseek(int fd, int offset, int whence);
     int pipe(int[] fds);
+
+    String gethostname();
 }

@@ -405,4 +405,8 @@ final class CheckedPOSIX implements POSIX {
     public int pipe(int[] fds) {
         try {return posix.pipe(fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public String gethostname() {
+        try {return posix.gethostname(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
 }

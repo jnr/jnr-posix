@@ -406,4 +406,8 @@ final class LazyPOSIX implements POSIX {
     public int pipe(int[] fds) {
         return posix().pipe(fds);
     }
+
+    public String gethostname() {
+        return posix().gethostname();
+    }
 }
