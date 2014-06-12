@@ -214,6 +214,12 @@ public class JavaLibCHelper {
         return System.getProperty("user.name");
     }
 
+    public String gethostname() {
+        String hn = System.getenv("HOSTNAME");
+        if (hn == null) hn = System.getenv("COMPUTERNAME");
+        return hn;
+    }
+
     public int getpid() {
         return handler.getPID();
     }
