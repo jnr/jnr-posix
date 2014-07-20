@@ -228,7 +228,7 @@ public class FileTest {
         ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
 
         int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
-        posix.libc().write(fd, buffer, str.length());
+        posix.write(fd, buffer, str.length());
         posix.close(fd);
 
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
