@@ -511,7 +511,7 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
-    public int lseek(int fd, int offset, int whence) {
+    public int lseek(int fd, long offset, int whence) {
         handler.unimplementedError("lseek");
 
         return -1;

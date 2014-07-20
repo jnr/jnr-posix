@@ -542,7 +542,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().pwrite(fd, buf, n, offset);
     }
 
-    public int lseek(int fd, int offset, int whence) {
+    public int lseek(int fd, long offset, int whence) {
         return libc().lseek(fd, offset, whence);
     }
 

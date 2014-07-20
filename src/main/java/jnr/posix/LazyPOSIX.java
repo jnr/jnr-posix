@@ -399,7 +399,7 @@ final class LazyPOSIX implements POSIX {
         return posix().pwrite(fd, buf, n, offset);
     }
 
-    public int lseek(int fd, int offset, int whence) {
+    public int lseek(int fd, long offset, int whence) {
         return posix().lseek(fd, offset, whence);
     }
 

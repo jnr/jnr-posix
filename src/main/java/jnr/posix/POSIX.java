@@ -123,6 +123,6 @@ public interface  POSIX {
     int read(int fd, ByteBuffer buf, int n);
     int pwrite(int fd, ByteBuffer buf, int n, int offset);
     int pread(int fd, ByteBuffer buf, int n, int offset);
-    int lseek(int fd, int offset, int whence);
+    int lseek(int fd, long offset, int whence);
     int pipe(int[] fds);
 }
