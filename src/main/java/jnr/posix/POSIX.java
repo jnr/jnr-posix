@@ -125,4 +125,5 @@ public interface  POSIX {
     int pread(int fd, ByteBuffer buf, int n, int offset);
     int lseek(int fd, long offset, int whence);
     int pipe(int[] fds);
+    int ftruncate(int fd, long offset);
 }

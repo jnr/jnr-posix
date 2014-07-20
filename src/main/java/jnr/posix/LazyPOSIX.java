@@ -406,4 +406,8 @@ final class LazyPOSIX implements POSIX {
     public int pipe(int[] fds) {
         return posix().pipe(fds);
     }
+
+    public int ftruncate(int fd, long offset) {
+        return posix().ftruncate(fd, offset);
+    }
 }

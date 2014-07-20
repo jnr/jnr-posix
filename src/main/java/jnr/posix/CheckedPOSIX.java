@@ -405,4 +405,8 @@ final class CheckedPOSIX implements POSIX {
     public int pipe(int[] fds) {
         try {return posix.pipe(fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public int ftruncate(int fd, long offset) {
+        try {return posix.ftruncate(fd, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

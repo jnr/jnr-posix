@@ -550,6 +550,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().pipe(fds);
     }
 
+    public int ftruncate(int fd, long offset) {
+        return libc().ftruncate(fd, offset);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

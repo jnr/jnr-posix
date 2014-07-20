@@ -523,6 +523,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int ftruncate(int fd, long offset) {
+        handler.unimplementedError("ftruncate");
+
+        return -1;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

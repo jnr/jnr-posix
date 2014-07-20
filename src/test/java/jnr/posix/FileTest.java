@@ -2,6 +2,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
+import jnr.constants.platform.OpenFlags;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -247,11 +248,28 @@ public class FileTest {
         ByteBuffer buffer = ByteBuffer.wrap(str2.getBytes());
 
         int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
-        posix.libc().pwrite(fd, buffer, str2.length(), 11);
+        posix.pwrite(fd, buffer, str2.length(), 11);
         posix.close(fd);
 
         raf = new RandomAccessFile(tmp, "r");
         assertEquals(raf.readLine(), "Now is the summer of our discontent");
         posix.unlink(tmp.getAbsolutePath());
+    }
+
+    @Test
+    public void ftruncateTest() throws Throwable {
+        String str = "Beware the Jabberwock, my son!";
+        File tmp = File.createTempFile("ftruncateTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        raf.write(str.getBytes());
+        raf.close();
+
+        int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        posix.ftruncate(fd, 21);
+        posix.lseek(fd, 0, 0);
+        byte[] buf = new byte[21];
+        int read = posix.read(fd, buf, 31);
+        assertEquals(21, read);
+        assertArrayEquals(buf, "Beware the Jabberwock".getBytes());
     }
 }
