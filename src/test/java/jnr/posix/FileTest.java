@@ -272,4 +272,14 @@ public class FileTest {
         assertEquals(21, read);
         assertArrayEquals(buf, "Beware the Jabberwock".getBytes());
     }
+
+    @Test
+    public void fcntlTest() throws Throwable {
+        int[] fds = new int[2];
+        int ret = posix.pipe(fds);
+        assertEquals(0, ret);
+        int flags = posix.fcntl(fds[0], Fcntl.F_GETFD, 0);
+        posix.fcntl(fds[0], Fcntl.F_SETFD, flags | 1); // FD_CLOEXEC
+        assertEquals(1, posix.fcntl(fds[0], Fcntl.F_GETFD, 0));
+    }
 }

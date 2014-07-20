@@ -443,6 +443,14 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("dup2");
     }
 
+    public int fcntlInt(int fd, Fcntl fcntlConst, int arg) {
+        return unimplementedInt("fcntl");
+    }
+
+    public int fcntl(int fd, Fcntl fcntlConst) {
+        return unimplementedInt("fcntl");
+    }
+
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return unimplementedInt("fcntl");
     }

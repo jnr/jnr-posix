@@ -111,7 +111,8 @@ public interface  POSIX {
 
     int dup2(int oldFd, int newFd);
 
-    int fcntl(int fd, Fcntl fcntlConst, int... arg);
+    int fcntlInt(int fd, Fcntl fcntlConst, int arg);
+    int fcntl(int fd, Fcntl fcntlConst);
     int close(int fd);
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
@@ -126,4 +127,12 @@ public interface  POSIX {
     int lseek(int fd, long offset, int whence);
     int pipe(int[] fds);
     int ftruncate(int fd, long offset);
+
+    /**
+     * fcntl(2)
+     *
+     * @deprecated This version does not pass args because jnr-ffi does not support variadic invocation.
+     * @see jnr.posix.POSIX#fcntlInt(int, jnr.constants.platform.Fcntl, int)
+     */
+    int fcntl(int fd, Fcntl fcntlConst, int... arg);
 }

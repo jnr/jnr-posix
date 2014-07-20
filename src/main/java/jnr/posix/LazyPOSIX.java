@@ -351,6 +351,14 @@ final class LazyPOSIX implements POSIX {
         return posix().dup2(oldFd, newFd);
     }
 
+    public int fcntlInt(int fd, Fcntl fcntlConst, int arg) {
+        return posix().fcntlInt(fd, fcntlConst, arg);
+    }
+
+    public int fcntl(int fd, Fcntl fcntlConst) {
+        return posix().fcntl(fd, fcntlConst);
+    }
+
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return posix().fcntl(fd, fcntlConst);
     }
