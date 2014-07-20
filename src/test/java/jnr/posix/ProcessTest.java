@@ -29,22 +29,4 @@ public class ProcessTest {
             assertEquals("incorrect HZ value", 100L, hz);
         }
     }
-
-    @Test
-    public void posix_spawn() throws Throwable {
-        long pid = posix.posix_spawnp("ls", null, null, Arrays.asList("."), Arrays.asList("FOO=BAR"));
-
-        assertTrue(pid > 0);
-
-        Pipe pipe = Pipe.open();
-        pipe.sink().configureBlocking(false);
-        int fd1, fd2;
-
-        fd1 = (Integer)FieldAccess.getProtectedFieldValue(Class.forName("sun.nio.ch.SourceChannelImpl"), "fdVal", pipe.source());
-        fd2 = (Integer)FieldAccess.getProtectedFieldValue(Class.forName("sun.nio.ch.SinkChannelImpl"), "fdVal", pipe.sink());
-        pid = posix.posix_spawnp("yes", Arrays.asList(SpawnFileAction.dup(fd2, 1), SpawnFileAction.close(fd1)), null, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
-
-        posix.close(fd1);
-        posix.waitpid(pid, null, 0);
-    }
 }
