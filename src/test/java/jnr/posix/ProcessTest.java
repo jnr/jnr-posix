@@ -29,4 +29,10 @@ public class ProcessTest {
             assertEquals("incorrect HZ value", 100L, hz);
         }
     }
+
+    @Test
+    public void getcwd() {
+        String propCwd = System.getProperty("user.dir");
+        assertEquals(propCwd, posix.getcwd());
+    }
 }

@@ -562,6 +562,15 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().ftruncate(fd, offset);
     }
 
+    public String getcwd() {
+        byte[] cwd = new byte[1024];
+        long result = libc().getcwd(cwd, 1024);
+        if (result == -1) return null;
+        int len = 0;
+        for (; len < 1024; len++) if (cwd[len] == 0) break;
+        return new String(cwd, 0, len);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;

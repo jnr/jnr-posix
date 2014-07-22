@@ -126,6 +126,7 @@ public interface  POSIX {
     int lseek(int fd, long offset, int whence);
     int pipe(int[] fds);
     int ftruncate(int fd, long offset);
+    String getcwd();
 
     /**
      * fcntl(2)

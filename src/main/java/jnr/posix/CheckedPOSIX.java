@@ -35,6 +35,11 @@ final class CheckedPOSIX implements POSIX {
         return false;
     }
 
+    private String unimplementedString() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
     public ProcessMaker newProcessMaker(String... command) {
         try { return posix.newProcessMaker(command); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
@@ -416,5 +421,9 @@ final class CheckedPOSIX implements POSIX {
 
     public int ftruncate(int fd, long offset) {
         try {return posix.ftruncate(fd, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public String getcwd() {
+        try {return posix.getcwd(); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
 }

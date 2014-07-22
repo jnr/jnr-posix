@@ -418,4 +418,8 @@ final class LazyPOSIX implements POSIX {
     public int ftruncate(int fd, long offset) {
         return posix().ftruncate(fd, offset);
     }
+
+    public String getcwd() {
+        return posix().getcwd();
+    }
 }
