@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -35,13 +36,24 @@ public class SpawnTest {
         }
     }
 
-
     @Test public void validPid() {
         if (Platform.getNativePlatform().isUnix()) {
             long pid = -1;
             try {
                 pid = posix.posix_spawnp("true", emptyActions, Arrays.asList("true"), emptyEnv);
                 assertTrue(pid != -1);
+            } finally {
+                if (pid != -1) posix.libc().waitpid((int) pid, null, 0);
+            }
+        }
+    }
+
+    @Test public void emptyCommand() {
+        if (Platform.getNativePlatform().isUnix()) {
+            long pid = -1;
+            try {
+                pid = posix.posix_spawnp("", emptyActions, Collections.EMPTY_LIST, emptyEnv);
+                assertEquals(-1, pid);
             } finally {
                 if (pid != -1) posix.libc().waitpid((int) pid, null, 0);
             }

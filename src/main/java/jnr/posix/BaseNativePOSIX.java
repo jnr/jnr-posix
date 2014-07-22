@@ -431,17 +431,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         NumberByReference pid = new NumberByReference(TypeAlias.pid_t);
         Pointer nativeFileActions = fileActions != null && !fileActions.isEmpty() ? nativeFileActions(fileActions) : null;
         Pointer nativeSpawnAttributes = spawnAttributes != null && !spawnAttributes.isEmpty() ? nativeSpawnAttributes(spawnAttributes) : null;
+        long result;
 
         try {
-            if (((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, nativeSpawnAttributes, argv, envp) == -1) {
-                Errno e = Errno.valueOf(errno());
-                handler.error(e, "posix_spawnp", e.description());
-            }
+            result = ((UnixLibC) libc()).posix_spawnp(pid, path, nativeFileActions, nativeSpawnAttributes, argv, envp);
         } finally {
             if (nativeFileActions != null) ((UnixLibC) libc()).posix_spawn_file_actions_destroy(nativeFileActions);
             if (nativeSpawnAttributes != null) ((UnixLibC) libc()).posix_spawnattr_destroy(nativeSpawnAttributes);
         }
 
+        if (result != 0) return -1; // result will be errno, but we can't indicate error because we return pid
         return pid.longValue();
     }
     
