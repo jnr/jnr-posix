@@ -1,7 +1,6 @@
 package jnr.posix;
 
-import jnr.ffi.Pointer;
-import jnr.ffi.TypeAlias;
+import jnr.ffi.*;
 import jnr.ffi.byref.NumberByReference;
 
 public abstract class SpawnAttribute {
@@ -21,11 +20,13 @@ public abstract class SpawnAttribute {
     }
 
     public static SpawnAttribute sigdef(long sigdef) {
-        return new Sigdef(sigdef);
+        throw new RuntimeException("sigdefault not yet supported");
+//        return new Sigdef(sigdef);
     }
 
     public static SpawnAttribute sigmask(long sigmask) {
-        return new Sigmask(sigmask);
+        throw new RuntimeException("sigmask not yet supported");
+//        return new Sigmask(sigmask);
     }
 
 
@@ -39,6 +40,10 @@ public abstract class SpawnAttribute {
         final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
             return ((UnixLibC) posix.libc()).posix_spawnattr_setpgroup(nativeSpawnAttr, pgroup) == 0;
         }
+
+        public String toString() {
+            return "SpawnAttribute::PGroup(pgroup = " + pgroup + ")";
+        }
     }
 
     private static final class SetFlags extends SpawnAttribute {
@@ -51,6 +56,10 @@ public abstract class SpawnAttribute {
         final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
             return ((UnixLibC) posix.libc()).posix_spawnattr_setflags(nativeSpawnAttr, flags) == 0;
         }
+
+        public String toString() {
+            return "SpawnAttribute::SetFlags(flags = " + Integer.toHexString(flags) + ")";
+        }
     }
 
     private static final class Sigmask extends SpawnAttribute {
@@ -61,7 +70,12 @@ public abstract class SpawnAttribute {
         }
 
         final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
-            return ((UnixLibC) posix.libc()).posix_spawnattr_setsigmask(nativeSpawnAttr, new NumberByReference(TypeAlias.u_int32_t, sigmask)) == 0;
+            throw new RuntimeException("sigmask not yet supported");
+//            return ((UnixLibC) posix.libc()).posix_spawnattr_setsigmask(nativeSpawnAttr, mask) == 0;
+        }
+
+        public String toString() {
+            return "SpawnAttribute::Sigmask(mask = " + Long.toHexString(sigmask) + ")";
         }
     }
 
@@ -73,7 +87,12 @@ public abstract class SpawnAttribute {
         }
 
         final boolean set(POSIX posix, Pointer nativeSpawnAttr) {
-            return ((UnixLibC) posix.libc()).posix_spawnattr_setsigdefault(nativeSpawnAttr, new NumberByReference(TypeAlias.u_int32_t, sigdef)) == 0;
+            throw new RuntimeException("sigdefault not yet supported");
+//            return ((UnixLibC) posix.libc()).posix_spawnattr_setsigdefault(nativeSpawnAttr, sigdef) == 0;
+        }
+
+        public String toString() {
+            return "SpawnAttribute::Sigdef(def = " + Long.toHexString(sigdef) + ")";
         }
     }
 

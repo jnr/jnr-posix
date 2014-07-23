@@ -28,9 +28,10 @@ public interface UnixLibC extends LibC {
     public int posix_spawnattr_getflags(Pointer attr, ShortByReference flags);
     public int posix_spawnattr_setpgroup(Pointer attr, @pid_t long pgroup);
     public int posix_spawnattr_getpgroup(Pointer attr, NumberByReference pgroup);
-    public int posix_spawnattr_setsigmask(Pointer attr, NumberByReference sigmask);
-    public int posix_spawnattr_getsigmask(Pointer attr, NumberByReference sigmask);
-    public int posix_spawnattr_setsigdefault(Pointer attr, NumberByReference sigdefault);
-    public int posix_spawnattr_getsigdefault(Pointer attr, NumberByReference sigdefault);
+    public int posix_spawnattr_setsigmask(Pointer attr, Pointer sigmask);
+    public int posix_spawnattr_getsigmask(Pointer attr, Pointer sigmask);
+    public int posix_spawnattr_setsigdefault(Pointer attr, Pointer sigdefault);
+    public int posix_spawnattr_getsigdefault(Pointer attr, Pointer sigdefault);
+    public int sigprocmask(int how, Pointer set, Pointer get);
 
 }
