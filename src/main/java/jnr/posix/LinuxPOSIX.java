@@ -42,100 +42,115 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         }
     }
 
-    private FileStat old_fstat(int fd) {
+    private int old_fstat(int fd, FileStat stat) {
         try {
-            return super.fstat(fd);
+            return super.fstat(fd, stat);
         } catch (UnsatisfiedLinkError ex2) {
             handler.unimplementedError("fstat");
-            return null;
+            return -1;
         }
     }
 
-
     @Override
-    public FileStat fstat(int fd) {
+    public int fstat(int fd, FileStat stat) {
         if (use_fxstat64) {
+            int ret;
             try {
-                FileStat stat = allocateStat();
-                if (((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat) < 0) {
+                if ((ret = ((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat)) < 0) {
                     handler.error(Errno.valueOf(errno()), "fstat", Integer.toString(fd));
                 }
 
-                return stat;
+                return ret;
 
             } catch (UnsatisfiedLinkError ex) {
                 use_fxstat64 = false;
-                return old_fstat(fd);
+                return old_fstat(fd, stat);
             }
 
         } else {
-            return old_fstat(fd);
+            return old_fstat(fd, stat);
         }
+    }
+
+    @Override
+    public FileStat fstat(int fd) {
+        FileStat stat = allocateStat();
+        int ret = fstat(fd, stat);
+        if (ret < 0) handler.error(Errno.valueOf(errno()), "fstat", Integer.toString(fd));
+        return stat;
     }
 
     @Override
     public FileStat fstat(FileDescriptor fileDescriptor) {
-        return fstat(helper.getfd(fileDescriptor));
+        FileStat stat = allocateStat();
+        int fd = helper.getfd(fileDescriptor);
+        int ret = fstat(fd, stat);
+        if (ret < 0) handler.error(Errno.valueOf(errno()), "fstat", Integer.toString(fd));
+        return stat;
     }
 
-    private final FileStat old_lstat(String path) {
+    private final int old_lstat(String path, FileStat stat) {
         try {
-            return super.lstat(path);
+            return super.lstat(path, stat);
         } catch (UnsatisfiedLinkError ex) {
             handler.unimplementedError("lstat");
-            return null;
+            return -1;
+        }
+    }
+
+    @Override
+    public int lstat(String path, FileStat stat) {
+        if (use_lxstat64) {
+            try {
+                return ((LinuxLibC) libc()).__lxstat64(statVersion, path, stat);
+            } catch (UnsatisfiedLinkError ex) {
+                use_lxstat64 = false;
+                return old_lstat(path, stat);
+            }
+        } else {
+            return old_lstat(path, stat);
         }
     }
 
     @Override
     public FileStat lstat(String path) {
-        if (use_lxstat64) {
-            try {
-                FileStat stat = allocateStat();
+        FileStat stat = allocateStat();
+        int ret = lstat(path, stat);
+        if (ret < 0) handler.error(Errno.valueOf(errno()), "lstat", path);
+        return stat;
+    }
 
-                if (((LinuxLibC) libc()).__lxstat64(statVersion, path, stat) < 0) {
-                    handler.error(Errno.valueOf(errno()), "lstat", path);
-                }
-
-                return stat;
-            } catch (UnsatisfiedLinkError ex) {
-                use_lxstat64 = false;
-                return old_lstat(path);
-            }
-        } else {
-            return old_lstat(path);
+    private final int old_stat(String path, FileStat stat) {
+        try {
+            return super.stat(path, stat);
+        } catch (UnsatisfiedLinkError ex) {
+            handler.unimplementedError("stat");
+            return -1;
         }
     }
 
-    private final FileStat old_stat(String path) {
-        try {
-            return super.stat(path);
-        } catch (UnsatisfiedLinkError ex) {
-            handler.unimplementedError("stat");
-            return null;
+    @Override
+    public int stat(String path, FileStat stat) {
+
+        if (use_xstat64) {
+            try {
+                return ((LinuxLibC) libc()).__xstat64(statVersion, path, stat);
+            } catch (UnsatisfiedLinkError ex) {
+                use_xstat64 = false;
+                return old_stat(path, stat);
+            }
+
+        } else {
+            return old_stat(path, stat);
         }
     }
 
     @Override
     public FileStat stat(String path) {
-
-        if (use_xstat64) {
-            try {
-                FileStat stat = allocateStat();
-
-                if (((LinuxLibC) libc()).__xstat64(statVersion, path, stat) < 0) {
-                    handler.error(Errno.valueOf(errno()), "stat", path);
-                }
-
-                return stat;
-            } catch (UnsatisfiedLinkError ex) {
-                use_xstat64 = false;
-                return old_stat(path);
-            }
-
-        } else {
-            return old_stat(path);
-        }
+        FileStat stat = allocateStat();
+        int ret = stat(path, stat);
+        if (ret < 0) handler.error(Errno.valueOf(errno()), "stat", path);
+        return stat;
     }
 
     public long sysconf(Sysconf name) {
