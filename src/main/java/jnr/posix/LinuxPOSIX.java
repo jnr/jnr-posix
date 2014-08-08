@@ -20,7 +20,17 @@ final class LinuxPOSIX extends BaseNativePOSIX {
         super(libcProvider, handler);
 
 
-        statVersion = Platform.IS_32_BIT ? 3 : 0;
+        if (Platform.IS_32_BIT) {
+                statVersion = 3;
+        } else {
+                FileStat stat = allocateStat();
+
+		if (((LinuxLibC) libc()).__xstat64(0, "/dev/null", stat) < 0) {
+                        statVersion = 1;
+                } else {
+                        statVersion = 0;
+                }
+        }
     }
     
     @Override
