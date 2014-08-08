@@ -84,6 +84,7 @@ public interface  POSIX {
     int umask(int mask);
     int unsetenv(String envName);
     int utimes(String path, long[] atimeval, long[] mtimeval);
+    int futimes(int fd, long[] atimeval, long[] mtimeval);
     int waitpid(int pid, int[] status, int flags);
     int waitpid(long pid, int[] status, int flags);
     int wait(int[] status);

@@ -37,6 +37,19 @@ public class FileTest {
     }
 
     @Test
+    public void futimeTest() throws Throwable {
+        File f = File.createTempFile("jnr-posix-futime", "tmp");
+        long oldTime = posix.stat(f.getAbsolutePath()).mtime();
+        Thread.sleep(2000);
+        int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        int rval = posix.futimes(fd, null, null);
+        assertEquals("futime did not return 0", 0, rval);
+        long newTime = posix.stat(f.getAbsolutePath()).mtime();
+        f.delete();
+        assertTrue("mtime failed", newTime > oldTime);
+    }
+
+    @Test
     public void linkTest() throws Throwable {
         File f1 = File.createTempFile("utime", null);
         File f2 = new File(f1.getAbsolutePath() + "link");

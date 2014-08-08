@@ -297,6 +297,10 @@ final class LazyPOSIX implements POSIX {
         return posix().utimes(path, atimeval, mtimeval);
     }
 
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        return posix().futimes(fd, atimeval, mtimeval);
+    }
+
     public int wait(int[] status) {
         return posix().wait(status);
     }

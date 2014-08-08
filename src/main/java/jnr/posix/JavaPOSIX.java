@@ -369,6 +369,11 @@ final class JavaPOSIX implements POSIX {
         new File(path).setLastModified(mtimeMillis);
         return 0;
     }
+
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        handler.unimplementedError("futimes");
+        return unimplementedInt("futimes");
+    }
     
     public int wait(int[] status) {
         return unimplementedInt("wait");
