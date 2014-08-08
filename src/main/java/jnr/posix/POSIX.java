@@ -138,4 +138,6 @@ public interface  POSIX {
      * @see jnr.posix.POSIX#fcntlInt(int, jnr.constants.platform.Fcntl, int)
      */
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
+    int fsync(int fd);
+    int fdatasync(int fd);
 }

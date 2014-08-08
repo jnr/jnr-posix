@@ -588,6 +588,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return new String(cwd, 0, len);
     }
 
+    public int fsync(int fd) {
+        return libc().fsync(fd);
+    }
+
+    public int fdatasync(int fd) {
+        return libc().fdatasync(fd);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;
@@ -643,4 +651,5 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             return Integer.class;
         }
     };
+
 }

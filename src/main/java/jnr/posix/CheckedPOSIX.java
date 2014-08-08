@@ -438,4 +438,12 @@ final class CheckedPOSIX implements POSIX {
     public String getcwd() {
         try {return posix.getcwd(); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
+
+    public int fsync(int fd) {
+        try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int fdatasync(int fd) {
+        try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

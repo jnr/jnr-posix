@@ -434,4 +434,12 @@ final class LazyPOSIX implements POSIX {
     public String getcwd() {
         return posix().getcwd();
     }
+
+    public int fsync(int fd) {
+        return posix().fsync(fd);
+    }
+
+    public int fdatasync(int fd) {
+        return posix().fdatasync(fd);
+    }
 }

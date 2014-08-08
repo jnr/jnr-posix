@@ -556,6 +556,16 @@ final class JavaPOSIX implements POSIX {
         return System.getProperty("user.dir");
     }
 
+    public int fsync(int fd) {
+        handler.unimplementedError("fsync");
+        return unimplementedInt("fsync not available for Java");
+    }
+
+    public int fdatasync(int fd) {
+        handler.unimplementedError("fdatasync");
+        return unimplementedInt("fdatasync not available for Java");
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

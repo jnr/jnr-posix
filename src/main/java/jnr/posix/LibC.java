@@ -135,5 +135,7 @@ public interface LibC {
     int pipe(@Out int[] fds);
     int ftruncate(int fd, long offset);
     long getcwd(byte[] cwd, int len);
+    int fsync(int fd);
+    int fdatasync(int fd);
 }
 
