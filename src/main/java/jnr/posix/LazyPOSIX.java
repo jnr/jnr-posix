@@ -57,8 +57,16 @@ final class LazyPOSIX implements POSIX {
         return posix().chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        return posix().fchmod(fd, mode);
+    }
+
     public int chown(String filename, int user, int group) {
         return posix().chown(filename, user, group);
+    }
+
+    public int fchown(int fd, int user, int group) {
+        return posix().fchown(fd, user, group);
     }
 
     public int endgrent() {
@@ -289,6 +297,10 @@ final class LazyPOSIX implements POSIX {
         return posix().utimes(path, atimeval, mtimeval);
     }
 
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        return posix().futimes(fd, atimeval, mtimeval);
+    }
+
     public int wait(int[] status) {
         return posix().wait(status);
     }
@@ -421,5 +433,13 @@ final class LazyPOSIX implements POSIX {
 
     public String getcwd() {
         return posix().getcwd();
+    }
+
+    public int fsync(int fd) {
+        return posix().fsync(fd);
+    }
+
+    public int fdatasync(int fd) {
+        return posix().fdatasync(fd);
     }
 }

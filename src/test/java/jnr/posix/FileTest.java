@@ -6,11 +6,7 @@ import jnr.constants.platform.OpenFlags;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -35,6 +31,19 @@ public class FileTest {
         Thread.sleep(2000);
         int rval = posix.utimes(f.getAbsolutePath(), null, null);
         assertEquals("utime did not return 0", 0, rval);
+        long newTime = posix.stat(f.getAbsolutePath()).mtime();
+        f.delete();
+        assertTrue("mtime failed", newTime > oldTime);
+    }
+
+    @Test
+    public void futimeTest() throws Throwable {
+        File f = File.createTempFile("jnr-posix-futime", "tmp");
+        long oldTime = posix.stat(f.getAbsolutePath()).mtime();
+        Thread.sleep(2000);
+        int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        int rval = posix.futimes(fd, null, null);
+        assertEquals("futime did not return 0", 0, rval);
         long newTime = posix.stat(f.getAbsolutePath()).mtime();
         f.delete();
         assertTrue("mtime failed", newTime > oldTime);
@@ -282,4 +291,15 @@ public class FileTest {
         posix.fcntl(fds[0], Fcntl.F_SETFD, flags | 1); // FD_CLOEXEC
         assertEquals(1, posix.fcntl(fds[0], Fcntl.F_GETFD, 0));
     }
+
+    @Test
+    public void fchmodTest() throws IOException {
+        File tmp = File.createTempFile("jnr-posix-chmod-test", "tmp");
+        int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0600);
+
+        assertEquals("chmod: ", 0, posix.fchmod(fd, 0));
+        assertEquals("chmod: ", 0, posix.fchmod(fd, 0777));
+        tmp.delete();
+    }
+
 }

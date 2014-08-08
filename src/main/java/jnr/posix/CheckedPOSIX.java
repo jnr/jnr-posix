@@ -60,8 +60,16 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.chmod(filename, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int fchmod(int fd, int mode) {
+        try { return posix.fchmod(fd, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int chown(String filename, int user, int group) {
         try { return posix.chown(filename, user, group); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int fchown(int fd, int user, int group) {
+        try { return posix.fchown(fd, user, group); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int endgrent() {
@@ -292,6 +300,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.utimes(path, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        try { return posix.futimes(fd, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int wait(int[] status) {
         try { return posix.wait(status); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
@@ -425,5 +437,13 @@ final class CheckedPOSIX implements POSIX {
 
     public String getcwd() {
         try {return posix.getcwd(); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
+    }
+
+    public int fsync(int fd) {
+        try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int fdatasync(int fd) {
+        try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 }

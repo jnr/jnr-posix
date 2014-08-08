@@ -71,10 +71,18 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        return libc().fchmod(fd, mode);
+    }
+
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }
-    
+
+    public int fchown(int fd, int user, int group) {
+        return libc().fchown(fd, user, group);
+    }
+
     public int exec(String path, String... args) {
         handler.unimplementedError("exec unimplemented");
         return -1;
@@ -356,6 +364,16 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().utimes(path, times);
     }
 
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        Timeval[] times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = Struct.arrayOf(getRuntime(), DefaultNativeTimeval.class, 2);
+            times[0].setTime(atimeval);
+            times[1].setTime(mtimeval);
+        }
+        return libc().futimes(fd, times);
+    }
+
     public int fork() {
         return libc().fork();
     }
@@ -570,6 +588,14 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return new String(cwd, 0, len);
     }
 
+    public int fsync(int fd) {
+        return libc().fsync(fd);
+    }
+
+    public int fdatasync(int fd) {
+        return libc().fdatasync(fd);
+    }
+
     public static abstract class PointerConverter implements FromNativeConverter {
         public Class nativeType() {
             return Pointer.class;
@@ -625,4 +651,5 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             return Integer.class;
         }
     };
+
 }

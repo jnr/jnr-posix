@@ -13,7 +13,9 @@ import jnr.constants.platform.Signal;
 public interface  POSIX {
     FileStat allocateStat();
     int chmod(String filename, int mode);
+    int fchmod(int fd, int mode);
     int chown(String filename, int user, int group);
+    int fchown(int fd, int user, int group);
     /**
      * Shell expanding and escaping version of exec which handles all the
      * preparation of a command line or command list.
@@ -82,6 +84,7 @@ public interface  POSIX {
     int umask(int mask);
     int unsetenv(String envName);
     int utimes(String path, long[] atimeval, long[] mtimeval);
+    int futimes(int fd, long[] atimeval, long[] mtimeval);
     int waitpid(int pid, int[] status, int flags);
     int waitpid(long pid, int[] status, int flags);
     int wait(int[] status);
@@ -135,4 +138,6 @@ public interface  POSIX {
      * @see jnr.posix.POSIX#fcntlInt(int, jnr.constants.platform.Fcntl, int)
      */
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
+    int fsync(int fd);
+    int fdatasync(int fd);
 }

@@ -42,7 +42,9 @@ import jnr.ffi.types.intptr_t;
 
 public interface LibC {
     int chmod(CharSequence filename, int mode);
+    int fchmod(int fd, int mode);
     int chown(CharSequence filename, int user, int group);
+    int fchown(int fd, int user, int group);
     int fstat(int fd, @Out @Transient FileStat stat);
     int fstat64(int fd, @Out @Transient FileStat stat);
     String getenv(CharSequence envName);
@@ -103,6 +105,7 @@ public interface LibC {
     @IgnoreError int umask(int mask);
     int unsetenv(CharSequence envName);
     int utimes(CharSequence path, @In Timeval[] times);
+    int futimes(int fd, @In Timeval[] times);
     int fork();
     int waitpid(long pid, @Out int[] status, int options);
     int wait(@Out int[] status);
@@ -132,5 +135,7 @@ public interface LibC {
     int pipe(@Out int[] fds);
     int ftruncate(int fd, long offset);
     long getcwd(byte[] cwd, int len);
+    int fsync(int fd);
+    int fdatasync(int fd);
 }
 

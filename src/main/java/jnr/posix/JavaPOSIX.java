@@ -45,8 +45,18 @@ final class JavaPOSIX implements POSIX {
         return helper.chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        handler.unimplementedError("No fchmod in Java (yet)");
+        return -1;
+    }
+
     public int chown(String filename, int user, int group) {
         return helper.chown(filename, user, group);
+    }
+
+    public int fchown(int fd, int user, int group) {
+        handler.unimplementedError("No fchown in Java (yet)");
+        return -1;
     }
 
     public int exec(String path, String... argv) {
@@ -359,6 +369,11 @@ final class JavaPOSIX implements POSIX {
         new File(path).setLastModified(mtimeMillis);
         return 0;
     }
+
+    public int futimes(int fd, long[] atimeval, long[] mtimeval) {
+        handler.unimplementedError("futimes");
+        return unimplementedInt("futimes");
+    }
     
     public int wait(int[] status) {
         return unimplementedInt("wait");
@@ -539,6 +554,16 @@ final class JavaPOSIX implements POSIX {
 
     public String getcwd() {
         return System.getProperty("user.dir");
+    }
+
+    public int fsync(int fd) {
+        handler.unimplementedError("fsync");
+        return unimplementedInt("fsync not available for Java");
+    }
+
+    public int fdatasync(int fd) {
+        handler.unimplementedError("fdatasync");
+        return unimplementedInt("fdatasync not available for Java");
     }
 
     static final class LoginInfo {
