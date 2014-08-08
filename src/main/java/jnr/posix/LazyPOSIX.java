@@ -57,6 +57,10 @@ final class LazyPOSIX implements POSIX {
         return posix().chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        return posix().fchmod(fd, mode);
+    }
+
     public int chown(String filename, int user, int group) {
         return posix().chown(filename, user, group);
     }

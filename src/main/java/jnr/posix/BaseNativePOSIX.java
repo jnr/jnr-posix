@@ -71,6 +71,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        return libc().fchmod(fd, mode);
+    }
+
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }

@@ -60,6 +60,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.chmod(filename, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int fchmod(int fd, int mode) {
+        try { return posix.fchmod(fd, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int chown(String filename, int user, int group) {
         try { return posix.chown(filename, user, group); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

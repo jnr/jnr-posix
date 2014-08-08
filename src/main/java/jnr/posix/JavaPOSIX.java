@@ -45,6 +45,11 @@ final class JavaPOSIX implements POSIX {
         return helper.chmod(filename, mode);
     }
 
+    public int fchmod(int fd, int mode) {
+        handler.unimplementedError("No fchmod in Java (yet)");
+        return -1;
+    }
+
     public int chown(String filename, int user, int group) {
         return helper.chown(filename, user, group);
     }

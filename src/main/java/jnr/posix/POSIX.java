@@ -13,6 +13,7 @@ import jnr.constants.platform.Signal;
 public interface  POSIX {
     FileStat allocateStat();
     int chmod(String filename, int mode);
+    int fchmod(int fd, int mode);
     int chown(String filename, int user, int group);
     /**
      * Shell expanding and escaping version of exec which handles all the
