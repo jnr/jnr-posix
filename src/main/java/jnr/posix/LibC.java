@@ -44,6 +44,7 @@ public interface LibC {
     int chmod(CharSequence filename, int mode);
     int fchmod(int fd, int mode);
     int chown(CharSequence filename, int user, int group);
+    int fchown(int fd, int user, int group);
     int fstat(int fd, @Out @Transient FileStat stat);
     int fstat64(int fd, @Out @Transient FileStat stat);
     String getenv(CharSequence envName);

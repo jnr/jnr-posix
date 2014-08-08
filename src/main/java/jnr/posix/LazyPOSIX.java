@@ -65,6 +65,10 @@ final class LazyPOSIX implements POSIX {
         return posix().chown(filename, user, group);
     }
 
+    public int fchown(int fd, int user, int group) {
+        return posix().fchown(fd, user, group);
+    }
+
     public int endgrent() {
         return posix().endgrent();
     }

@@ -78,7 +78,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int chown(String filename, int user, int group) {
         return libc().chown(filename, user, group);
     }
-    
+
+    public int fchown(int fd, int user, int group) {
+        return libc().fchown(fd, user, group);
+    }
+
     public int exec(String path, String... args) {
         handler.unimplementedError("exec unimplemented");
         return -1;

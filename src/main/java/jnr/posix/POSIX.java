@@ -15,6 +15,7 @@ public interface  POSIX {
     int chmod(String filename, int mode);
     int fchmod(int fd, int mode);
     int chown(String filename, int user, int group);
+    int fchown(int fd, int user, int group);
     /**
      * Shell expanding and escaping version of exec which handles all the
      * preparation of a command line or command list.

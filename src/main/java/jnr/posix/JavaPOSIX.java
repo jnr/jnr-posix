@@ -54,6 +54,11 @@ final class JavaPOSIX implements POSIX {
         return helper.chown(filename, user, group);
     }
 
+    public int fchown(int fd, int user, int group) {
+        handler.unimplementedError("No fchown in Java (yet)");
+        return -1;
+    }
+
     public int exec(String path, String... argv) {
         handler.unimplementedError("No exec in Java (yet)");
         
