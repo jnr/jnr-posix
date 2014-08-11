@@ -45,8 +45,9 @@ import jnr.constants.platform.Errno;
 import jnr.posix.util.Chmod;
 import jnr.posix.util.ExecIt;
 import jnr.posix.util.FieldAccess;
+import jnr.posix.util.Platform;
 
-/**
+ /**
  * This libc implementation is created one per runtime instance versus the others which
  * are expected to be one static instance for whole JVM.  Because of this it is no big
  * deal to make reference to a POSIXHandler directly.
@@ -72,8 +73,11 @@ public class JavaLibCHelper {
     public JavaLibCHelper(POSIXHandler handler) {
         this.env = new HashMap<String, String>();
         this.handler = handler;
-	this.handleField = FieldAccess.getProtectedField(FileDescriptor.class,
-							 "handle");
+        if (Platform.IS_WINDOWS) { // Exception generated if we are not on Windows.
+            this.handleField = FieldAccess.getProtectedField(FileDescriptor.class, "handle");
+        } else {
+            this.handleField = null;
+        }
         fdField = FILE_DESCRIPTOR_FD;
     }
     
