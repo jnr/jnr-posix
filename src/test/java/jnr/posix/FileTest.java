@@ -287,9 +287,9 @@ public class FileTest {
         int[] fds = new int[2];
         int ret = posix.pipe(fds);
         assertEquals(0, ret);
-        int flags = posix.fcntl(fds[0], Fcntl.F_GETFD, 0);
-        posix.fcntl(fds[0], Fcntl.F_SETFD, flags | 1); // FD_CLOEXEC
-        assertEquals(1, posix.fcntl(fds[0], Fcntl.F_GETFD, 0));
+        int flags = posix.fcntlInt(fds[0], Fcntl.F_GETFD, 0);
+        posix.fcntlInt(fds[0], Fcntl.F_SETFD, flags | 1); // FD_CLOEXEC
+        assertEquals(1, posix.fcntlInt(fds[0], Fcntl.F_GETFD, 0));
     }
 
     @Test
