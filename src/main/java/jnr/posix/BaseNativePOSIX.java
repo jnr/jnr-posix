@@ -575,6 +575,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().pipe(fds);
     }
 
+    public int socketpair(int domain, int type, int protocol, int[] fds) {
+        return libc().socketpair( domain, type, protocol, fds );
+    }
+
     public int ftruncate(int fd, long offset) {
         return libc().ftruncate(fd, offset);
     }

@@ -427,6 +427,10 @@ final class LazyPOSIX implements POSIX {
         return posix().pipe(fds);
     }
 
+    public int socketpair(int domain, int type, int protocol, int[] fds) {
+        return posix().socketpair( domain, type, protocol, fds );
+    }
+
     public int ftruncate(int fd, long offset) {
         return posix().ftruncate(fd, offset);
     }

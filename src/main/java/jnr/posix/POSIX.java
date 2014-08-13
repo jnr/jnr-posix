@@ -131,6 +131,8 @@ public interface  POSIX {
     int ftruncate(int fd, long offset);
     String getcwd();
 
+    int socketpair(int domain, int type, int protocol, int[] fds);
+
     /**
      * fcntl(2)
      *

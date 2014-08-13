@@ -1,6 +1,9 @@
 package jnr.posix;
 
+import jnr.constants.platform.AddressFamily;
 import jnr.constants.platform.OpenFlags;
+import jnr.constants.platform.Sock;
+import jnr.posix.util.Platform;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,5 +65,36 @@ public class IOTest {
         int read = posix.read(fds[0], buf, 5);
         Assert.assertEquals(5, read);
         Assert.assertArrayEquals(buf, hello);
+    }
+
+    @Test
+    public void testSocketPair() throws Throwable {
+        if ( !Platform.IS_WINDOWS ) {
+            int[] fds = {0, 0};
+
+            int ret = posix.socketpair(AddressFamily.AF_UNIX.intValue(), Sock.SOCK_STREAM.intValue(), 0, fds);
+
+            Assert.assertTrue(ret >= 0);
+            Assert.assertTrue(fds[0] > 0);
+            Assert.assertTrue(fds[1] > 0);
+
+            byte[] hello = "hello".getBytes();
+            int written = posix.write(fds[1], hello, 5);
+            Assert.assertEquals(5, written);
+
+            byte[] buf = new byte[5];
+            int read = posix.read(fds[0], buf, 5);
+            Assert.assertEquals(5, read);
+            Assert.assertArrayEquals(buf, hello);
+
+            hello = "goodbye".getBytes();
+            written = posix.write(fds[0], hello, 7);
+            Assert.assertEquals(7, written);
+
+            buf = new byte[7];
+            read = posix.read(fds[1], buf, 7);
+            Assert.assertEquals(7, read);
+            Assert.assertArrayEquals(buf, hello);
+        }
     }
 }

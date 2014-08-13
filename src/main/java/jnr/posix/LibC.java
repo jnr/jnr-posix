@@ -133,6 +133,7 @@ public interface LibC {
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
     int pipe(@Out int[] fds);
+    int socketpair(int domain, int type, int protocol, @Out int[] fds);
     int ftruncate(int fd, long offset);
     long getcwd(byte[] cwd, int len);
     int fsync(int fd);
