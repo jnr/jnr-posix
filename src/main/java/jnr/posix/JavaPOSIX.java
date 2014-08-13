@@ -546,6 +546,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int socketpair(int domain, int type, int protocol, int[] fds) {
+        handler.unimplementedError("socketpair");
+
+        return -1;
+    }
+
     public int ftruncate(int fd, long offset) {
         handler.unimplementedError("ftruncate");
 
