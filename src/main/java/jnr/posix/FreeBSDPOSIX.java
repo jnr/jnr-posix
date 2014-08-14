@@ -34,6 +34,7 @@ package jnr.posix;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
+import jnr.posix.util.MethodName;
 
 final class FreeBSDPOSIX extends BaseNativePOSIX {
     FreeBSDPOSIX(LibCProvider libc, POSIXHandler handler) {
@@ -42,6 +43,16 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
     
     public FileStat allocateStat() {
         return new FreeBSDFileStat(this);
+    }
+
+    public MsgHdr allocateMsgHdr() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
+    public SocketMacros socketMacros() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
     }
 
     public long sysconf(Sysconf name) {

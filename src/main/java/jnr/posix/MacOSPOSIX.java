@@ -15,6 +15,14 @@ final class MacOSPOSIX extends BaseNativePOSIX {
         return new MacOSFileStat(this);
     }
 
+    public MsgHdr allocateMsgHdr() {
+        return new MacOSMsgHdr(this);
+    }
+
+    public SocketMacros socketMacros() {
+        return MacOSSocketMacros.INSTANCE;
+    }
+
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
     }

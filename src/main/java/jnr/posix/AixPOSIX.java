@@ -46,7 +46,17 @@ final class AixPOSIX extends BaseNativePOSIX {
     public FileStat allocateStat() { 
         return new AixFileStat(this); 
     }
-    
+
+    public MsgHdr allocateMsgHdr() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
+    public SocketMacros socketMacros() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
     }

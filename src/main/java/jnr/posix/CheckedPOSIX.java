@@ -51,7 +51,11 @@ final class CheckedPOSIX implements POSIX {
     public FileStat allocateStat() {
         try { return posix.allocateStat(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
-    
+
+    public MsgHdr allocateMsgHdr() {
+        try { return posix.allocateMsgHdr(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
     public int chdir(String path) {
         try { return posix.chdir(path); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
@@ -432,7 +436,15 @@ final class CheckedPOSIX implements POSIX {
     }
 
     public int socketpair(int domain, int type, int protocol, int[] fds) {
-        try {return posix.socketpair( domain, type, protocol, fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+        try {return posix.socketpair(domain, type, protocol, fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int sendmsg(int socket, MsgHdr message, int flags) {
+        try {return posix.sendmsg(socket, message, flags); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int recvmsg(int socket, MsgHdr message, int flags) {
+        try {return posix.recvmsg(socket, message, flags); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int ftruncate(int fd, long offset) {

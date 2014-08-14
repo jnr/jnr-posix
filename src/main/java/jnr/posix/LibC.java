@@ -30,14 +30,11 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
-import jnr.ffi.annotations.IgnoreError;
-import jnr.ffi.annotations.In;
-import jnr.ffi.annotations.Out;
-import jnr.ffi.annotations.Transient;
+import jnr.ffi.annotations.*;
 import jnr.ffi.types.clock_t;
 
 import java.nio.ByteBuffer;
-import jnr.ffi.annotations.Delegate;
+
 import jnr.ffi.types.intptr_t;
 
 public interface LibC {
@@ -133,10 +130,13 @@ public interface LibC {
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
     int pipe(@Out int[] fds);
-    int socketpair(int domain, int type, int protocol, @Out int[] fds);
     int ftruncate(int fd, long offset);
     long getcwd(byte[] cwd, int len);
     int fsync(int fd);
     int fdatasync(int fd);
+
+    int socketpair(int domain, int type, int protocol, @Out int[] fds);
+    int sendmsg(int socket, @In MsgHdr message, int flags);
+    int recvmsg(int socket, @Direct MsgHdr message, int flags);
 }
 

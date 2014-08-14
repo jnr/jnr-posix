@@ -11,6 +11,8 @@ import java.io.FileDescriptor;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
+import jnr.posix.util.MethodName;
 import jnr.posix.util.WindowsHelpers;
 
 final class WindowsPOSIX extends BaseNativePOSIX {
@@ -122,6 +124,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public FileStat allocateStat() {
         return new WindowsFileStat(this);
+    }
+
+    public MsgHdr allocateMsgHdr() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
+    public SocketMacros socketMacros() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
     }
 
     @Override

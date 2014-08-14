@@ -1,24 +1,22 @@
 package jnr.posix;
 
-import static jnr.constants.platform.Errno.*;
+import jnr.constants.platform.Errno;
+import jnr.constants.platform.Fcntl;
+import jnr.constants.platform.Sysconf;
+import jnr.posix.util.Java5ProcessMaker;
+import jnr.posix.util.MethodName;
+import jnr.posix.util.Platform;
+import jnr.posix.util.ProcessMaker;
+import sun.misc.Signal;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 
-import jnr.constants.platform.Errno;
-import jnr.constants.platform.Fcntl;
-import jnr.constants.platform.Sysconf;
-import jnr.posix.util.Java5ProcessMaker;
-import jnr.posix.util.Platform;
-import jnr.posix.util.ProcessMaker;
-import sun.misc.Signal;
+import static jnr.constants.platform.Errno.EINVAL;
+import static jnr.constants.platform.Errno.ENOENT;
 
 final class JavaPOSIX implements POSIX {
     private final POSIXHandler handler;
@@ -39,6 +37,16 @@ final class JavaPOSIX implements POSIX {
     
     public FileStat allocateStat() {
         return new JavaFileStat(this, handler);
+    }
+
+    public MsgHdr allocateMsgHdr() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
+    }
+
+    public SocketMacros socketMacros() {
+        handler.unimplementedError(MethodName.getCallerMethodName());
+        return null;
     }
 
     public int chmod(String filename, int mode) {
@@ -548,6 +556,18 @@ final class JavaPOSIX implements POSIX {
 
     public int socketpair(int domain, int type, int protocol, int[] fds) {
         handler.unimplementedError("socketpair");
+
+        return -1;
+    }
+
+    public int sendmsg(int socket, MsgHdr message, int flags) {
+        handler.unimplementedError("sendmsg");
+
+        return -1;
+    }
+
+    public int recvmsg(int socket, MsgHdr message, int flags) {
+        handler.unimplementedError("recvmsg");
 
         return -1;
     }

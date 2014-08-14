@@ -53,6 +53,8 @@ final class POSIXTypeMapper implements TypeMapper {
 
         } else if (HANDLE.class.isAssignableFrom(klazz)) {
             return HANDLE.Converter;
+        } else if (MsgHdr.class.isAssignableFrom(klazz)) {
+            return BaseNativePOSIX.MsgHdrConverter;
         }
 
         return null;

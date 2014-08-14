@@ -132,6 +132,10 @@ public interface  POSIX {
     String getcwd();
 
     int socketpair(int domain, int type, int protocol, int[] fds);
+    int sendmsg(int socket, MsgHdr message, int flags);
+    int recvmsg(int socket, MsgHdr message, int flags);
+
+    MsgHdr allocateMsgHdr();
 
     /**
      * fcntl(2)

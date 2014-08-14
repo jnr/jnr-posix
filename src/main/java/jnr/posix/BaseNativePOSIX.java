@@ -5,9 +5,6 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
-import jnr.ffi.byref.AbstractNumberReference;
-import jnr.ffi.byref.IntByReference;
-import jnr.ffi.byref.LongLongByReference;
 import jnr.ffi.byref.NumberByReference;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
@@ -22,7 +19,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import jnr.constants.platform.Signal;
@@ -576,7 +572,15 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int socketpair(int domain, int type, int protocol, int[] fds) {
-        return libc().socketpair( domain, type, protocol, fds );
+        return libc().socketpair(domain, type, protocol, fds);
+    }
+
+    public int sendmsg(int socket, MsgHdr message, int flags) {
+        return libc().sendmsg( socket, message, flags );
+    }
+
+    public int recvmsg(int socket, MsgHdr message, int flags) {
+        return libc().recvmsg(socket, message, flags);
     }
 
     public int ftruncate(int fd, long offset) {
@@ -653,6 +657,24 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
         public Class<Integer> nativeType() {
             return Integer.class;
+        }
+    };
+
+    public static final ToNativeConverter<MsgHdr, Pointer> MsgHdrConverter = new ToNativeConverter<MsgHdr, Pointer>() {
+        public Pointer toNative(MsgHdr value, ToNativeContext context) {
+            if ( value instanceof BaseMsgHdr ) {
+                return ((BaseMsgHdr) value).memory;
+            } else if ( value instanceof Struct ) {
+                return Struct.getMemory((Struct) value);
+            } else if ( value == null ) {
+                return null;
+            }
+
+            throw new IllegalArgumentException("instance of " + value.getClass() + " is not a struct");
+        }
+
+        public Class<Pointer> nativeType() {
+            return Pointer.class;
         }
     };
 

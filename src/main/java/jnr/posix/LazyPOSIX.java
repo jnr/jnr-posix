@@ -48,7 +48,11 @@ final class LazyPOSIX implements POSIX {
     public FileStat allocateStat() {
         return posix().allocateStat();
     }
-    
+
+    public MsgHdr allocateMsgHdr() {
+        return posix().allocateMsgHdr();
+    }
+
     public int chdir(String path) {
         return posix().chdir(path);
     }
@@ -306,7 +310,7 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int waitpid(int pid, int[] status, int flags) {
-        return waitpid((long)pid, status, flags);
+        return waitpid((long) pid, status, flags);
     }
 
     public int waitpid(long pid, int[] status, int flags) {
@@ -428,7 +432,15 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int socketpair(int domain, int type, int protocol, int[] fds) {
-        return posix().socketpair( domain, type, protocol, fds );
+        return posix().socketpair(domain, type, protocol, fds);
+    }
+
+    public int sendmsg(int socket, MsgHdr message, int flags) {
+        return posix().sendmsg( socket, message, flags );
+    }
+
+    public int recvmsg(int socket, MsgHdr message, int flags) {
+        return posix().recvmsg( socket, message, flags );
     }
 
     public int ftruncate(int fd, long offset) {
