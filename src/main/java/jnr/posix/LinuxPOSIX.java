@@ -44,13 +44,22 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     }
 
     public MsgHdr allocateMsgHdr() {
-        handler.unimplementedError(MethodName.getCallerMethodName());
-        return null;
+        if ( Platform.IS_32_BIT ) {
+            handler.unimplementedError(MethodName.getCallerMethodName());
+            return null;
+        } else {
+            return new LinuxMsgHdr64(this);
+        }
     }
 
     public SocketMacros socketMacros() {
-        handler.unimplementedError(MethodName.getCallerMethodName());
-        return null;
+        if ( Platform.IS_32_BIT ) {
+            handler.unimplementedError(MethodName.getCallerMethodName());
+            return null;
+        } else {
+            return LinuxSocketMacros64.INSTANCE;
+
+        }
     }
 
     private int old_fstat(int fd, FileStat stat) {
