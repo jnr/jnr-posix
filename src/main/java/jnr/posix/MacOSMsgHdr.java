@@ -5,7 +5,6 @@ import jnr.ffi.Runtime;
 import jnr.ffi.StructLayout;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author Bob McWhirter
