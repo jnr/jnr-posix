@@ -1,12 +1,11 @@
 package jnr.posix;
 
-import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
 import jnr.ffi.Runtime;
 import jnr.ffi.StructLayout;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +19,16 @@ public abstract class BaseMsgHdr implements MsgHdr {
 
     protected BaseMsgHdr(NativePOSIX posix, StructLayout layout) {
         this.posix = posix;
-        this.memory = posix.getRuntime().getMemoryManager().allocateTemporary( layout.size(), true );
+        this.memory = posix.getRuntime().getMemoryManager().allocateTemporary(layout.size(), true);
     }
 
     public void setName(String name) {
         if (name == null) {
             setNamePointer(null);
-            setNameLen( 0 );
+            setNameLen(0);
             return;
         }
-        byte[] nameBytes = name.getBytes(StandardCharsets.US_ASCII);
+        byte[] nameBytes = name.getBytes(Charset.forName("US-ASCII"));
         Pointer p = Runtime.getSystemRuntime().getMemoryManager().allocateTemporary(nameBytes.length, true);
         p.put(0, nameBytes, 0, nameBytes.length);
         setNamePointer(p);
@@ -41,11 +40,11 @@ public abstract class BaseMsgHdr implements MsgHdr {
         if (ptr == null) {
             return null;
         }
-        return ptr.getString(0, getNameLen(), StandardCharsets.US_ASCII);
+        return ptr.getString(0, getNameLen(), Charset.forName( "US-ASCII" ));
     }
 
     public CmsgHdr allocateControl(int dataLength) {
-        CmsgHdr[] controls = allocateControls( new int[] { dataLength } );
+        CmsgHdr[] controls = allocateControls(new int[]{dataLength});
         return controls[0];
     }
 
@@ -62,7 +61,7 @@ public abstract class BaseMsgHdr implements MsgHdr {
         int offset = 0;
         for (int i = 0; i < dataLengths.length; ++i) {
             int eachLen = posix.socketMacros().CMSG_SPACE(dataLengths[i]);
-            CmsgHdr each = allocateCmsgHdrInternal(posix, ptr.slice(offset, eachLen), eachLen );
+            CmsgHdr each = allocateCmsgHdrInternal(posix, ptr.slice(offset, eachLen), eachLen);
             cmsgs[i] = each;
             offset += eachLen;
         }
@@ -75,7 +74,7 @@ public abstract class BaseMsgHdr implements MsgHdr {
 
     public CmsgHdr[] getControls() {
         int len = getControlLen();
-        if (len == 0 ) {
+        if (len == 0) {
             return new CmsgHdr[0];
         }
 
@@ -85,13 +84,13 @@ public abstract class BaseMsgHdr implements MsgHdr {
 
         Pointer controlPtr = getControlPointer();
 
-        while ( offset < len ) {
+        while (offset < len) {
             CmsgHdr each = allocateCmsgHdrInternal(posix, controlPtr.slice(offset), -1);
             offset += each.getLen();
-            control.add( each );
+            control.add(each);
         }
 
-        return control.toArray( new CmsgHdr[control.size()]);
+        return control.toArray(new CmsgHdr[control.size()]);
     }
 
     public void setIov(ByteBuffer[] buffers) {
@@ -124,19 +123,27 @@ public abstract class BaseMsgHdr implements MsgHdr {
     }
 
     abstract void setNamePointer(Pointer name);
+
     abstract Pointer getNamePointer();
 
     abstract void setNameLen(int len);
+
     abstract int getNameLen();
 
     abstract void setIovPointer(Pointer iov);
+
     abstract Pointer getIovPointer();
+
     abstract int getIovLen();
+
     abstract void setIovLen(int len);
 
     abstract CmsgHdr allocateCmsgHdrInternal(NativePOSIX posix, Pointer pointer, int len);
+
     abstract void setControlPointer(Pointer control);
+
     abstract Pointer getControlPointer();
+
     abstract void setControlLen(int len);
 
 }
