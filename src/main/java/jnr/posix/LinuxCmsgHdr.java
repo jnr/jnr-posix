@@ -7,7 +7,7 @@ import jnr.ffi.StructLayout;
 /**
  * @author Bob McWhirter
  */
-class LinuxCmsgHdr64 extends BaseCmsgHdr {
+class LinuxCmsgHdr extends BaseCmsgHdr {
 
     public static class Layout extends StructLayout {
 
@@ -23,11 +23,11 @@ class LinuxCmsgHdr64 extends BaseCmsgHdr {
 
     public static final Layout layout = new Layout(Runtime.getSystemRuntime());
 
-    public LinuxCmsgHdr64(NativePOSIX posix, Pointer memory) {
+    public LinuxCmsgHdr(NativePOSIX posix, Pointer memory) {
         super(posix, memory);
     }
 
-    public LinuxCmsgHdr64(NativePOSIX posix, Pointer memory, int totalLen) {
+    public LinuxCmsgHdr(NativePOSIX posix, Pointer memory, int totalLen) {
         super(posix, memory, totalLen);
     }
 

@@ -4,36 +4,33 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
-import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
 
 import java.io.FileDescriptor;
-
-import static jnr.constants.platform.Errno.ENOENT;
 
 final class LinuxPOSIX extends BaseNativePOSIX {
     private volatile boolean use_fxstat64 = true;
     private volatile boolean use_lxstat64 = true;
     private volatile boolean use_xstat64 = true;
     private final int statVersion;
-    
+
     LinuxPOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         super(libcProvider, handler);
 
 
         if (Platform.IS_32_BIT) {
-                statVersion = 3;
+            statVersion = 3;
         } else {
-                FileStat stat = allocateStat();
+            FileStat stat = allocateStat();
 
-		if (((LinuxLibC) libc()).__xstat64(0, "/dev/null", stat) < 0) {
-                        statVersion = 1;
-                } else {
-                        statVersion = 0;
-                }
+            if (((LinuxLibC) libc()).__xstat64(0, "/dev/null", stat) < 0) {
+                statVersion = 1;
+            } else {
+                statVersion = 0;
+            }
         }
     }
-    
+
     @Override
     public FileStat allocateStat() {
         if (Platform.IS_32_BIT) {
@@ -44,22 +41,11 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     }
 
     public MsgHdr allocateMsgHdr() {
-        if ( Platform.IS_32_BIT ) {
-            handler.unimplementedError(MethodName.getCallerMethodName());
-            return null;
-        } else {
-            return new LinuxMsgHdr64(this);
-        }
+        return new LinuxMsgHdr(this);
     }
 
     public SocketMacros socketMacros() {
-        if ( Platform.IS_32_BIT ) {
-            handler.unimplementedError(MethodName.getCallerMethodName());
-            return null;
-        } else {
-            return LinuxSocketMacros64.INSTANCE;
-
-        }
+        return LinuxSocketMacros.INSTANCE;
     }
 
     private int old_fstat(int fd, FileStat stat) {
@@ -180,7 +166,7 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     public Times times() {
         return NativeTimes.times(this);
     }
-    
+
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new LinuxPasswd((Pointer) arg) : null;

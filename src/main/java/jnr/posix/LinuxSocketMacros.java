@@ -6,9 +6,9 @@ import jnr.ffi.Runtime;
 /**
  * @author Bob McWhirter
  */
-public class LinuxSocketMacros64 implements SocketMacros {
+public class LinuxSocketMacros implements SocketMacros {
 
-    public static final LinuxSocketMacros64 INSTANCE = new LinuxSocketMacros64();
+    public static final LinuxSocketMacros INSTANCE = new LinuxSocketMacros();
 
     public int CMSG_ALIGN(int len) {
         int sizeof_size_t = Runtime.getSystemRuntime().findType(TypeAlias.size_t).size();
@@ -16,14 +16,14 @@ public class LinuxSocketMacros64 implements SocketMacros {
     }
 
     public int CMSG_SPACE(int l) {
-        return CMSG_ALIGN(l) + CMSG_ALIGN(LinuxCmsgHdr64.layout.size());
+        return CMSG_ALIGN(l) + CMSG_ALIGN(LinuxCmsgHdr.layout.size());
     }
 
     public int CMSG_LEN(int l) {
-        return CMSG_ALIGN( LinuxCmsgHdr64.layout.size() + l );
+        return CMSG_ALIGN( LinuxCmsgHdr.layout.size() + l );
     }
 
     public Pointer CMSG_DATA(Pointer cmsg) {
-        return cmsg.slice(CMSG_ALIGN(MacOSCmsgHdr.layout.size()));
+        return cmsg.slice(CMSG_ALIGN(LinuxCmsgHdr.layout.size()));
     }
 }
