@@ -267,6 +267,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int getpid(){
+        return wlibc()._getpid();
+    }
+
+    @Override
     public int getppid() {
         return 0;
     }
@@ -298,6 +303,16 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public FileStat lstat(String path) {
         return stat(path);
+    }
+
+    @Override
+    public int lstat(String path, FileStat stat) {
+        return stat(path, stat); // windows stat honors windows equiv of softlinks and dangling ones.
+    }
+
+    @Override
+    public int stat(String path, FileStat stat) {
+        return wlibc()._stat64(path, stat);
     }
 
     @Override

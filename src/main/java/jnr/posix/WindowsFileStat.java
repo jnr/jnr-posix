@@ -2,6 +2,8 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
+// http://msdn.microsoft.com/en-us/library/14h5k7ff.aspx
+// This layout is meant to be used with stat64() family so _USE_32BIT_TIME_T is not in play.
 public class WindowsFileStat extends BaseFileStat {
     private static final class Layout extends StructLayout {
 

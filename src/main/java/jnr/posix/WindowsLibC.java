@@ -4,6 +4,7 @@ import jnr.ffi.Pointer;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.annotations.StdCall;
+import jnr.ffi.annotations.Transient;
 import jnr.ffi.byref.IntByReference;
 
 import java.nio.ByteBuffer;
@@ -26,6 +27,8 @@ public interface WindowsLibC extends LibC {
     
     public int _open_osfhandle(HANDLE handle, int flags);
     public int _close(int fd);
+    public int _getpid();
+    int _stat64(CharSequence path, @Out @Transient FileStat stat);
 
     public int _wmkdir(@In WString path);
     public boolean RemoveDirectoryW(@In WString path);
