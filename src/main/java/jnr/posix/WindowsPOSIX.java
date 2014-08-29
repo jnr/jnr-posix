@@ -147,6 +147,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     public int chmod(String filename, int mode) {
         return wlibc()._wchmod(WString.path(filename), mode);
     }
+
+    @Override
+    public int chdir(String path) {
+        return wlibc()._wchdir(WString.path(path));
+    }
     
     @Override
     public int chown(String filename, int user, int group) {
