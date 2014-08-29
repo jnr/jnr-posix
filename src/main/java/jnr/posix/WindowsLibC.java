@@ -33,6 +33,7 @@ public interface WindowsLibC extends LibC {
     public int _wmkdir(@In WString path);
     public boolean RemoveDirectoryW(@In WString path);
     public int _wchmod(@In WString path, int pmode);
+    public int _wchdir(@In WString path);
     
     @StdCall
     public boolean CreateProcessW(byte[] applicationName, 
