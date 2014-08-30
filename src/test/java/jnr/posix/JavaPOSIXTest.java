@@ -54,16 +54,34 @@ public class JavaPOSIXTest {
         
     }
 
+    @Test public void lstatTest() throws IOException {
+        File file = createTestFile();
+
+        FileStat stat = posix.lstat(file.getName());
+
+        assertTrue(stat.isEmpty());
+
+        stat = posix.allocateStat();
+        int ret = posix.lstat(file.getPath(), stat);
+
+        assertTrue(ret >= 0);
+        assertTrue(stat.isEmpty());
+
+        file.delete();
+
+        stat = posix.allocateStat();
+        ret = posix.lstat(file.getPath(), stat);
+
+        assertTrue(ret < 0);
+    }
+
 	@Test
 	public void chmodTest() throws IOException {
-		// create a tmp file
-		String fName = "test.dat";
-		File file = new File(fName);
-		file.createNewFile();
-		// test ..
-		assertEquals("chmod: ", 0, posix.chmod(fName, 0));
-		assertEquals("chmod: ", 0, posix.chmod(fName, 0777));
-		// .. and delete
+        File file = createTestFile();
+
+		assertEquals("chmod: ", 0, posix.chmod(file.getName(), 0));
+		assertEquals("chmod: ", 0, posix.chmod(file.getName(), 0777));
+
 		file.delete();
 	}
 
@@ -74,5 +92,14 @@ public class JavaPOSIXTest {
     }
     @Test public void isNative() {
         assertFalse("JavaPOSIX isNative should be false", posix.isNative());
+    }
+
+    private File createTestFile() throws IOException {
+        // create a tmp file
+        String fName = "test.dat";
+        File file = new File(fName);
+        file.createNewFile();
+
+        return file;
     }
 }
