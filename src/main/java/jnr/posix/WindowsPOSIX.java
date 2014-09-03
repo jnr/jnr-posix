@@ -345,6 +345,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         return 0;
     }
+
+    @Override
+    public int umask(int mask) {
+        return wlibc()._umask(mask);
+    }
     
     @Override
     public int unsetenv(String envName) {

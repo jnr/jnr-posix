@@ -30,6 +30,8 @@ public interface WindowsLibC extends LibC {
     public int _getpid();
     int _stat64(CharSequence path, @Out @Transient FileStat stat);
 
+    int _umask(int mask);
+
     public int _wmkdir(@In WString path);
     public boolean RemoveDirectoryW(@In WString path);
     public int _wchmod(@In WString path, int pmode);
