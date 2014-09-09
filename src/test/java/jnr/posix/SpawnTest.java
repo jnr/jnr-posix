@@ -153,7 +153,7 @@ public class SpawnTest {
                 assertNotSame(-1, outputPipe[1]);
 
                 List<SpawnFileAction> actions = Arrays.asList(open(inputFile.getAbsolutePath(), 0, OpenFlags.O_RDONLY.intValue(), 0444),
-                        dup(outputPipe[1], 1));
+                        dup(outputPipe[1], 1), close(outputPipe[0]));
                 pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "-"), emptyEnv);
                 assertTrue(pid != -1);
 
