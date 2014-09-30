@@ -43,14 +43,14 @@ public class OpenBSDPasswd extends NativePasswd implements Passwd {
 
         public final UTF8StringRef pw_name = new UTF8StringRef();   // user name
         public final UTF8StringRef pw_passwd = new UTF8StringRef(); // password (encrypted)
-        public final Signed32 pw_uid = new Signed32();       // user id
-        public final Signed32 pw_gid = new Signed32();       // user id
-        public final SignedLong pw_change = new SignedLong();    // password change time
+        public final Unsigned32 pw_uid = new Unsigned32();       // user id
+        public final Unsigned32 pw_gid = new Unsigned32();       // user id
+        public final Signed64 pw_change = new Signed64();    // password change time
         public final UTF8StringRef pw_class = new UTF8StringRef();  // user access class
         public final UTF8StringRef pw_gecos = new UTF8StringRef();  // login info
         public final UTF8StringRef pw_dir = new UTF8StringRef();    // home directory
         public final UTF8StringRef pw_shell = new UTF8StringRef();  // default shell
-        public final SignedLong pw_expire = new SignedLong();    // account expiration
+        public final Signed64 pw_expire = new Signed64();    // account expiration
     }
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
