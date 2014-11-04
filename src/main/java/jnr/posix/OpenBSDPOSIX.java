@@ -32,6 +32,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Struct;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
 import jnr.posix.util.MethodName;
@@ -68,4 +69,15 @@ final class OpenBSDPOSIX extends BaseNativePOSIX {
             return arg != null ? new OpenBSDPasswd((Pointer) arg) : null;
         }
     };
+
+    @Override
+    public int utimes(String path, long[] atimeval, long[] mtimeval) {
+        Timeval[] times = null;
+        if (atimeval != null && mtimeval != null) {
+            times = Struct.arrayOf(getRuntime(), OpenBSDTimeval.class, 2);
+            times[0].setTime(atimeval);
+            times[1].setTime(mtimeval);
+        }
+        return libc().utimes(path, times);
+    }
 }
