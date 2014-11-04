@@ -1,7 +1,7 @@
 package jnr.posix;
 
 public final class OpenBSDTimeval extends Timeval {
-    public final SignedLong tv_sec = new SignedLong();
+    public final Signed64 tv_sec = new Signed64();
     public final SignedLong tv_usec = new SignedLong();
 
     public OpenBSDTimeval(jnr.ffi.Runtime runtime) {
