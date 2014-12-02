@@ -69,6 +69,10 @@ final class LazyPOSIX implements POSIX {
         return posix().chown(filename, user, group);
     }
 
+    public CharSequence crypt(CharSequence key, CharSequence salt) {
+        return posix().crypt(key, salt);
+    }
+
     public int fchown(int fd, int user, int group) {
         return posix().fchown(fd, user, group);
     }

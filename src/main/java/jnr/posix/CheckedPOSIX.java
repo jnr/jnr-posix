@@ -72,6 +72,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.chown(filename, user, group); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public CharSequence crypt(CharSequence key, CharSequence salt) {
+        try { return posix.crypt(key, salt); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
     public int fchown(int fd, int user, int group) {
         try { return posix.fchown(fd, user, group); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

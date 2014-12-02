@@ -11,6 +11,7 @@ import java.util.Collection;
 import jnr.constants.platform.Signal;
 
 public interface  POSIX {
+    CharSequence crypt(CharSequence key, CharSequence salt);
     FileStat allocateStat();
     int chmod(String filename, int mode);
     int fchmod(int fd, int mode);

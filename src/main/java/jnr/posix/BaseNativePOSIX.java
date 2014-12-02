@@ -79,6 +79,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().fchown(fd, user, group);
     }
 
+    public CharSequence crypt(CharSequence key, CharSequence salt) {
+        return libc().crypt(key, salt);
+    }
+
     public int exec(String path, String... args) {
         handler.unimplementedError("exec unimplemented");
         return -1;
