@@ -122,7 +122,7 @@ public class POSIXFactory {
     private static String[] libraries() {
         switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
             case LINUX:
-                return new String[] { "libc.so.6" };
+                return new String[] { "libc.so.6", "crypt" };
             
             case SOLARIS:
                 return new String[] { "socket", "nsl", "c" };
