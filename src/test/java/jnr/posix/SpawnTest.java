@@ -48,18 +48,6 @@ public class SpawnTest {
         }
     }
 
-    @Test public void emptyCommand() {
-        if (Platform.getNativePlatform().isUnix()) {
-            long pid = -1;
-            try {
-                pid = posix.posix_spawnp("", emptyActions, Collections.EMPTY_LIST, emptyEnv);
-                assertEquals(-1, pid);
-            } finally {
-                if (pid != -1) posix.libc().waitpid((int) pid, null, 0);
-            }
-        }
-    }
-
     private static void closePipe(int[] fds) {
         posix.libc().close(fds[0]);
         posix.libc().close(fds[1]);
