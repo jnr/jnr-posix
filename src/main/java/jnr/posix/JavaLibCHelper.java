@@ -45,6 +45,7 @@ import jnr.constants.platform.Errno;
 import jnr.posix.util.Chmod;
 import jnr.posix.util.ExecIt;
 import jnr.posix.util.FieldAccess;
+import jnr.posix.util.JavaCrypt;
 import jnr.posix.util.Platform;
 
  /**
@@ -184,6 +185,10 @@ public class JavaLibCHelper {
         } catch (Exception e) {}
         
         return chownResult != -1 && chgrpResult != -1 ? 0 : 1;
+    }
+
+    public static CharSequence crypt(CharSequence original, CharSequence salt) {
+        return JavaCrypt.crypt(original, salt);
     }
 
     public int getfd(FileDescriptor descriptor) {

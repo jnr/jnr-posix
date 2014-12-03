@@ -68,8 +68,7 @@ final class JavaPOSIX implements POSIX {
     }
 
     public CharSequence crypt(CharSequence key, CharSequence salt) {
-        handler.unimplementedError("no crypt in Java (yet)");
-        return null;
+        return helper.crypt(key, salt);
     }
 
     public int exec(String path, String... argv) {
