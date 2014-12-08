@@ -126,6 +126,10 @@ public class POSIXFactory {
             
             case SOLARIS:
                 return new String[] { "socket", "nsl", "c" };
+
+            case FREEBSD:
+            case NETBSD:
+                return new String[] { "c", "crypt" };
             
             case AIX:
                 return jnr.ffi.Runtime.getSystemRuntime().addressSize() == 4
