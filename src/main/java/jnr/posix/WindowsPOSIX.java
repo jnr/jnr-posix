@@ -164,7 +164,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         return aspawn(true, null, argv, path, null);
     }
-    
+
+    @Override
+    public CharSequence crypt(CharSequence key, CharSequence salt) {
+        return JavaLibCHelper.crypt(key, salt);
+    }
+
     @Override
     public int exec(String path, String[] argv, String[] envp) {
         if (argv.length == 1) return spawn(true, argv[0], null, path, envp);
