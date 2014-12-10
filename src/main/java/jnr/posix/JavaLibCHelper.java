@@ -308,7 +308,7 @@ public class JavaLibCHelper {
         try {
             File file = new JavaSecuredFile(path);
             
-            if (!file.exists()) handler.error(ENOENT, "stat", path);
+            if (!file.exists()) return -1;
                 
             jstat.setup(file.getCanonicalPath());
         } catch (IOException e) {
