@@ -256,7 +256,11 @@ final class JavaPOSIX implements POSIX {
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }
-    
+
+    public int kill(long pid, int signal) {
+        return unimplementedInt("kill");    // FIXME: Can be implemented
+    }
+
     private static class SunMiscSignalHandler implements sun.misc.SignalHandler {
         final SignalHandler handler;
         public SunMiscSignalHandler(SignalHandler handler) {

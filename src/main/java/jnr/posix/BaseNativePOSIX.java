@@ -289,9 +289,13 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int kill(int pid, int signal) {
+        return kill((long) pid, signal);
+    }
+
+    public int kill(long pid, int signal) {
         return libc().kill(pid, signal);
     }
-    
+
     public SignalHandler signal(Signal sig, final SignalHandler handler) {
         synchronized (signalHandlers) {
             SignalHandler old = signalHandlers.get(sig);

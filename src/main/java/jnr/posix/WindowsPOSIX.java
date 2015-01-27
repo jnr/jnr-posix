@@ -156,6 +156,13 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int kill(long pid, int signal) {
+        handler.unimplementedError("kill");
+
+        return -1;
+    }
+
+    @Override
     public int chmod(String filename, int mode) {
         return wlibc()._wchmod(WString.path(filename), mode);
     }

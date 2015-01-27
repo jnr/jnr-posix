@@ -81,6 +81,7 @@ public interface LibC {
     int setrlimit(int resource, @In RLimit rlim);
     int setrlimit(int resource, Pointer rlim);
     int kill(int pid, int signal);
+    int kill(long pid, int signal);
 
     int dup(int fd);
     int dup2(int oldFd, int newFd);
