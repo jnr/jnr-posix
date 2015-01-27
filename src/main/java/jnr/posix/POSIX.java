@@ -62,6 +62,7 @@ public interface  POSIX {
     int getuid();
     boolean isatty(FileDescriptor descriptor);
     int kill(int pid, int signal);
+    int kill(long pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);
     int lchmod(String filename, int mode);
     int lchown(String filename, int user, int group);
