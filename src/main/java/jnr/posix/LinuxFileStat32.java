@@ -75,6 +75,10 @@ public final class LinuxFileStat32 extends BaseFileStat {
         return layout.st_atim_sec.get(memory);
     }
 
+    public long aTimeNanoSecs() {
+        return layout.st_atim_nsec.get(memory);
+    }
+
     public long blocks() {
         return layout.st_blocks.get(memory);
     }
@@ -85,6 +89,10 @@ public final class LinuxFileStat32 extends BaseFileStat {
 
     public long ctime() {
         return layout.st_ctim_sec.get(memory);
+    }
+
+    public long cTimeNanoSecs() {
+        return layout.st_ctim_nsec.get(memory);
     }
 
     public long dev() {
@@ -105,6 +113,10 @@ public final class LinuxFileStat32 extends BaseFileStat {
 
     public long mtime() {
         return layout.st_mtim_sec.get(memory);
+    }
+
+    public long mTimeNanoSecs() {
+        return layout.st_mtim_nsec.get(memory);
     }
 
     public int nlink() {
