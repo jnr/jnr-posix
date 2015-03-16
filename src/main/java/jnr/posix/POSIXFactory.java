@@ -16,18 +16,70 @@ import java.util.Map;
 public class POSIXFactory {
     // Weird inner-class resolution problem work-around FIXME: JRUBY-5889.  Someone fix JAFFL!
     private static final Class<Struct> BOGUS_HACK = Struct.class;
-    
+
+    /**
+     * Get a POSIX instance. If useNativePosix is true, this works just like
+     * POSIXFactory#getPOSIX(). If useNativePosix is false, this works like
+     * POSIXFactory#getJavaPOSIX()
+     *
+     * @param handler a POSIXHandler implementation
+     * @param useNativePOSIX whether to attempt to use native code for better functionality
+     * @return a POSIX implementation, attempting to use native code if useNativePosix is true
+     */
     public static POSIX getPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
         return new LazyPOSIX(handler, useNativePOSIX);
     }
 
     /**
-     * This will use {@link DefaultPOSIXHandler} and the native POSIX implementation
+     * This will use {@link DefaultPOSIXHandler} and the native POSIX implementation,
+     * falling back on the pure-Java implementation if native support is not available.
      *
-     * @return a POSIX implementation
+     * @return a POSIX implementation, native if possible and pure-Java otherwise.
      */
     public static POSIX getPOSIX() {
         return getPOSIX(new DefaultPOSIXHandler(), true);
+    }
+
+    /**
+     * Get a pure-Java POSIX instance. Functionality will be limited to that which can
+     * be provided by pure-Java/JDK features or shelling out to external commands.
+     *
+     * @param handler a POSIXHandler implementation
+     * @return a pure-Java POSIX implementation
+     */
+    public static POSIX getJavaPOSIX(POSIXHandler handler) {
+        return new JavaPOSIX(handler);
+    }
+
+    /**
+     * Get a pure-Java POSIX instance. Functionality will be limited to that which can
+     * be provided by pure-Java/JDK features or shelling out to external commands.
+     *
+     * @return a pure-Java POSIX implementation
+     */
+    public static POSIX getJavaPOSIX() {
+        return getJavaPOSIX(new DefaultPOSIXHandler());
+    }
+
+    /**
+     * Get a POSIX instance. If a true native implementation can't be loaded, allow that
+     * error to propagate rather than falling back on the pure-Java version.
+     *
+     * @param handler a POSIXHandler implementation
+     * @return a native POSIX implementation, raising errors if the native version can't load
+     */
+    public static POSIX getNativePOSIX(POSIXHandler handler) {
+        return loadNativePOSIX(handler);
+    }
+
+    /**
+     * Get a POSIX instance. If a true native implementation can't be loaded, allow that
+     * error to propagate rather than falling back on the pure-Java version.
+     *
+     * @return a native POSIX implementation, raising errors if the native version can't load
+     */
+    public static POSIX getNativePOSIX() {
+        return getNativePOSIX(new DefaultPOSIXHandler());
     }
 
     static POSIX loadPOSIX(POSIXHandler handler, boolean useNativePOSIX) {
@@ -85,10 +137,6 @@ public class POSIXFactory {
         }
 
         return null;
-    }
-
-    public static POSIX getJavaPOSIX(POSIXHandler handler) {
-        return new JavaPOSIX(handler);
     }
 
     public static POSIX loadLinuxPOSIX(POSIXHandler handler) {
