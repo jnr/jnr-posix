@@ -12,6 +12,16 @@ import jnr.constants.platform.Signal;
 
 public interface  POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
+
+    /**
+     * Call the crypt function with the given key and salt as raw zero-terminated byte (C char) strings.
+     *
+     * @param key
+     * @param salt
+     * @return
+     */
+    byte[] crypt(byte[] key, byte[] salt);
+
     FileStat allocateStat();
     int chmod(String filename, int mode);
     int fchmod(int fd, int mode);

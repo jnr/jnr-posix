@@ -83,6 +83,15 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().crypt(key, salt);
     }
 
+    public byte[] crypt(byte[] key, byte[] salt) {
+        Pointer ptr = libc().crypt(key, salt);
+        int end = ptr.indexOf(0, (byte)0);
+        byte[] bytes = new byte[end + 1];
+        ptr.get(0, bytes, 0, end);
+
+        return bytes;
+    }
+
     public int exec(String path, String... args) {
         handler.unimplementedError("exec unimplemented");
         return -1;

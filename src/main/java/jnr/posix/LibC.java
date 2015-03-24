@@ -30,6 +30,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.ffi.annotations.*;
 import jnr.ffi.types.clock_t;
 
@@ -39,6 +40,7 @@ import jnr.ffi.types.intptr_t;
 
 public interface LibC {
     CharSequence crypt(CharSequence key, CharSequence salt);
+    Pointer crypt(byte[] key, byte[] salt);
     int chmod(CharSequence filename, int mode);
     int fchmod(int fd, int mode);
     int chown(CharSequence filename, int user, int group);

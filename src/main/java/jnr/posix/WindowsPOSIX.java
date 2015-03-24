@@ -171,6 +171,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public byte[] crypt(byte[] key, byte[] salt) {
+        return JavaLibCHelper.crypt(key, salt);
+    }
+
+    @Override
     public int exec(String path, String[] argv, String[] envp) {
         if (argv.length == 1) return spawn(true, argv[0], null, path, envp);
 

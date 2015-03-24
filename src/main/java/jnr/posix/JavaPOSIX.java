@@ -71,6 +71,10 @@ final class JavaPOSIX implements POSIX {
         return helper.crypt(key, salt);
     }
 
+    public byte[] crypt(byte[] key, byte[] salt) {
+        return helper.crypt(key, salt);
+    }
+
     public int exec(String path, String... argv) {
         handler.unimplementedError("No exec in Java (yet)");
         

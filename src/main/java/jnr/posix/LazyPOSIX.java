@@ -73,6 +73,10 @@ final class LazyPOSIX implements POSIX {
         return posix().crypt(key, salt);
     }
 
+    public byte[] crypt(byte[] key, byte[] salt) {
+        return posix().crypt(key, salt);
+    }
+
     public int fchown(int fd, int user, int group) {
         return posix().fchown(fd, user, group);
     }

@@ -191,6 +191,11 @@ public class JavaLibCHelper {
         return JavaCrypt.crypt(original, salt);
     }
 
+    // FIXME: This version has no idea what charset you want, so it just uses default.
+    public static byte[] crypt(byte[] original, byte[] salt) {
+        return JavaCrypt.crypt(new String(original), new String(salt)).toString().getBytes();
+    }
+
     public int getfd(FileDescriptor descriptor) {
         return getfdFromDescriptor(descriptor);
     }
