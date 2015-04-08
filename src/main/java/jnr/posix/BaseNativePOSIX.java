@@ -85,6 +85,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public byte[] crypt(byte[] key, byte[] salt) {
         Pointer ptr = libc().crypt(key, salt);
+        if (ptr == null) return null;
         int end = ptr.indexOf(0, (byte)0);
         byte[] bytes = new byte[end + 1];
         ptr.get(0, bytes, 0, end);

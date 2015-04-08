@@ -14,11 +14,11 @@ public interface  POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
 
     /**
-     * Call the crypt function with the given key and salt as raw zero-terminated byte (C char) strings.
+     * Call the crypt function with the given key and salt as raw null-terminated byte (C char) strings.
      *
-     * @param key
-     * @param salt
-     * @return
+     * @param key null-terminated key bytes
+     * @param salt null-terminated salt bytes
+     * @return null-terminated crypted bytes, or null if there was an error
      */
     byte[] crypt(byte[] key, byte[] salt);
 
