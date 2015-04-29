@@ -11,7 +11,6 @@
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  *
- * Copyright (C) 2008 Google Inc. All Rights Reserved.
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
@@ -25,6 +24,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the CPL, the GPL or the LGPL.
  ***** END LICENSE BLOCK *****/
+
 package jnr.posix;
 
 import java.io.File;
@@ -33,16 +33,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 
-/**
- * <p>This file catches any SecurityExceptions raised when access
- * to a file is denied and responds as if the file didn't exist
- * instead.</p>
- *
- */
+@SuppressWarnings("serial")
 public class JavaSecuredFile extends File {
-    public JavaSecuredFile(File parent, String child) {
-        super(parent, child);
-    }
 
     public JavaSecuredFile(String pathname) {
         super(pathname);
@@ -52,54 +44,39 @@ public class JavaSecuredFile extends File {
         super(parent, child);
     }
 
+    public JavaSecuredFile(File parent, String child) {
+        super(parent, child);
+    }
+
     public JavaSecuredFile(URI uri) {
         super(uri);
     }
 
+
     @Override
-    public File getParentFile() {
-        String parent = getParent();
-        if (parent != null) {
-            return new JavaSecuredFile(parent);
-        } else {
-            return null;
-        }
+    public JavaSecuredFile getParentFile() {
+        String path = super.getParent();
+        return path==null ? null : new JavaSecuredFile(path);
     }
 
     @Override
-    public File getAbsoluteFile() {
-        String absolute = getAbsolutePath();
-        if (absolute != null) {
-            return new JavaSecuredFile(absolute);
-        } else {
-            return null;
-        }
+    public JavaSecuredFile getAbsoluteFile() {
+        String path = super.getAbsolutePath();
+        return path==null ? null : new JavaSecuredFile(path);
     }
 
     @Override
-    public String getCanonicalPath() throws IOException {
-        try {
-            return super.getCanonicalPath();
-        } catch (SecurityException ex) {
-            throw new IOException(ex.getMessage());
-        }
-    }
-
-    @Override
-    public File getCanonicalFile() throws IOException {
-        String canonical = getCanonicalPath();
-        if (canonical != null) {
-            return new JavaSecuredFile(canonical);
-        } else {
-            return null;
-        }
+    public JavaSecuredFile getCanonicalFile() throws IOException {
+        String path = super.getCanonicalPath();
+        return path==null ? null : new JavaSecuredFile(path);
     }
 
     @Override
     public boolean canRead() {
         try {
             return super.canRead();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -108,7 +85,8 @@ public class JavaSecuredFile extends File {
     public boolean canWrite() {
         try {
             return super.canWrite();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -117,7 +95,8 @@ public class JavaSecuredFile extends File {
     public boolean exists() {
         try {
             return super.exists();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -126,7 +105,8 @@ public class JavaSecuredFile extends File {
     public boolean isDirectory() {
         try {
             return super.isDirectory();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -135,7 +115,8 @@ public class JavaSecuredFile extends File {
     public boolean isFile() {
         try {
             return super.isFile();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -144,35 +125,9 @@ public class JavaSecuredFile extends File {
     public boolean isHidden() {
         try {
             return super.isHidden();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
-        }
-    }
-
-    @Override
-    public long lastModified() {
-        try {
-            return super.lastModified();
-        } catch (SecurityException ex) {
-            return 0L;
-        }
-    }
-
-    @Override
-    public long length() {
-        try {
-            return super.length();
-        } catch (SecurityException ex) {
-            return 0L;
-        }
-    }
-
-    @Override
-    public boolean createNewFile() throws IOException {
-        try {
-            return super.createNewFile();
-        } catch (SecurityException ex) {
-            throw new IOException(ex.getMessage());
         }
     }
 
@@ -180,53 +135,9 @@ public class JavaSecuredFile extends File {
     public boolean delete() {
         try {
             return super.delete();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
-        }
-    }
-
-    @Override
-    public String[] list() {
-        try {
-            return super.list();
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public String[] list(FilenameFilter filter) {
-        try {
-            return super.list(filter);
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public File[] listFiles() {
-        try {
-            return super.listFiles();
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public File[] listFiles(FilenameFilter filter) {
-        try {
-            return super.listFiles(filter);
-        } catch (SecurityException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public File[] listFiles(FileFilter filter) {
-        try {
-            return super.listFiles(filter);
-        } catch (SecurityException ex) {
-            return null;
         }
     }
 
@@ -234,7 +145,8 @@ public class JavaSecuredFile extends File {
     public boolean mkdir() {
         try {
             return super.mkdir();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -243,7 +155,8 @@ public class JavaSecuredFile extends File {
     public boolean mkdirs() {
         try {
             return super.mkdirs();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -252,7 +165,8 @@ public class JavaSecuredFile extends File {
     public boolean renameTo(File dest) {
         try {
             return super.renameTo(dest);
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -261,7 +175,8 @@ public class JavaSecuredFile extends File {
     public boolean setLastModified(long time) {
         try {
             return super.setLastModified(time);
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
@@ -270,9 +185,90 @@ public class JavaSecuredFile extends File {
     public boolean setReadOnly() {
         try {
             return super.setReadOnly();
-        } catch (SecurityException ex) {
+        }
+        catch(SecurityException e) {
             return false;
         }
     }
-}
 
+    @Override
+    public String getCanonicalPath() throws IOException {
+        try {
+            return super.getCanonicalPath();
+        }
+        catch(SecurityException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public boolean createNewFile() throws IOException {
+        try {
+            return super.createNewFile();
+        }
+        catch(SecurityException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public String[] list() {
+        try {
+            return super.list();
+        }
+        catch(SecurityException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String[] list(FilenameFilter filter) {
+        try {
+            return super.list(filter);
+        }
+        catch(SecurityException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public File[] listFiles() {
+        try {
+            return super.listFiles();
+        }
+        catch(SecurityException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public File[] listFiles(FileFilter filter) {
+        try {
+            return super.listFiles(filter);
+        }
+        catch(SecurityException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public long lastModified() {
+        try {
+            return super.lastModified();
+        }
+        catch(SecurityException e) {
+            return 0L;
+        }
+    }
+
+    @Override
+    public long length() {
+        try {
+            return super.length();
+        }
+        catch(SecurityException e) {
+            return 0L;
+        }
+    }
+
+}
