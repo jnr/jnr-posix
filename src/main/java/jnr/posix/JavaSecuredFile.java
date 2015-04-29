@@ -56,19 +56,19 @@ public class JavaSecuredFile extends File {
 
 
     @Override
-    public JavaSecuredFile getParentFile() {
+    public File getParentFile() {
         String path = getParent();
         return path == null ? null : new JavaSecuredFile(path);
     }
 
     @Override
-    public JavaSecuredFile getAbsoluteFile() {
+    public File getAbsoluteFile() {
         String path = getAbsolutePath();
         return path == null ? null : new JavaSecuredFile(path);
     }
 
     @Override
-    public JavaSecuredFile getCanonicalFile() throws IOException {
+    public File getCanonicalFile() throws IOException {
         String path = getCanonicalPath();
         return path == null ? null : new JavaSecuredFile(path);
     }
