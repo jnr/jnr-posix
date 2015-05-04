@@ -234,6 +234,7 @@ public class POSIXFactory {
                         .map("read", "_read")
                         .map("write", "_write")
                         .map("close", "_close")
+                        .map("getcwd", "_getcwd")
                         .build();
             
             case SOLARIS:
