@@ -3,6 +3,13 @@ package jnr.posix;
 
 import jnr.ffi.mapper.FunctionMapper;
 
+/**
+ * No longer used.  It used to map function names from libc names to
+ * msvcrt names.
+ *
+ * @deprecated Use SimpleFunctionMapper instead.
+ */
+@Deprecated
 final class POSIXFunctionMapper implements FunctionMapper {
     public static final FunctionMapper INSTANCE = new POSIXFunctionMapper();
 
