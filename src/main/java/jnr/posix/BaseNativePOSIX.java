@@ -601,6 +601,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().recvmsg(socket, message, flags);
     }
 
+    public int truncate(CharSequence path, long length) {
+        return libc().truncate(path, length);
+    }
+
     public int ftruncate(int fd, long offset) {
         return libc().ftruncate(fd, offset);
     }

@@ -586,6 +586,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int truncate(CharSequence path, long length) {
+        handler.unimplementedError("truncate");
+
+        return -1;
+    }
+
     public int ftruncate(int fd, long offset) {
         handler.unimplementedError("ftruncate");
 

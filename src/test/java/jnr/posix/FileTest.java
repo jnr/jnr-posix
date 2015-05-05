@@ -288,6 +288,26 @@ public class FileTest {
     }
 
     @Test
+    public void truncateTest() throws Throwable {
+        String str = "Beware the Jabberwock, my son!";
+        File tmp = File.createTempFile("truncateTest", "tmp");
+        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+        raf.write(str.getBytes());
+        raf.close();
+
+        int shorterLength = str.length() - 10;
+        int longerLength = shorterLength * 2;
+
+        // Truncate should make a file shorter if the new length is less than the old length.
+        posix.truncate(tmp.getAbsolutePath(), shorterLength);
+        assertEquals(shorterLength, tmp.length());
+
+        // Truncate should extend a file if the new length is greater than the old length.
+        posix.truncate(tmp.getAbsolutePath(), longerLength);
+        assertEquals(longerLength, tmp.length());
+    }
+
+    @Test
     public void ftruncateTest() throws Throwable {
         String str = "Beware the Jabberwock, my son!";
         File tmp = File.createTempFile("ftruncateTest", "tmp");

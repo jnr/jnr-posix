@@ -459,6 +459,10 @@ final class CheckedPOSIX implements POSIX {
         try {return posix.recvmsg(socket, message, flags); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int truncate(CharSequence path, long length) {
+        try { return posix.truncate(path, length); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int ftruncate(int fd, long offset) {
         try {return posix.ftruncate(fd, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

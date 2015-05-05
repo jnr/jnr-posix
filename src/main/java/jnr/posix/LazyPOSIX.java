@@ -455,6 +455,10 @@ final class LazyPOSIX implements POSIX {
         return posix().recvmsg( socket, message, flags );
     }
 
+    public int truncate(CharSequence path, long length) {
+        return posix().truncate(path, length);
+    }
+
     public int ftruncate(int fd, long offset) {
         return posix().ftruncate(fd, offset);
     }
