@@ -496,6 +496,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().fcntl(fd, fcntl.intValue());
     }
 
+    public int access(CharSequence path, int amode) {
+        return libc().access(path, amode);
+    }
+
     public int close(int fd) {
         return libc().close(fd);
     }

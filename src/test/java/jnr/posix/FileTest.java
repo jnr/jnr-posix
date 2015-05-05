@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import jnr.constants.platform.Access;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.OpenFlags;
@@ -338,5 +339,21 @@ public class FileTest {
         assertTrue(newFile.exists());
 
         newFile.delete();
+    }
+
+    @Test
+    public void accessTest() throws IOException {
+        File tmp = File.createTempFile("jnr-posix-access-test", "tmp");
+
+        // Set permissions to RWXRWXRWX and verify we have access to execute.
+        posix.chmod(tmp.getCanonicalPath(), 0777);
+        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.X_OK.intValue()));
+
+        // Set permissions to RW-RW-RW and verify we no longer have access to execute.
+        posix.chmod(tmp.getCanonicalPath(), 0666);
+        assertEquals("access: ", -1, posix.access(tmp.getCanonicalPath(), Access.X_OK.intValue()));
+
+        // F_OK just checks the file exists and should pass.
+        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.F_OK.intValue()));
     }
 }

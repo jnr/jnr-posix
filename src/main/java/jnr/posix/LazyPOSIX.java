@@ -387,6 +387,10 @@ final class LazyPOSIX implements POSIX {
         return posix().fcntl(fd, fcntlConst);
     }
 
+    public int access(CharSequence path, int amode) {
+        return posix().access(path, amode);
+    }
+
     public int close(int fd) {
         return posix().close(fd);
     }

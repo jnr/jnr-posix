@@ -84,6 +84,7 @@ public interface LibC {
     int fcntl(int fd, int fnctl);
     @Deprecated
     int fcntl(int fd, int fnctl, int... arg);
+    int access(CharSequence path, int amode);
     int getdtablesize();
 
     public interface LibCSignalHandler {

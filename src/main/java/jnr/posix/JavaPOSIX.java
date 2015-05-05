@@ -486,6 +486,12 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("fcntl");
     }
 
+    public int access(CharSequence path, int amode) {
+        handler.unimplementedError("access");
+
+        return -1;
+    }
+
     public int close(int fd) {
         return unimplementedInt("close");
     }
