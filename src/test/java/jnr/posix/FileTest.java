@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.OpenFlags;
+import jnr.posix.util.Platform;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -194,27 +195,47 @@ public class FileTest {
     }
 
     @Test
-    public void unlinkTest() throws Throwable {
-        File tmp = File.createTempFile("unlinkTest", "tmp");
-        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+    public void unlinkTestNonWindows() throws Throwable {
+        if (! Platform.IS_WINDOWS) {
+            File tmp = File.createTempFile("unlinkTest", "tmp");
+            RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
 
-        raf.write("hello".getBytes());
+            raf.write("hello".getBytes());
 
-        int res = posix.unlink(tmp.getCanonicalPath());
+            int res = posix.unlink(tmp.getCanonicalPath());
 
-        assertEquals(0, res);
+            assertEquals(0, res);
+            assertFalse(tmp.exists());
 
-        assertFalse(tmp.exists());
+            raf.write("world".getBytes());
+            raf.seek(0);
 
-        raf.write("world".getBytes());
+            byte[] actual = new byte[10];
+            raf.read(actual);
 
-        raf.seek(0);
+            assertArrayEquals("helloworld".getBytes(), actual);
+        }
+    }
 
-        byte[] actual = new byte[10];
+    @Test
+    public void unlinkTestWindows() throws Throwable {
+        if (Platform.IS_WINDOWS) {
+            File tmp = File.createTempFile("unlinkTest", "tmp");
+            RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
 
-        raf.read(actual);
+            raf.write("hello".getBytes());
 
-        assertArrayEquals("helloworld".getBytes(), actual);
+            // Windows won't allow you to delete open files, so we must
+            // close the handle before trying to delete it.  Unfortunately,
+            // this also means we're unable to write to the handle afterwards
+            // as we do with the non-Windows test.
+            raf.close();
+
+            int res = posix.unlink(tmp.getCanonicalPath());
+
+            assertEquals(0, res);
+            assertFalse(tmp.exists());
+        }
     }
 
     @Test
