@@ -134,6 +134,7 @@ public interface LibC {
     int open(CharSequence path, int flags, int perm);
     int pipe(@Out int[] fds);
     int ftruncate(int fd, long offset);
+    int rename(CharSequence oldName, CharSequence newName);
     long getcwd(byte[] cwd, int len);
     int fsync(int fd);
     int fdatasync(int fd);

@@ -323,4 +323,20 @@ public class FileTest {
         tmp.delete();
     }
 
+
+    @Test
+    public void renameTest() throws IOException {
+        File oldFile = File.createTempFile("jnr-posix-rename-test", "tmp");
+        File newFile = new File(oldFile.getParent() + File.separatorChar + "jnr-posix-rename-test-new");
+
+        assertTrue(oldFile.exists());
+        assertFalse(newFile.exists());
+
+        posix.rename(oldFile.getCanonicalPath(), newFile.getCanonicalPath());
+
+        assertFalse(oldFile.exists());
+        assertTrue(newFile.exists());
+
+        newFile.delete();
+    }
 }

@@ -586,6 +586,19 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int rename(CharSequence oldName, CharSequence newName) {
+        // Very basic support.  This might not work well with rename's semantics regarding symlinks.
+
+        File oldFile = new File(oldName.toString());
+        File newFile = new File(newName.toString());
+
+        if (oldFile.renameTo(newFile)) {
+            return 0;
+        }
+
+        return -1;
+    }
+
     public String getcwd() {
         return System.getProperty("user.dir");
     }

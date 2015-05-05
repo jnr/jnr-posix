@@ -140,6 +140,7 @@ public interface  POSIX {
     int lseek(int fd, long offset, int whence);
     int pipe(int[] fds);
     int ftruncate(int fd, long offset);
+    int rename(CharSequence oldName, CharSequence newName);
     String getcwd();
 
     int socketpair(int domain, int type, int protocol, int[] fds);

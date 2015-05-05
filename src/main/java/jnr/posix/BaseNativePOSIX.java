@@ -601,6 +601,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().ftruncate(fd, offset);
     }
 
+    public int rename(CharSequence oldName, CharSequence newName) {
+        return libc().rename(oldName, newName);
+    }
+
     public String getcwd() {
         byte[] cwd = new byte[1024];
         long result = libc().getcwd(cwd, 1024);

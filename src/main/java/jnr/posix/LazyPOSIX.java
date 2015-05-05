@@ -455,6 +455,10 @@ final class LazyPOSIX implements POSIX {
         return posix().ftruncate(fd, offset);
     }
 
+    public int rename(CharSequence oldName, CharSequence newName) {
+        return posix().rename(oldName, newName);
+    }
+
     public String getcwd() {
         return posix().getcwd();
     }

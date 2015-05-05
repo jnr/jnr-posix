@@ -459,6 +459,10 @@ final class CheckedPOSIX implements POSIX {
         try {return posix.ftruncate(fd, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int rename(CharSequence oldName, CharSequence newName) {
+        try {return posix.rename(oldName, newName); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public String getcwd() {
         try {return posix.getcwd(); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
