@@ -236,7 +236,7 @@ public class POSIXFactory {
                         .map("close", "_close")
                         .map("getcwd", "_getcwd")
                         .map("unlink", "_unlink")
-                        .map("access", "_access_s")
+                        .map("access", "_access")
                         .map("open", "_open")
                         .build();
             
