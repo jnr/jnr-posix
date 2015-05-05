@@ -345,13 +345,17 @@ public class FileTest {
     public void accessTest() throws IOException {
         File tmp = File.createTempFile("jnr-posix-access-test", "tmp");
 
-        // Set permissions to RWXRWXRWX and verify we have access to execute.
-        posix.chmod(tmp.getCanonicalPath(), 0777);
-        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.X_OK.intValue()));
+        jnr.constants.platform.Access.F_OK.intValue();
 
-        // Set permissions to RW-RW-RW and verify we no longer have access to execute.
-        posix.chmod(tmp.getCanonicalPath(), 0666);
-        assertEquals("access: ", -1, posix.access(tmp.getCanonicalPath(), Access.X_OK.intValue()));
+        // Set permissions to read-only and verify we don't have permissions to write.
+        posix.chmod(tmp.getCanonicalPath(), 0400);
+        assertEquals("access: ", -1, posix.access(tmp.getCanonicalPath(), Access.W_OK.intValue()));
+        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.R_OK.intValue()));
+
+        // Reset the permissions to read-wrinte and verify we now have permissions to write.
+        posix.chmod(tmp.getCanonicalPath(), 0600);
+        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.W_OK.intValue()));
+        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.R_OK.intValue()));
 
         // F_OK just checks the file exists and should pass.
         assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.F_OK.intValue()));
