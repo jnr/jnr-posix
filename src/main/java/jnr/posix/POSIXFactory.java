@@ -237,6 +237,7 @@ public class POSIXFactory {
                         .map("getcwd", "_getcwd")
                         .map("unlink", "_unlink")
                         .map("access", "_access_s")
+                        .map("open", "_open")
                         .build();
             
             case SOLARIS:
