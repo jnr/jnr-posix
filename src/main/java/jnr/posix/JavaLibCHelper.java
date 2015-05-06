@@ -377,6 +377,16 @@ public class JavaLibCHelper {
         return descriptor;
     }
 
+    public static FileDescriptor toFileDescriptor(HANDLE fileDescriptor) {
+        FileDescriptor descriptor = new FileDescriptor();
+        try {
+            FILE_DESCRIPTOR_HANDLE.set(descriptor, fileDescriptor.toPointer().address());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return descriptor;
+    }
+
     private static class PosixExec extends ExecIt {
         private final AtomicReference<Errno> errno = new AtomicReference<Errno>(Errno.EINVAL);
         private final ErrnoParsingOutputStream errorStream = new ErrnoParsingOutputStream(errno);

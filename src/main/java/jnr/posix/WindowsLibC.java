@@ -26,6 +26,7 @@ public interface WindowsLibC extends LibC {
     public static final int FILE_TYPE_UNKNOWN = 0x0000;
     
     public int _open_osfhandle(HANDLE handle, int flags);
+    public HANDLE _get_osfhandle(int fd);
     public int _close(int fd);
     public int _getpid();
     int _stat64(CharSequence path, @Out @Transient FileStat stat);
