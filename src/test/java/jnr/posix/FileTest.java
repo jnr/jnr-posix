@@ -104,13 +104,13 @@ public class FileTest {
         File tmp = File.createTempFile("dupTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
         FileChannel fileChannel = raf.getChannel();
-        int fileDescriptor = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(fileChannel));
+        int fileDescriptor = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(fileChannel));
 
         byte[] outContent = "foo".getBytes();
 
-        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.dup(fileDescriptor));
+        FileDescriptor newFileDescriptor = toDescriptor(posix.dup(fileDescriptor));
 
-        new FileOutputStream(JavaLibCHelper.toFileDescriptor(fileDescriptor)).write(outContent);
+        new FileOutputStream(toDescriptor(fileDescriptor)).write(outContent);
         raf.seek(0);
 
         byte[] inContent = new byte[outContent.length];
@@ -422,6 +422,15 @@ public class FileTest {
             return ((WindowsLibC) posix.libc())._open_osfhandle(handle, 0);
         } else {
             return JavaLibCHelper.getfdFromDescriptor(descriptor);
+        }
+    }
+
+    private FileDescriptor toDescriptor(int fd) {
+        if (Platform.IS_WINDOWS) {
+            HANDLE handle = ((WindowsLibC) posix.libc())._get_osfhandle(fd);
+            return JavaLibCHelper.toFileDescriptor(handle);
+        } else {
+            return JavaLibCHelper.toFileDescriptor(fd);
         }
     }
 }
