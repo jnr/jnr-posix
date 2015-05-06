@@ -123,14 +123,19 @@ public class FileTest {
     public void dup2Test() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
-        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
-        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+        int oldFd = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
+        int newFd = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
 
         byte[] outContent = "foo".getBytes();
 
-        FileDescriptor newFileDescriptor = JavaLibCHelper.toFileDescriptor(posix.dup2(oldFd, newFd));
+        // NB: Windows differs a bit from POSIX's return value.  Both will return -1 on failure, but Windows will return
+        // 0 upon success, while POSIX will return the new FD.  Since we already know what the FD will be if the call
+        // is successful, it's easy to make code that works with both forms.  But it is something to watch out for when
+        // calling.
+        assertNotEquals(-1, posix.dup2(oldFd, newFd));
+        FileDescriptor newFileDescriptor = toDescriptor(newFd);
 
-        new FileOutputStream(JavaLibCHelper.toFileDescriptor(oldFd)).write(outContent);
+        new FileOutputStream(toDescriptor(oldFd)).write(outContent);
         raf.seek(0);
 
         byte[] inContent = new byte[outContent.length];
