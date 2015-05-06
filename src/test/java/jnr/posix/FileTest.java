@@ -130,8 +130,7 @@ public class FileTest {
 
         // NB: Windows differs a bit from POSIX's return value.  Both will return -1 on failure, but Windows will return
         // 0 upon success, while POSIX will return the new FD.  Since we already know what the FD will be if the call
-        // is successful, it's easy to make code that works with both forms.  But it is something to watch out for when
-        // calling.
+        // is successful, it's easy to make code that works with both forms.  But it is something to watch out for.
         assertNotEquals(-1, posix.dup2(oldFd, newFd));
         FileDescriptor newFileDescriptor = toDescriptor(newFd);
 
