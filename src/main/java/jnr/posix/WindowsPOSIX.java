@@ -592,6 +592,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
             return -1;
         }
     }
+
+    public int pipe(int[] fds) {
+        // TODO (nirvdrum 06-May-15) Maybe not hard-code the psize value. But figure out a sensible way to handle textmode.
+        return ((WindowsLibC) libc())._pipe(fds, 512, 0);
+    }
     
     private WindowsLibC wlibc() {
         return (WindowsLibC) libc();

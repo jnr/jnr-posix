@@ -38,6 +38,7 @@ public interface WindowsLibC extends LibC {
     public int _wchmod(@In WString path, int pmode);
     public int _wchdir(@In WString path);
     public int _wstat64(@In WString path, @Out @Transient FileStat stat);
+    public int _pipe(int[] fds, int psize, int textmode);
     
     @StdCall
     public boolean CreateProcessW(byte[] applicationName, 
