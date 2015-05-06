@@ -62,7 +62,6 @@ public class JavaLibCHelper {
     private static final ThreadLocal<Integer> errno = new ThreadLocal<Integer>();
 
     private final POSIXHandler handler;
-    private final Field fdField, handleField;
     private final Map<String, String> env;
     
     private static final Class SEL_CH_IMPL;
@@ -70,16 +69,11 @@ public class JavaLibCHelper {
     private static final Class FILE_CHANNEL_IMPL;
     private static final Field FILE_CHANNEL_IMPL_FD;
     private static final Field FILE_DESCRIPTOR_FD;
+    private static final Field FILE_DESCRIPTOR_HANDLE;
 
     public JavaLibCHelper(POSIXHandler handler) {
         this.env = new HashMap<String, String>();
         this.handler = handler;
-        if (Platform.IS_WINDOWS) { // Exception generated if we are not on Windows.
-            this.handleField = FieldAccess.getProtectedField(FileDescriptor.class, "handle");
-        } else {
-            this.handleField = null;
-        }
-        fdField = FILE_DESCRIPTOR_FD;
     }
     
     static {
@@ -125,6 +119,19 @@ public class JavaLibCHelper {
             ffd = null;
         }
         FILE_DESCRIPTOR_FD = ffd;
+
+        if (Platform.IS_WINDOWS) {
+            Field handle;
+            try {
+                handle = FileDescriptor.class.getDeclaredField("handle");
+                handle.setAccessible(true);
+            } catch (Exception e) {
+                handle = null;
+            }
+            FILE_DESCRIPTOR_HANDLE = handle;
+        } else {
+            FILE_DESCRIPTOR_HANDLE = null;
+        }
     }
     
     public static FileDescriptor getDescriptorFromChannel(Channel channel) {
@@ -212,10 +219,10 @@ public class JavaLibCHelper {
         return -1;
     }
     
-    public HANDLE gethandle(FileDescriptor descriptor) {
-        if (descriptor == null || handleField == null) return HANDLE.valueOf(-1);
+    public static HANDLE gethandle(FileDescriptor descriptor) {
+        if (descriptor == null || FILE_DESCRIPTOR_HANDLE == null) return HANDLE.valueOf(-1);
         try {
-            return HANDLE.valueOf(handleField.getLong(descriptor));
+            return HANDLE.valueOf(FILE_DESCRIPTOR_HANDLE.getLong(descriptor));
         } catch (SecurityException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {

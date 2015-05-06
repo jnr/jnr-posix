@@ -307,7 +307,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
-        int fd = ((WindowsLibC) libc())._open_osfhandle(helper.gethandle(fileDescriptor), 0);
+        int fd = ((WindowsLibC) libc())._open_osfhandle(JavaLibCHelper.gethandle(fileDescriptor), 0);
         try {
             return libc().fstat(fd, stat);
         } finally {
@@ -506,7 +506,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public boolean isatty(FileDescriptor fd) {
-        HANDLE handle = helper.gethandle(fd);
+        HANDLE handle = JavaLibCHelper.gethandle(fd);
 
         int type = wlibc().GetFileType(handle);
         return type == FILE_TYPE_CHAR;
