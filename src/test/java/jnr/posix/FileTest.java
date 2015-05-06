@@ -380,4 +380,36 @@ public class FileTest {
         // F_OK just checks the file exists and should pass.
         assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.F_OK.intValue()));
     }
+
+    @Test
+    public void readlinkTest() throws IOException {
+        File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+        File link = new File(file.getAbsolutePath() + "link");
+
+        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+
+        byte[] buffer = new byte[file.getAbsolutePath().length()];
+        assertEquals(buffer.length, posix.readlink(link.getAbsolutePath(), buffer, buffer.length));
+
+        assertArrayEquals(buffer, file.getAbsolutePath().getBytes());
+
+        link.delete();
+        file.delete();
+    }
+
+    @Test
+    public void readlinkByteBufferTest() throws IOException {
+        File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+        File link = new File(file.getAbsolutePath() + "link");
+
+        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+
+        ByteBuffer buffer = ByteBuffer.allocate(file.getAbsolutePath().length());
+        assertEquals(buffer.capacity(), posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
+
+        assertArrayEquals(buffer.array(), file.getAbsolutePath().getBytes());
+
+        link.delete();
+        file.delete();
+    }
 }

@@ -102,6 +102,7 @@ public interface LibC {
     int stat64(CharSequence path, @Out @Transient FileStat stat);
     int symlink(CharSequence oldpath, CharSequence newpath);
     int readlink(CharSequence oldpath, @Out ByteBuffer buffer, int len);
+    int readlink(CharSequence path, @Out byte[] buffer, int len);
     int setenv(CharSequence envName, CharSequence envValue, int overwrite);
     @IgnoreError int umask(int mask);
     int unsetenv(CharSequence envName);
