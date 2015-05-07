@@ -1,5 +1,7 @@
 package jnr.posix;
 
+import jnr.constants.platform.OpenFlags;
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import static jnr.constants.platform.Errno.*;
 import static jnr.constants.platform.windows.LastError.*;
@@ -117,8 +119,11 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         errorToErrnoMapper.put(WSAEMFILE.value(), EMFILE);
     }
 
+    private final FileStat checkFdStat;
+
     WindowsPOSIX(LibCProvider libc, POSIXHandler handler) {
         super(libc, handler);
+        this.checkFdStat = allocateStat();
     }
     
     @Override
@@ -597,6 +602,44 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         // TODO (nirvdrum 06-May-15) Maybe not hard-code the psize value. But figure out a sensible way to handle textmode.
         return ((WindowsLibC) libc())._pipe(fds, 512, 0);
     }
+
+
+    public int fcntlInt(int fd, Fcntl fcntl, int arg) {
+        switch(fcntl) {
+            case F_GETFD: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // This is a gigantic hack.  Indicate that Windows does not support close-on-exec.
+                    return 0;
+                }
+            }
+
+            case F_SETFD: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // This is a gigantic hack.  Indicate that Windows does not support close-on-exec by no-oping.
+                    return 0;
+                }
+            }
+
+            case F_GETFL: {
+                if (checkFd(fd) == -1) {
+                    return -1;
+                } else {
+                    // TODO (nirvdrum 06-May-15): Look up the actual flags rather than optimistically hard-coding this set.
+                    return OpenFlags.O_RDWR.intValue();
+                }
+            }
+
+            default: {
+                handler.unimplementedError("fcntl");
+
+                return -1;
+            }
+        }
+    }
     
     private WindowsLibC wlibc() {
         return (WindowsLibC) libc();
@@ -687,6 +730,13 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         
         // TODO: On winnt reverse sign of pid
         return new WindowsChildRecord(processInformation.getProcess(), processInformation.getPid());
+    }
+
+    private int checkFd(int fd) {
+        // There might be a lighter-weight check, but we basically want to
+        // make sure the FD is valid and the effective user can access it,
+        // since we need to simulate fcntl semantics.
+        return libc().fstat(fd, checkFdStat);
     }
 
     public static final PointerConverter PASSWD = new PointerConverter() {
