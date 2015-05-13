@@ -241,6 +241,7 @@ public class POSIXFactory {
                         .map("dup", "_dup")
                         .map("dup2", "_dup2")
                         .map("lseek", "_lseek")
+                        .map("ftruncate", "_chsize")
                         .build();
             
             case SOLARIS:
