@@ -603,6 +603,28 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return ((WindowsLibC) libc())._pipe(fds, 512, 0);
     }
 
+    public int truncate(CharSequence path, long length) {
+        // Windows doesn't have a native truncate() equivalent, but it does have a native ftruncate() equivalent.
+        // In order to call the ftruncate() equivalent, we must convert a path to a FD.  We do that by wrapping the
+        // ftruncate() call with open() and close().
+
+        // Permissions are ignored since we're not using O_CREAT.
+        int fd = libc().open(path, OpenFlags.O_WRONLY.intValue(), 0);
+        if (fd == -1) {
+            return -1;
+        }
+
+        if (libc().ftruncate(fd, length) == -1) {
+            return -1;
+        }
+
+        if (libc().close(fd) == -1) {
+            return -1;
+        }
+
+        // truncate() returns 0 on success.
+        return 0;
+    }
 
     public int fcntlInt(int fd, Fcntl fcntl, int arg) {
         switch(fcntl) {
