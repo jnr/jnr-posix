@@ -75,7 +75,7 @@ public interface LibC {
     @IgnoreError int getuid();
     int setsid();
     int setuid(int uid);
-    int kill(int pid, int signal);
+    int kill(long pid, int signal);
 
     int dup(int fd);
     int dup2(int oldFd, int newFd);

@@ -211,6 +211,10 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int kill(int pid, int signal) {
+        return kill((long) pid, signal);
+    }
+
+    public int kill(long pid, int signal) {
         return posix().kill(pid, signal);
     }
     
