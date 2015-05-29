@@ -363,7 +363,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
         return libc().readlink(path, buf, bufsize);
     }
-    
+
+    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+        return libc().readlink(path, bufPtr, bufsize);
+    }
+
     public int unsetenv(String envName) {
         return libc().unsetenv(envName);
     }

@@ -253,6 +253,10 @@ final class LazyPOSIX implements POSIX {
         return posix().readlink(path, buf, bufsize);
     }
 
+    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+        return posix().readlink(path, bufPtr, bufsize);
+    }
+
     public int rmdir(String path) {
         return posix().rmdir(path);
     }

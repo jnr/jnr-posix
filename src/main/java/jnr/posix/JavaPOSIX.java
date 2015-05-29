@@ -303,6 +303,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
     // At this point the environment is not being used by any methods here.
     // getenv/setenv/unsetenv do behave properly via POSIX definitions, but 
     // it is only a storage facility at the moment.  In a future release, this
