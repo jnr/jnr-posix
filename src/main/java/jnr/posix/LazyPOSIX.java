@@ -322,6 +322,10 @@ final class LazyPOSIX implements POSIX {
         return posix().utimes(path, atimeval, mtimeval);
     }
 
+    public int utimes(String path, Pointer times) {
+        return posix().utimes(path, times);
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         return posix().futimes(fd, atimeval, mtimeval);
     }

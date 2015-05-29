@@ -386,6 +386,10 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().utimes(path, times);
     }
 
+    public int utimes(String path, Pointer times) {
+        return libc().utimes(path, times);
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         Timeval[] times = null;
         if (atimeval != null && mtimeval != null) {

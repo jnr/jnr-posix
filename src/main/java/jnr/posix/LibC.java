@@ -108,6 +108,7 @@ public interface LibC {
     @IgnoreError int umask(int mask);
     int unsetenv(CharSequence envName);
     int utimes(CharSequence path, @In Timeval[] times);
+    int utimes(String path, @In Pointer times);
     int futimes(int fd, @In Timeval[] times);
     int fork();
     int waitpid(long pid, @Out int[] status, int options);

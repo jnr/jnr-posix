@@ -72,6 +72,37 @@ public class FileTest {
     }
 
     @Test
+    public void utimesPointerTest() throws Throwable {
+        File f = File.createTempFile("utimes", null);
+
+        Pointer times = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 4); // long[2][2] == 4 longs.
+        times.putLong(0, 800);
+        times.putLong(8, 200);
+        times.putLong(16, 900);
+        times.putLong(24, 300);
+
+        int rval = posix.utimes(f.getAbsolutePath(), times);
+        assertEquals("utimes did not return 0", 0, rval);
+
+        FileStat stat = posix.stat(f.getAbsolutePath());
+
+        assertEquals("atime seconds failed", 800, stat.atime());
+        assertEquals("mtime seconds failed", 900, stat.mtime());
+
+        // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
+        // representative.  We really just want to verify that the usec portion of the timeval is passed throug
+        // to the POSIX call.
+        if (stat instanceof LinuxFileStat64) {
+            LinuxFileStat64 linuxStat = (LinuxFileStat64) stat;
+
+            assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
+            assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
+        }
+
+        f.delete();
+    }
+
+    @Test
     public void futimeTest() throws Throwable {
         File f = File.createTempFile("jnr-posix-futime", "tmp");
         long oldTime = posix.stat(f.getAbsolutePath()).mtime();

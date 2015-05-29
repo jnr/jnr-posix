@@ -405,6 +405,10 @@ final class JavaPOSIX implements POSIX {
         return 0;
     }
 
+    public int utimes(String path, Pointer times) {
+        return unimplementedInt("utimes");
+    }
+
     public int futimes(int fd, long[] atimeval, long[] mtimeval) {
         handler.unimplementedError("futimes");
         return unimplementedInt("futimes");
