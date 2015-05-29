@@ -29,15 +29,46 @@ public class FileTest {
     }
 
     @Test
-    public void utimeTest() throws Throwable {
-        File f = File.createTempFile("utime", null);
+    public void utimesTest() throws Throwable {
+        File f = File.createTempFile("utimes", null);
+
+        int rval = posix.utimes(f.getAbsolutePath(), new long[] { 800, 200 }, new long [] { 900, 300 });
+        assertEquals("utimes did not return 0", 0, rval);
+
+        FileStat stat = posix.stat(f.getAbsolutePath());
+
+        assertEquals("atime seconds failed", 800, stat.atime());
+        assertEquals("mtime seconds failed", 900, stat.mtime());
+
+        // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
+        // representative.  We really just want to verify that the usec portion of the timeval is passed throug
+        // to the POSIX call.
+        if (stat instanceof LinuxFileStat64) {
+            LinuxFileStat64 linuxStat = (LinuxFileStat64) stat;
+
+            assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
+            assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
+        }
+
+        f.delete();
+    }
+
+    @Test
+    public void utimesDefaultValuesTest() throws Throwable {
+        File f = File.createTempFile("utimes", null);
+
         long oldTime = posix.stat(f.getAbsolutePath()).mtime();
         Thread.sleep(2000);
+
         int rval = posix.utimes(f.getAbsolutePath(), null, null);
-        assertEquals("utime did not return 0", 0, rval);
-        long newTime = posix.stat(f.getAbsolutePath()).mtime();
+        assertEquals("utimes did not return 0", 0, rval);
+
+        FileStat stat = posix.stat(f.getAbsolutePath());
+
+        assertTrue("atime failed", stat.atime() > oldTime);
+        assertTrue("mtime failed", stat.mtime() > oldTime);
+
         f.delete();
-        assertTrue("mtime failed", newTime > oldTime);
     }
 
     @Test
