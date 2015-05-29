@@ -3,6 +3,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
@@ -253,7 +254,7 @@ final class LazyPOSIX implements POSIX {
         return posix().readlink(path, buf, bufsize);
     }
 
-    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
         return posix().readlink(path, bufPtr, bufsize);
     }
 

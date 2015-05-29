@@ -2,6 +2,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
@@ -82,7 +83,7 @@ public interface  POSIX {
     String readlink(String path) throws IOException;
     int readlink(CharSequence path, byte[] buf, int bufsize);
     int readlink(CharSequence path, ByteBuffer buf, int bufsize);
-    int readlink(CharSequence path, long bufPtr, int bufsize);
+    int readlink(CharSequence path, Pointer bufPtr, int bufsize);
     int rmdir(String path);
     int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
     int setsid();

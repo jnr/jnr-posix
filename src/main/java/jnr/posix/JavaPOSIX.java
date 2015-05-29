@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
@@ -303,7 +304,7 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
-    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
         handler.unimplementedError("readlink");
 
         return -1;

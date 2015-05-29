@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Pointer;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.ProcessMaker;
 
@@ -256,7 +257,7 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 
-    public int readlink(CharSequence path, long bufPtr, int bufsize) {
+    public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
         try { return posix.readlink(path, bufPtr, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 

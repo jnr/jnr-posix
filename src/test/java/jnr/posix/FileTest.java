@@ -4,6 +4,7 @@ import jnr.constants.platform.Access;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.OpenFlags;
+import jnr.ffi.Pointer;
 import jnr.posix.util.Platform;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -415,6 +417,25 @@ public class FileTest {
         assertEquals(buffer.capacity(), posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
 
         assertArrayEquals(buffer.array(), file.getAbsolutePath().getBytes());
+
+        link.delete();
+        file.delete();
+    }
+
+    @Test
+    public void readlinkPointerTest() throws IOException {
+        File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+        File link = new File(file.getAbsolutePath() + "link");
+
+        int bufSize = 1024;
+        int filenameLength = file.getAbsolutePath().length();
+
+        Pointer buffer = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(bufSize);
+        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+
+        assertEquals(filenameLength, posix.readlink(link.getAbsolutePath(), buffer, bufSize));
+
+        assertEquals(buffer.getString(0, filenameLength, Charset.defaultCharset()), file.getAbsolutePath());
 
         link.delete();
         file.delete();
