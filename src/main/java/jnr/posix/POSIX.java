@@ -74,6 +74,9 @@ public interface  POSIX {
     int getrlimit(int resource, RLimit rlim);
     int getrlimit(int resource, Pointer rlim);
     RLimit getrlimit(int resource);
+    int setrlimit(int resource, RLimit rlim);
+    int setrlimit(int resource, Pointer rlim);
+    int setrlimit(int resource, long rlimCur, long rlimMax);
     boolean isatty(FileDescriptor descriptor);
     int kill(int pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);

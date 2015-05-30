@@ -221,6 +221,18 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.getrlimit(resource); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 
+    public int setrlimit(int resource, RLimit rlim) {
+        try { return posix.setrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        try { return posix.setrlimit(resource, rlim); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        try { return posix.setrlimit(resource, rlimCur, rlimMax); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public boolean isatty(FileDescriptor descriptor) {
         try { return posix.isatty(descriptor); } catch (UnsatisfiedLinkError ule) { return unimplementedBool(); }
     }

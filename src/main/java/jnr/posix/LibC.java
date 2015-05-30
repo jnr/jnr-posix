@@ -77,6 +77,8 @@ public interface LibC {
     int setuid(int uid);
     int getrlimit(int resource, @Out RLimit rlim);
     int getrlimit(int resource, Pointer rlim);
+    int setrlimit(int resource, @In RLimit rlim);
+    int setrlimit(int resource, Pointer rlim);
     int kill(int pid, int signal);
 
     int dup(int fd);

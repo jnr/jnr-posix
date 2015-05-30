@@ -8,6 +8,6 @@ public abstract class RLimit extends Struct {
     }
 
     public abstract void init(long current, long max);
-    public abstract long getCurrent();
-    public abstract long getMax();
+    public abstract long rlimCur();
+    public abstract long rlimMax();
 }

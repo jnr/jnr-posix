@@ -9,18 +9,18 @@ public class DefaultNativeRLimit extends RLimit {
     }
 
     @Override
-    public void init(long current, long max) {
-        rlim_cur.set(current);
-        rlim_max.set(max);
+    public void init(long rlimCur, long rlimMax) {
+        rlim_cur.set(rlimCur);
+        rlim_max.set(rlimMax);
     }
 
     @Override
-    public long getCurrent() {
+    public long rlimCur() {
         return rlim_cur.get();
     }
 
     @Override
-    public long getMax() {
+    public long rlimMax() {
         return rlim_max.get();
     }
 }

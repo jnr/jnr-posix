@@ -225,6 +225,18 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
+    public int setrlimit(int resource, RLimit rlim) {
+        return unimplementedInt("setrlimit");
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        return unimplementedInt("setrlimit");
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        return unimplementedInt("setrlimit");
+    }
+
     public int fork() {
         return -1;
     }

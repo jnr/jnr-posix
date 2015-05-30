@@ -218,6 +218,18 @@ final class LazyPOSIX implements POSIX {
         return posix().getrlimit(resource);
     }
 
+    public int setrlimit(int resource, RLimit rlim) {
+        return posix().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, Pointer rlim) {
+        return posix().setrlimit(resource, rlim);
+    }
+
+    public int setrlimit(int resource, long rlimCur, long rlimMax) {
+        return posix().setrlimit(resource, rlimCur, rlimMax);
+    }
+
     public boolean isatty(FileDescriptor descriptor) {
         return posix().isatty(descriptor);
     }
