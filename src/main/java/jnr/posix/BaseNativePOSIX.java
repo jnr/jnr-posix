@@ -217,6 +217,22 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().getuid();
     }
 
+    public int getrlimit(int resource, RLimit rlim) {
+        return libc().getrlimit(resource, rlim);
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        return libc().getrlimit(resource, rlim);
+    }
+
+    public RLimit getrlimit(int resource) {
+        RLimit rlim = new DefaultNativeRLimit(getRuntime());
+
+        if (getrlimit(resource, rlim) < 0) handler.error(Errno.valueOf(errno()), "rlim");
+
+        return rlim;
+    }
+
     public int setegid(int egid) {
         return libc().setegid(egid);
     }

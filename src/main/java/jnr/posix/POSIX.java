@@ -71,6 +71,9 @@ public interface  POSIX {
     int endpwent();
     int setpwent();
     int getuid();
+    int getrlimit(int resource, RLimit rlim);
+    int getrlimit(int resource, Pointer rlim);
+    RLimit getrlimit(int resource);
     boolean isatty(FileDescriptor descriptor);
     int kill(int pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);

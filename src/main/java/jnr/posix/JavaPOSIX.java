@@ -210,7 +210,21 @@ final class JavaPOSIX implements POSIX {
     public int getuid() {
         return LoginInfo.UID;
     }
-    
+
+    public int getrlimit(int resource, RLimit rlim) {
+        return unimplementedInt("getrlimit");
+    }
+
+    public int getrlimit(int resource, Pointer rlim) {
+        return unimplementedInt("getrlimit");
+    }
+
+    public RLimit getrlimit(int resource) {
+        handler.unimplementedError("getrlimit");
+
+        return null;
+    }
+
     public int fork() {
         return -1;
     }
