@@ -274,15 +274,15 @@ final class CheckedPOSIX implements POSIX {
     }
 
     public int readlink(CharSequence path, byte[] buf, int bufsize) {
-        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int readlink(CharSequence path, ByteBuffer buf, int bufsize) {
-        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+        try { return posix.readlink(path, buf, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int readlink(CharSequence path, Pointer bufPtr, int bufsize) {
-        try { return posix.readlink(path, bufPtr, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+        try { return posix.readlink(path, bufPtr, bufsize); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public int rmdir(String path) {
