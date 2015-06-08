@@ -1,6 +1,6 @@
 package jnr.posix;
 
-import com.kenai.jffi.Platform;
+import jnr.posix.util.Platform;
 import jnr.constants.platform.RLIMIT;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
@@ -21,7 +21,7 @@ public class ProcessTest {
     @Test
     public void times() {
         long hz = posix.sysconf(Sysconf._SC_CLK_TCK);
-        if (Platform.getPlatform().getOS() == Platform.OS.DARWIN) {
+        if (Platform.IS_MAC) {
             assertEquals("incorrect HZ value", 100L, hz);
         }
     }
@@ -73,47 +73,53 @@ public class ProcessTest {
         assertTrue("Bad soft limit for number of processes", rlim.getLong(0) > 0);
         assertTrue("Bad hard limit for number of processes", rlim.getLong(8) > 0);
     }
-    /* Broken on at least MACOS
+
     @Test
-    public void testSetRlimit() {
-        RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+    public void testSetRlimitLinux() {
+        if (Platform.IS_LINUX) {
+            RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
-        int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), originalRlim.rlimCur() - 1, originalRlim.rlimMax() - 1);
-        assertEquals("setrlimit did not return 0", 0, result);
+            int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), originalRlim.rlimCur() - 1, originalRlim.rlimMax() - 1);
+            assertEquals("setrlimit did not return 0", 0, result);
 
-        RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-        assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
-        assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
+            RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+            assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
+            assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
+        }
     }
 
     @Test
-    public void testSetRlimitPreallocated() {
-        RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+    public void testSetRlimitPreallocatedLinux() {
+        if (Platform.IS_LINUX) {
+            RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
-        RLimit updatedRlim = new DefaultNativeRLimit(jnr.ffi.Runtime.getSystemRuntime());
-        updatedRlim.init(originalRlim.rlimCur() - 1, originalRlim.rlimMax() - 1);
+            RLimit updatedRlim = new DefaultNativeRLimit(jnr.ffi.Runtime.getSystemRuntime());
+            updatedRlim.init(originalRlim.rlimCur() - 1, originalRlim.rlimMax() - 1);
 
-        int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), updatedRlim);
-        assertEquals("setrlimit did not return 0", 0, result);
+            int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), updatedRlim);
+            assertEquals("setrlimit did not return 0", 0, result);
 
-        RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-        assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
-        assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
+            RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+            assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
+            assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
+        }
     }
 
     @Test
-    public void testSetRlimitPointer() {
-        RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+    public void testSetRlimitPointerLinux() {
+        if (Platform.IS_LINUX) {
+            RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
-        Pointer updatedRlim = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 2); // 2 longs.
-        updatedRlim.putLong(0, originalRlim.rlimCur() - 1);
-        updatedRlim.putLong(8, originalRlim.rlimMax() - 1);
+            Pointer updatedRlim = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 2); // 2 longs.
+            updatedRlim.putLong(0, originalRlim.rlimCur() - 1);
+            updatedRlim.putLong(8, originalRlim.rlimMax() - 1);
 
-        int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), updatedRlim);
-        assertEquals("setrlimit did not return 0", 0, result);
+            int result = posix.setrlimit(RLIMIT.RLIMIT_NPROC.intValue(), updatedRlim);
+            assertEquals("setrlimit did not return 0", 0, result);
 
-        RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-        assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
-        assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
-        }*/
+            RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
+            assertEquals("soft limit didn't update", originalRlim.rlimCur() - 1, rlim.rlimCur());
+            assertEquals("hard limit didn't update", originalRlim.rlimMax() - 1, rlim.rlimMax());
+        }
+    }
 }
