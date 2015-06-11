@@ -61,7 +61,7 @@ public class Chmod {
             } catch (IOException ioe) {
                 // FIXME: ignore?
             } catch (InterruptedException ie) {
-                // FIXME: ignore?
+                Thread.currentThread().interrupt();
             }
         }
         return -1;
