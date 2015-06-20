@@ -377,6 +377,10 @@ final class CheckedPOSIX implements POSIX {
         return posix.libc();
     }
 
+    public Pointer environ() {
+        try { return posix.environ(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
     public String getenv(String envName) {
         try { return posix.getenv(envName); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }

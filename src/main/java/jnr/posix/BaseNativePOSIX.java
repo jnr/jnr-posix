@@ -134,7 +134,11 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int fstat(int fd, FileStat stat) {
         return libc().fstat(fd, stat);
     }
-    
+
+    public Pointer environ() {
+        return getRuntime().getMemoryManager().newPointer(libc().environ().get());
+    }
+
     public String getenv(String envName) {
         return libc().getenv(envName);
     }

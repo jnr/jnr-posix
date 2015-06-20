@@ -31,6 +31,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
+import jnr.ffi.Variable;
 import jnr.ffi.annotations.*;
 import jnr.ffi.types.clock_t;
 
@@ -151,5 +152,7 @@ public interface LibC {
     int socketpair(int domain, int type, int protocol, @Out int[] fds);
     int sendmsg(int socket, @In MsgHdr message, int flags);
     int recvmsg(int socket, @Direct MsgHdr message, int flags);
+
+    public Variable<Long> environ();
 }
 

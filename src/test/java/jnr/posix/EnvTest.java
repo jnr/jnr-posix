@@ -57,4 +57,19 @@ public class EnvTest {
 
         assertNull(posix.getenv("MY_UNSETENV_VAR"));
     }
+
+    @Test
+    public void testEnv() throws Throwable {
+        final Pointer env = posix.environ();
+
+        int offset = 0;
+        while (env.getPointer(offset) != null) {
+            final Pointer entryPointer = env.getPointer(offset);
+            final String entry = new String(MemoryIO.getInstance().getZeroTerminatedByteArray(entryPointer.address()));
+
+            assertTrue(entry.contains("="));
+
+            offset += jnr.ffi.Runtime.getSystemRuntime().addressSize();
+        }
+    }
 }

@@ -47,6 +47,7 @@ public interface  POSIX {
     FileStat fstat(int descriptor);
     int fstat(FileDescriptor descriptor, FileStat stat);
     int fstat(int fd, FileStat stat);
+    Pointer environ();
     String getenv(String envName);
     int getegid();
     int geteuid();

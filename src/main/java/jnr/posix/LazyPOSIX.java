@@ -374,6 +374,10 @@ final class LazyPOSIX implements POSIX {
         return posix().libc();
     }
 
+    public Pointer environ() {
+        return posix().environ();
+    }
+
     public String getenv(String envName) {
         return posix().getenv(envName);
     }

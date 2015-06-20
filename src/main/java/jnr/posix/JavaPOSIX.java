@@ -201,7 +201,13 @@ final class JavaPOSIX implements POSIX {
     public int endgrent() {
         return unimplementedInt("endgrent");
     }
-    
+
+    public Pointer environ() {
+        handler.unimplementedError("environ");
+
+        return null;
+    }
+
     // @see setenv for more on the environment methods
     public String getenv(String envName) {
         return helper.getEnv().get(envName);
