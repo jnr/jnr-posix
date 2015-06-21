@@ -7,8 +7,14 @@ import jnr.ffi.mapper.FromNativeContext;
 
 final class MacOSPOSIX extends BaseNativePOSIX {
 
+    private final NSGetEnviron environ;
+
     MacOSPOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         super(libcProvider, handler);
+
+        final LibraryLoader<NSGetEnviron> loader = LibraryLoader.create(NSGetEnviron.class);
+        loader.library("libSystem.B.dylib");
+        environ = loader.load();
     }
 
     public FileStat allocateStat() {
@@ -30,7 +36,12 @@ final class MacOSPOSIX extends BaseNativePOSIX {
     public Times times() {
         return NativeTimes.times(this);
     }
-    
+
+    @Override
+    public Pointer environ() {
+        return environ._NSGetEnviron().getPointer(0);
+    }
+
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
             return arg != null ? new MacOSPasswd((Pointer) arg) : null;
