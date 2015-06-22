@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.ffi.Pointer;
+import jnr.ffi.Variable;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.annotations.StdCall;
@@ -102,4 +103,6 @@ public interface WindowsLibC extends LibC {
     
     @StdCall
     int WaitForSingleObject(HANDLE handle, int milliseconds);
+
+    Variable<Long> _environ();
 }

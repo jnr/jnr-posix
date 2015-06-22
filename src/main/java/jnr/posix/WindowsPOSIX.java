@@ -212,13 +212,6 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     public int geteuid() {
         return 0;
     }
-    
-    @Override
-    public String getenv(String envName) {
-        handler.unimplementedError("getenv");
-        
-        return null;
-    }
 
     @Override
     public int seteuid(int euid) {
@@ -341,7 +334,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
         return null;
     }
-    
+
+    @Override
+    public Pointer environ() {
+        return getRuntime().getMemoryManager().newPointer(wlibc()._environ().get());
+    }
+
     @Override
     public int setenv(String envName, String envValue, int overwrite) {
         if (envName.contains("=")) {
