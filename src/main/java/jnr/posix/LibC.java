@@ -153,6 +153,6 @@ public interface LibC {
     int sendmsg(int socket, @In MsgHdr message, int flags);
     int recvmsg(int socket, @Direct MsgHdr message, int flags);
 
-    public Variable<Long> environ();
+    Variable<Long> environ();
 }
 
