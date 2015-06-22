@@ -31,7 +31,6 @@ package jnr.posix;
 import static jnr.constants.platform.Errno.*;
 
 import java.io.*;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -189,7 +188,10 @@ public class JavaLibCHelper {
         try {
             if (user != -1) chownResult = launcher.runAndWait("chown", "" + user, filename);
             if (group != -1) chgrpResult = launcher.runAndWait("chgrp ", "" + user, filename);
-        } catch (Exception e) {}
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+        }
         
         return chownResult != -1 && chgrpResult != -1 ? 0 : 1;
     }
@@ -268,11 +270,12 @@ public class JavaLibCHelper {
     public int link(String oldpath, String newpath) {
         try {
             return new PosixExec(handler).runAndWait("ln", oldpath, newpath);
-
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            errno(EINVAL);
-            return -1;  // We tried and failed for some reason. Indicate error.
         }
+        errno(EINVAL);
+        return -1;  // We tried and failed for some reason. Indicate error.
     }
     
     public int lstat(String path, FileStat stat) {
@@ -336,11 +339,12 @@ public class JavaLibCHelper {
     public int symlink(String oldpath, String newpath) {
         try {
             return new PosixExec(handler).runAndWait("ln", "-s", oldpath, newpath);
-
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            errno(EEXIST);
-            return -1;  // We tried and failed for some reason. Indicate error.
         }
+        errno(EEXIST);
+        return -1;  // We tried and failed for some reason. Indicate error.
 
     }
 
@@ -357,8 +361,8 @@ public class JavaLibCHelper {
             
             return buffer.position();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
-
         errno(ENOENT);
         return -1; // We tried and failed for some reason. Indicate error.
     }
