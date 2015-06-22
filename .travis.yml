@@ -1,7 +1,7 @@
 language: java
-#jdk:
-#  - oraclejdk7
-#  - openjdk6
+jdk:
+  - oraclejdk7
+  - openjdk6
 os:
   - linux
   - osx
