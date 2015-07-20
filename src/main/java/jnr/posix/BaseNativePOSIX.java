@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import jnr.constants.platform.Signal;
 
-abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
+public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
     
     protected final POSIXHandler handler;
@@ -31,7 +31,7 @@ abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     
     protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
     
-    BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
+    protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
         this.libc = libcProvider.getLibC();
         this.helper = new JavaLibCHelper(handler);

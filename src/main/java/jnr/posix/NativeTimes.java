@@ -9,7 +9,7 @@ import jnr.ffi.StructLayout;
 /**
  *
  */
-final class NativeTimes implements Times {
+public final class NativeTimes implements Times {
     static final class Layout extends StructLayout {
         public final clock_t tms_utime = new clock_t();
         public final clock_t tms_stime = new clock_t();
