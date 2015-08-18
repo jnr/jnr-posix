@@ -518,7 +518,7 @@ final class JavaPOSIX implements POSIX {
     }
     
     public int flock(int fd, int mode) {
-        return unimplementedInt("waitpid");
+        return unimplementedInt("flock");
     }
 
     public int dup(int fd) {
