@@ -20,7 +20,7 @@ install:
 
             [System.IO.Compression.ZipFile]::ExtractToDirectory("C:\maven-bin.zip", "C:\maven")
           }
-  - cmd: SET PATH=%JAVA_HOME%\bin;%PATH%
+  - cmd: SET PATH=C:\maven\apache-maven-3.3.3\bin;%JAVA_HOME%\bin;%PATH%
   - cmd: echo %PATH%
   - cmd: java -version
 
