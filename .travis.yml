@@ -1,14 +1,31 @@
 language: java
 sudo: false
-jdk:
-  - oraclejdk8
-  - oraclejdk7
-#  - openjdk8
-  - openjdk7
-  - openjdk6
+
+before_install:
+   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then export JAVA_HOME=$(/usr/libexec/java_home); fi
+   - echo $JAVA_HOME
+   
+matrix:
+  include:
+    # this is the current Travis default JDK on linux
+    # - os: linux
+    #   jdk: oraclejdk7
+    - os: linux
+      jdk: oraclejdk8
+    # - os: linux
+    #  jdk: openjdk8
+    - os: linux
+      jdk: openjdk7
+    - os: linux
+      jdk: openjdk6
+    # this is the current Travis default JDK on osx
+    # - os: osx
+    #   env: JAVA_HOME=/usr/libexec/java_home
+
 os:
   - linux
-#  - osx
+  - osx
+
 notifications:
   irc:
     channels:
