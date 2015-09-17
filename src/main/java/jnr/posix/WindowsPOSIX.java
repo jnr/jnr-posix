@@ -325,7 +325,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int stat(String path, FileStat stat) {
-        return wlibc()._wstat64(new WString(path), stat);
+        return wlibc()._wstat64(WString.path(path), stat);
     }
 
     @Override
