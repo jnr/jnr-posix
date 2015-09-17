@@ -24,30 +24,32 @@ public class IOTest {
 
     @Test
     public void testOpenReadWrite() throws Throwable {
-        File tmp = File.createTempFile("IOTest", "testOpen");
-        int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), 0666);
-        Assert.assertTrue(fd > 0);
+        if (!Platform.IS_WINDOWS) {
+            File tmp = File.createTempFile("IOTest", "testOpen");
+            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), 0666);
+            Assert.assertTrue(fd > 0);
 
-        byte[] hello = "hello".getBytes();
-        int written = posix.write(fd, hello, 5);
-        Assert.assertEquals(5, written);
+            byte[] hello = "hello".getBytes();
+            int written = posix.write(fd, hello, 5);
+            Assert.assertEquals(5, written);
 
-        byte[] buf = new byte[5];
-        posix.lseek(fd, 0, 0); // no jnr-constants for SEEK_SET
-        int read = posix.read(fd, buf, 5);
-        Assert.assertEquals(5, read);
-        Assert.assertArrayEquals(hello, buf);
+            byte[] buf = new byte[5];
+            posix.lseek(fd, 0, 0); // no jnr-constants for SEEK_SET
+            int read = posix.read(fd, buf, 5);
+            Assert.assertEquals(5, read);
+            Assert.assertArrayEquals(hello, buf);
 
-        byte[] goodbye = "goodbye".getBytes();
-        written = posix.pwrite(fd, goodbye, 7, 3);
-        Assert.assertEquals(7, written);
-        Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
+            byte[] goodbye = "goodbye".getBytes();
+            written = posix.pwrite(fd, goodbye, 7, 3);
+            Assert.assertEquals(7, written);
+            Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
 
-        byte[] bye = new byte[3];
-        read = posix.pread(fd, bye, 3, 7);
-        Assert.assertEquals(3, read);
-        Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
-        Assert.assertArrayEquals("bye".getBytes(), bye);
+            byte[] bye = new byte[3];
+            read = posix.pread(fd, bye, 3, 7);
+            Assert.assertEquals(3, read);
+            Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
+            Assert.assertArrayEquals("bye".getBytes(), bye);
+        }
     }
 
     @Test

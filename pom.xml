@@ -133,16 +133,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.16</version>
-        <configuration>
-          <forkCount>2</forkCount>
-          <reuseForks>false</reuseForks>
-          <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>
         <executions>
@@ -156,4 +146,48 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>non-windows-unit-tests</id>
+      <activation><os><family>!windows</family></os></activation>
+      <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.18.1</version>
+          <configuration>
+            <forkCount>2</forkCount>
+            <reuseForks>false</reuseForks>
+            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+              <exclude>**/windows/*Test.java</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows-unit-tests</id>
+      <activation><os><family>windows</family></os></activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.18.1</version>
+            <configuration>
+              <forkCount>2</forkCount>
+              <reuseForks>false</reuseForks>
+              <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

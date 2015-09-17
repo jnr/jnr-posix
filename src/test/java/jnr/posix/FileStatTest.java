@@ -42,17 +42,20 @@ public class FileStatTest {
     // @Test
     // public void hello() {}
     @Test public void filestat() throws Throwable {
-        File f = File.createTempFile("stat", null);
-        try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertNotNull("posix.stat failed", st);
-        
-            FileStat stat = posix.allocateStat();
-            int result = posix.stat(f.getAbsolutePath(), stat);
-            assertNotNull("posix.stat failed", st);
-            assertEquals(0, result);
-        } finally {
-            f.delete();
+        if (!Platform.IS_WINDOWS) {
+            File f = File.createTempFile("stat", null);
+            try {
+                System.out.println("F: " + f.getAbsolutePath());
+                FileStat st = posix.stat(f.getAbsolutePath());
+                assertNotNull("posix.stat failed", st);
+
+                FileStat stat = posix.allocateStat();
+                int result = posix.stat(f.getAbsolutePath(), stat);
+                assertNotNull("posix.stat failed", st);
+                assertEquals(0, result);
+            } finally {
+                f.delete();
+            }
         }
     }
 

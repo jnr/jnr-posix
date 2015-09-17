@@ -28,7 +28,7 @@
 /**
  * $Id: $
  */
-package jnr.posix.util;
+package jnr.posix.windows;
 
 import jnr.posix.util.WindowsHelpers;
 import junit.framework.TestCase;

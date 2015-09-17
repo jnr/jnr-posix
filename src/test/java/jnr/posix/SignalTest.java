@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Signal;
+import jnr.posix.util.Platform;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,34 +31,38 @@ public class SignalTest {
     
     @Test
     public void testBasicSignal() {
-        Signal s = Signal.SIGHUP;
-        final AtomicBoolean fired = new AtomicBoolean(false);
-        posix.signal(s, new SignalHandler() {
-            public void handle(int signal) {
-                fired.set(true);
-            }
-        });
-        
-        posix.kill(posix.getpid(), s.intValue());
-        waitUntilTrue(fired, 200);
-        Assert.assertTrue(fired.get());
+        if (!Platform.IS_WINDOWS) {
+            Signal s = Signal.SIGHUP;
+            final AtomicBoolean fired = new AtomicBoolean(false);
+            posix.signal(s, new SignalHandler() {
+                public void handle(int signal) {
+                    fired.set(true);
+                }
+            });
+
+            posix.kill(posix.getpid(), s.intValue());
+            waitUntilTrue(fired, 200);
+            Assert.assertTrue(fired.get());
+        }
     }
     
     @Test
     public void testJavaSignal() {
-        Signal s = Signal.SIGHUP;
-        final AtomicBoolean fired = new AtomicBoolean(false);
-        javaPosix.signal(s, new SignalHandler() {
-            public void handle(int signal) {
-                fired.set(true);
-            }
-        });
-        
-        // have to use native here; no abstraction for kill in pure Java
-        // TODO: sun.misc.Signal.raise can be used to kill current pid
-        posix.kill(posix.getpid(), s.intValue());
+        if (!Platform.IS_WINDOWS) {
+            Signal s = Signal.SIGHUP;
+            final AtomicBoolean fired = new AtomicBoolean(false);
+            javaPosix.signal(s, new SignalHandler() {
+                public void handle(int signal) {
+                    fired.set(true);
+                }
+            });
 
-        waitUntilTrue(fired, 200);
-        Assert.assertTrue(fired.get());
+            // have to use native here; no abstraction for kill in pure Java
+            // TODO: sun.misc.Signal.raise can be used to kill current pid
+            posix.kill(posix.getpid(), s.intValue());
+
+            waitUntilTrue(fired, 200);
+            Assert.assertTrue(fired.get());
+        }
     }
 }
