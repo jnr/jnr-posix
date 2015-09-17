@@ -36,30 +36,21 @@ public class FileStatTest {
     public void tearDown() {
     }
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
     @Test public void filestat() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
-            File f = File.createTempFile("stat", null);
-            try {
-                System.out.println("F: " + f.getAbsolutePath());
-                FileStat st = posix.stat(f.getAbsolutePath());
-                assertNotNull("posix.stat failed", st);
+        File f = File.createTempFile("stat", null);
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertNotNull("posix.stat failed", st);
 
-                FileStat stat = posix.allocateStat();
-                int result = posix.stat(f.getAbsolutePath(), stat);
-                assertNotNull("posix.stat failed", st);
-                assertEquals(0, result);
-            } finally {
-                f.delete();
-            }
+            FileStat stat = posix.allocateStat();
+            int result = posix.stat(f.getAbsolutePath(), stat);
+            assertNotNull("posix.stat failed", stat);
+            assertEquals(0, result);
+        } finally {
+            f.delete();
         }
     }
 
-    
     @Test
     public void filestatInt() throws Throwable {
         // Windows does not store fd in FileDescriptor so this test wll not work

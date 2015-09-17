@@ -1,16 +1,17 @@
 package jnr.posix.windows;
 
-import java.io.File;
+import java.io.File;;
 import java.io.RandomAccessFile;
 import jnr.posix.DummyPOSIXHandler;
+import jnr.posix.FileStat;
 import jnr.posix.POSIX;
 import jnr.posix.POSIXFactory;
-import jnr.posix.util.Platform;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 public class WindowsFileTest {
     private static POSIX posix;
@@ -18,6 +19,59 @@ public class WindowsFileTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
+    }
+
+    /*
+    // FIXME: This is a broken method since it does not delete any of the generated dirs.
+    private static final String DIR_NAME = "0123456789";
+    private File makeLongPath() throws IOException {
+        File tmp = File.createTempFile("temp", Long.toHexString(System.nanoTime()));
+
+        if (!(tmp.delete() && tmp.mkdir())) throw new IOException("Could not make a long path");
+
+        for (int i = 0; i < 30; i++) {
+            tmp = new File(tmp, DIR_NAME);
+            if (!tmp.mkdir()) throw new IOException("Coult not make subdir: " + i);
+        }
+
+        return File.createTempFile("temp", null, tmp);
+    }
+
+    @Test
+    public void testLongFileRegular() throws Throwable {
+        File f = makeLongPath();
+        String path = f.getAbsolutePath();
+        try {
+            FileStat st = posix.stat(path);
+            assertNotNull("posix.stat failed", st);
+
+            FileStat stat = posix.allocateStat();
+            int result = posix.stat(path, stat);
+            assertNotNull("posix.stat failed", stat);
+            assertEquals(0, result);
+        } finally {
+            f.delete();
+        }
+    }
+*/
+
+    @Test
+    public void statUNCFile() throws Throwable {
+        File f = File.createTempFile("stat", null);
+        String absolutePath = f.getAbsolutePath();
+        char letter = absolutePath.charAt(0);
+        String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
+        try {
+            FileStat st = posix.stat(path);
+            assertNotNull("posix.stat failed", st);
+
+            FileStat stat = posix.allocateStat();
+            int result = posix.stat(path, stat);
+            assertNotNull("posix.stat failed", stat);
+            assertEquals(0, result);
+        } finally {
+            f.delete();
+        }
     }
 
     @Test

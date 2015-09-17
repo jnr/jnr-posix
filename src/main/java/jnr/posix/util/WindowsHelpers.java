@@ -22,11 +22,6 @@ public class WindowsHelpers {
     static final int WORDSIZE = jnr.ffi.Runtime.getSystemRuntime().addressSize();
     
     public static byte[] toWPath(String path) {
-        boolean absolute = new File(path).isAbsolute();
-        if (absolute) {
-            path = "//?/" + path;
-        }
-
         return toWString(path);
     }
 
