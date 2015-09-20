@@ -30,6 +30,7 @@ public class FileTest {
 
     @Test
     public void utimesTest() throws Throwable {
+        // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("utimes", null);
 

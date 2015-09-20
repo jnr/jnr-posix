@@ -1,6 +1,7 @@
 package jnr.posix.windows;
 
 import java.io.File;;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
@@ -21,26 +22,51 @@ public class WindowsFileTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    /*
+    private class Pair {
+        public File base;
+        public File leaf;
+        public Pair(File base, File leaf) {
+            this.base = base;
+            this.leaf = leaf;
+        }
+
+        public void cleanup() {
+            cleanup(base);
+        }
+
+        public void cleanup(File node) {
+            if (node.isDirectory()) {
+                File[] files = node.listFiles();
+                if (files != null) {
+                    for(File file: files) {
+                        cleanup(file);
+                    }
+                }
+            }
+            node.delete();
+        }
+    }
     // FIXME: This is a broken method since it does not delete any of the generated dirs.
     private static final String DIR_NAME = "0123456789";
-    private File makeLongPath() throws IOException {
+    private Pair makeLongPath() throws IOException {
         File tmp = File.createTempFile("temp", Long.toHexString(System.nanoTime()));
 
         if (!(tmp.delete() && tmp.mkdir())) throw new IOException("Could not make a long path");
 
+        StringBuilder buf = new StringBuilder(DIR_NAME);
         for (int i = 0; i < 30; i++) {
-            tmp = new File(tmp, DIR_NAME);
-            if (!tmp.mkdir()) throw new IOException("Coult not make subdir: " + i);
+            buf.append(DIR_NAME).append('/');
         }
+        File tmp2 = new File(tmp, buf.toString());
+        tmp2.mkdirs();
 
-        return File.createTempFile("temp", null, tmp);
+        return new Pair(tmp, tmp2);
     }
 
     @Test
-    public void testLongFileRegular() throws Throwable {
-        File f = makeLongPath();
-        String path = f.getAbsolutePath();
+        public void testLongFileRegular() throws Throwable {
+        Pair pair = makeLongPath();
+        String path = pair.leaf.getAbsolutePath();
         try {
             FileStat st = posix.stat(path);
             assertNotNull("posix.stat failed", st);
@@ -50,10 +76,28 @@ public class WindowsFileTest {
             assertNotNull("posix.stat failed", stat);
             assertEquals(0, result);
         } finally {
-            f.delete();
+            pair.cleanup();
         }
     }
-*/
+
+    @Test
+    public void testLongFileUNC() throws Throwable {
+        Pair pair = makeLongPath();
+        String absolutePath = pair.leaf.getAbsolutePath();
+        char letter = absolutePath.charAt(0);
+        String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
+        try {
+            FileStat st = posix.stat(path);
+            assertNotNull("posix.stat failed", st);
+
+            FileStat stat = posix.allocateStat();
+            int result = posix.stat(path, stat);
+            assertNotNull("posix.stat failed", stat);
+            assertEquals(0, result);
+        } finally {
+            pair.cleanup();
+        }
+    }
 
     @Test
     public void statUNCFile() throws Throwable {

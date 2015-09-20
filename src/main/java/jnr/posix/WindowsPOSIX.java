@@ -16,6 +16,10 @@ import java.util.Map;
 
 import jnr.posix.util.MethodName;
 import jnr.posix.util.WindowsHelpers;
+import jnr.posix.windows.CommonFileInformation;
+import jnr.posix.windows.WindowsByHandleFileInformation;
+import jnr.posix.windows.WindowsFileInformation;
+import jnr.posix.windows.WindowsFindData;
 
 final class WindowsPOSIX extends BaseNativePOSIX {
     private final static int FILE_TYPE_CHAR = 0x0002;
@@ -128,7 +132,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public FileStat allocateStat() {
-        return new WindowsFileStat(this);
+        return new WindowsRawFileStat(this, handler);
     }
 
     public MsgHdr allocateMsgHdr() {
@@ -305,12 +309,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     
     @Override
     public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
-        int fd = ((WindowsLibC) libc())._open_osfhandle(JavaLibCHelper.gethandle(fileDescriptor), 0);
-        try {
-            return libc().fstat(fd, stat);
-        } finally {
-            ((WindowsLibC) libc())._close(fd);
-        }
+        WindowsByHandleFileInformation info = new WindowsByHandleFileInformation(getRuntime());
+        if (wlibc().GetFileInformationByHandle(JavaLibCHelper.gethandle(fileDescriptor), info) == 0) return -1;
+
+        ((WindowsRawFileStat) stat).setup(info);
+
+        return 0;
     }
     
     @Override
@@ -325,7 +329,27 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int stat(String path, FileStat stat) {
-        return wlibc()._wstat64(WString.path(path), stat);
+        WindowsFileInformation info = new WindowsFileInformation(getRuntime());
+        WString wpath = WString.path(path, true);
+        if (wlibc().GetFileAttributesExW(wpath, 0, info) != 0) {
+            ((WindowsRawFileStat) stat).setup(path, info);
+        } else {
+            int e = wlibc().GetLastError();
+
+            if (e == ERROR_FILE_NOT_FOUND.intValue() || e == ERROR_PATH_NOT_FOUND.intValue()
+                    || e == ERROR_BAD_NETPATH.intValue()) {
+                return -1;
+            }
+
+            WindowsFindData findData = new WindowsFindData(getRuntime());
+            HANDLE handle = wlibc().FindFirstFileW(wpath, findData);
+            if (handle == HANDLE.valueOf(HANDLE.INVALID_HANDLE_VALUE)) return -1;
+            wlibc().FindClose(handle);
+
+            ((WindowsRawFileStat) stat).setup(path, findData);
+        }
+
+        return 0;
     }
 
     @Override
@@ -418,13 +442,14 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         return timeSet ? 0 : -1;
     }
 
-    private FileTime unixTimeToFileTime(long unixTime) {
+    private FileTime unixTimeToFileTime(long unixTimeSeconds) {
         // FILETIME is a 64-bit unsigned integer representing
         // the number of 100-nanosecond intervals since January 1, 1601
         // UNIX timestamp is number of seconds since January 1, 1970
-        // 116444736000000000 = 10000000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
-        long ft = (unixTime + 11644473600L) * 10000000L;
+        // 116444736000000000 = 10_000_000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
+        long ft = (unixTimeSeconds + 11644473600L) * 10000000L;
 
+        //long ft = CommonFileInformation.asNanoSeconds(unixTimeSeconds);
         FileTime fileTime = new FileTime(getRuntime());
         fileTime.dwLowDateTime.set(ft & 0xFFFFFFFFL);
         fileTime.dwHighDateTime.set((ft >> 32) & 0xFFFFFFFFL);

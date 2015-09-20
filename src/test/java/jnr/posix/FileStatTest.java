@@ -1,6 +1,8 @@
 
 package jnr.posix;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import jnr.posix.util.FieldAccess;
 import jnr.posix.util.Platform;
 import org.junit.*;
@@ -15,6 +17,18 @@ import static org.junit.Assert.*;
 public class FileStatTest {
 
     public FileStatTest() {
+    }
+
+    private void addNBytes(File file, int amount) {
+        FileOutputStream fis = null;
+
+        try {
+            fis = new FileOutputStream(file);
+            byte[] buf = new byte[amount];
+            fis.write(buf);
+        } catch (IOException e) {
+            if (fis != null) { try { fis.close(); } catch (IOException e2) {} }
+        }
     }
 
     private static POSIX posix;
@@ -38,17 +52,39 @@ public class FileStatTest {
 
     @Test public void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
+        int size = 1567;
+        Thread.sleep(1000);
+        addNBytes(f, size);
         try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertNotNull("posix.stat failed", st);
+            FileStat stat = posix.stat(f.getAbsolutePath());
+            assertNotNull("posix.stat failed", stat);
+            assertEquals(size, stat.st_size());
+            assertNotEquals(stat.mtime(), stat.ctime());
 
-            FileStat stat = posix.allocateStat();
+            stat = posix.allocateStat();
             int result = posix.stat(f.getAbsolutePath(), stat);
             assertNotNull("posix.stat failed", stat);
             assertEquals(0, result);
+            assertEquals(size, stat.st_size());
         } finally {
             f.delete();
         }
+    }
+
+    @Test
+    public void filestatDescriptor() throws Throwable {
+        File f = File.createTempFile("stat", null);
+
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            FileStat stat = posix.allocateStat();
+            int result = posix.fstat(fis.getFD(), stat);
+            assertEquals(0, result);
+            assertEquals(0, stat.st_size());
+        } finally {
+            f.delete();
+        }
+
     }
 
     @Test

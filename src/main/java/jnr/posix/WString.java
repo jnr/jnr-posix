@@ -20,6 +20,24 @@ public final class WString {
     }
 
     public static WString path(String path) {
+        return path(path, false);
+    }
+
+    public static WString path(String path, boolean longPathExtensionNeeded) {
+        if (longPathExtensionNeeded && path.length() > 240) { // FIXME: This is not right value.  Needs tests around actual char boundary.
+            if (path.startsWith("//")) { // UNC Path
+                path = "//?/UNC/" + path.substring(2);
+            } else if (path.startsWith("\\\\")) {
+                path = "\\\\?\\UNC\\" + path.substring(2);
+            } else if (WindowsHelpers.isDriveLetterPath(path)) {
+                if (path.contains("/")) {
+                    path = "//?/" + path;
+                } else {
+                    path = "\\\\?\\" + path;
+                }
+            }
+        }
+
         return new WString(WindowsHelpers.toWPath(path));
     }
 

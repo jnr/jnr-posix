@@ -414,5 +414,9 @@ public class WindowsHelpers {
         return kindOf == InternalType.BOTH || 
                 (hasCommandDotCom ? kindOf == InternalType.COMMAND : kindOf == InternalType.SHELL);
     }
+
+    public static boolean isDriveLetterPath(String path) {
+        return path.length() >= 2 && Character.isAlphabetic(path.charAt(0)) && path.charAt(1) == ':';
+    }
         
 }

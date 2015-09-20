@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import jnr.posix.POSIXHandler.WARNING_ID;
 
-public final class JavaFileStat implements FileStat {
+public class JavaFileStat implements FileStat {
     private final POSIXHandler handler;
     private final POSIX posix;
 

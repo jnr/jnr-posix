@@ -9,6 +9,10 @@ import jnr.ffi.annotations.Transient;
 import jnr.ffi.byref.IntByReference;
 
 import java.nio.ByteBuffer;
+import jnr.posix.windows.SystemTime;
+import jnr.posix.windows.WindowsByHandleFileInformation;
+import jnr.posix.windows.WindowsFileInformation;
+import jnr.posix.windows.WindowsFindData;
 
 public interface WindowsLibC extends LibC {
     public static final int STD_INPUT_HANDLE = -10;
@@ -53,8 +57,15 @@ public interface WindowsLibC extends LibC {
                                  WindowsStartupInfo startupInfo,
                                  WindowsProcessInformation processInformation);
 
+    public int FileTimeToSystemTime(@In FileTime fileTime, @Out @Transient SystemTime systemTime);
     public int GetFileAttributesW(@In WString path);
+    public int GetFileAttributesExW(@In WString path, @In int infoLevel, @Out @Transient WindowsFileInformation fileInformation);
     public int SetFileAttributesW(@In WString path, int flags);
+    public int GetFileInformationByHandle(@In HANDLE handle, @Out @Transient WindowsByHandleFileInformation fileInformation);
+
+    public int FindClose(HANDLE handle);
+    public HANDLE FindFirstFileW(@In WString wpath, @Out WindowsFindData findData);
+    public int GetLastError();
     
     @StdCall
     public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);
