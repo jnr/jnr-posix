@@ -87,6 +87,11 @@ final class LinuxPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int fstat(FileDescriptor fileDescriptor, FileStat stat) {
+        return fstat(helper.getfd(fileDescriptor), stat);
+    }
+
+    @Override
     public FileStat fstat(FileDescriptor fileDescriptor) {
         FileStat stat = allocateStat();
         int fd = helper.getfd(fileDescriptor);
