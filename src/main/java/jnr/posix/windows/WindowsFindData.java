@@ -8,7 +8,7 @@ import jnr.ffi.Runtime;
  */
 public class WindowsFindData extends CommonFileInformation {
     public static final int MAX_PATH = 260;
-    private class s8 extends jnr.ffi.Struct {
+    public static class s8 extends jnr.ffi.Struct {
         private Signed8 signed8 = new Signed8();
         public s8(Runtime runtime) {
             super(runtime);
