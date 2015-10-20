@@ -1,14 +1,13 @@
 package jnr.posix;
 
+import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Sysconf;
-import jnr.ffi.Pointer;
+import jnr.ffi.*;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
 
-import java.io.FileDescriptor;
-
-import static jnr.constants.platform.Errno.ENOENT;
+import static jnr.constants.platform.Errno.EINVAL;
 
 final class SolarisPOSIX extends BaseNativePOSIX {
     SolarisPOSIX(LibCProvider libc, POSIXHandler handler) {
@@ -37,6 +36,50 @@ final class SolarisPOSIX extends BaseNativePOSIX {
         return NativeTimes.times(this);
     }
 
+    public static final int LOCK_SH = 1;
+    public static final int LOCK_EX = 2;
+    public static final int LOCK_NB = 4;
+    public static final int LOCK_UN = 8;
+
+    public static final int SEEK_SET = 0;
+
+    public static class Layout extends StructLayout {
+        protected Layout(jnr.ffi.Runtime runtime) {
+            super(runtime);
+        }
+
+        public final off_t l_start = new off_t();
+        public final off_t l_len = new off_t();
+        public final pid_t l_pid = new pid_t();
+        public final int16_t l_type = new int16_t(); // short
+        public final int16_t l_whence = new int16_t(); // short
+    }
+
+    private static final Layout FLOCK_LAYOUT = new Layout(jnr.ffi.Runtime.getSystemRuntime());
+
+    public int flock(int fd, int operation) {
+        Pointer lock = getRuntime().getMemoryManager().allocateTemporary(FLOCK_LAYOUT.size(), true);
+
+        switch (operation & ~LOCK_NB) {
+            case LOCK_SH:
+                FLOCK_LAYOUT.l_type.set(lock, (short) Fcntl.F_RDLCK.intValue());
+                break;
+            case LOCK_EX:
+                FLOCK_LAYOUT.l_type.set(lock, (short) Fcntl.F_WRLCK.intValue());
+                break;
+            case LOCK_UN:
+                FLOCK_LAYOUT.l_type.set(lock, (short) Fcntl.F_UNLCK.intValue());
+                break;
+            default:
+                errno(EINVAL.intValue());
+                return -1;
+        }
+        FLOCK_LAYOUT.l_whence.set(lock, (short)SEEK_SET);
+        FLOCK_LAYOUT.l_start.set(lock, 0L);
+        FLOCK_LAYOUT.l_len.set(lock, 0L);
+
+        return libc().fcntl(fd, (operation & LOCK_NB) != 0 ? Fcntl.F_SETLK.intValue() : Fcntl.F_SETLKW.intValue(), lock);
+    }
 
     public static final PointerConverter PASSWD = new PointerConverter() {
         public Object fromNative(Object arg, FromNativeContext ctx) {
