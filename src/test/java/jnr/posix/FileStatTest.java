@@ -110,6 +110,9 @@ public class FileStatTest {
             } finally {
                 f.delete();
             }
+        } else {
+            FileStat stat = posix.fstat(0);
+            assertTrue(stat != null);
         }
     }
 

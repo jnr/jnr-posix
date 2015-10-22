@@ -127,7 +127,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
 
     WindowsPOSIX(LibCProvider libc, POSIXHandler handler) {
         super(libc, handler);
-        this.checkFdStat = allocateStat();
+        this.checkFdStat = new WindowsFileStat(this);
     }
     
     @Override
@@ -305,6 +305,12 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         handler.unimplementedError("lchown");
         
         return -1;
+    }
+
+    public FileStat fstat(int fd) {
+        WindowsFileStat stat = new WindowsFileStat(this);
+        if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + fd);
+        return stat;
     }
     
     @Override
