@@ -340,7 +340,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
         if (wlibc().GetFileAttributesExW(wpath, 0, info) != 0) {
             ((WindowsRawFileStat) stat).setup(path, info);
         } else {
-            int e = wlibc().GetLastError();
+            int e = errno();
 
             if (e == ERROR_FILE_NOT_FOUND.intValue() || e == ERROR_PATH_NOT_FOUND.intValue()
                     || e == ERROR_BAD_NETPATH.intValue()) {

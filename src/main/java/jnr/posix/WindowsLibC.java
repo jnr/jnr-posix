@@ -65,7 +65,6 @@ public interface WindowsLibC extends LibC {
 
     public int FindClose(HANDLE handle);
     public HANDLE FindFirstFileW(@In WString wpath, @Out WindowsFindData findData);
-    public int GetLastError();
     
     @StdCall
     public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);

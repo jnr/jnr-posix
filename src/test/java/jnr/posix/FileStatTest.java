@@ -116,6 +116,21 @@ public class FileStatTest {
         }
     }
 
+    // FIXME: I could guarantee this does not exist but this was very very quick :)
+    private static final String NON_EXISTENT_FILENAME = "skdjlfklfsdjk";
+    @Test
+    public void filestatFailed() throws Throwable {
+        FileStat stat = null;
+
+        // A little wonky without adding a new posixhandler but we are using dummy so this is ok for now
+        // the default handler raises on a problem in stat so we are only verifying this at the moment.
+        try {
+            stat = posix.stat(NON_EXISTENT_FILENAME);
+        } catch (UnsupportedOperationException e) {}
+
+        assertTrue(stat == null);
+    }
+
     
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
