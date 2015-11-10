@@ -60,11 +60,13 @@ public interface WindowsLibC extends LibC {
     public int FileTimeToSystemTime(@In FileTime fileTime, @Out @Transient SystemTime systemTime);
     public int GetFileAttributesW(@In WString path);
     public int GetFileAttributesExW(@In WString path, @In int infoLevel, @Out @Transient WindowsFileInformation fileInformation);
+    public int GetFileAttributesExW(@In byte[] path, @In int infoLevel, @Out @Transient WindowsFileInformation fileInformation);
     public int SetFileAttributesW(@In WString path, int flags);
     public int GetFileInformationByHandle(@In HANDLE handle, @Out @Transient WindowsByHandleFileInformation fileInformation);
 
     public int FindClose(HANDLE handle);
     public HANDLE FindFirstFileW(@In WString wpath, @Out WindowsFindData findData);
+    public HANDLE FindFirstFileW(@In byte[] wpath, @Out WindowsFindData findData);
     
     @StdCall
     public boolean GetExitCodeProcess(HANDLE handle, @Out Pointer exitCode);

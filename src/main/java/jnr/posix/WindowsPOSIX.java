@@ -336,7 +336,7 @@ final class WindowsPOSIX extends BaseNativePOSIX {
     @Override
     public int stat(String path, FileStat stat) {
         WindowsFileInformation info = new WindowsFileInformation(getRuntime());
-        WString wpath = WString.path(path, true);
+        byte[] wpath = WString.path(path, true);
         if (wlibc().GetFileAttributesExW(wpath, 0, info) != 0) {
             ((WindowsRawFileStat) stat).setup(path, info);
         } else {

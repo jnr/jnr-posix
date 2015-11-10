@@ -20,10 +20,10 @@ public final class WString {
     }
 
     public static WString path(String path) {
-        return path(path, false);
+        return new WString(path(path, false));
     }
 
-    public static WString path(String path, boolean longPathExtensionNeeded) {
+    public static byte[] path(String path, boolean longPathExtensionNeeded) {
         if (longPathExtensionNeeded && path.length() > 240) { // FIXME: This is not right value.  Needs tests around actual char boundary.
             if (path.startsWith("//")) { // UNC Path
                 path = "//?/UNC/" + path.substring(2);
@@ -38,7 +38,7 @@ public final class WString {
             }
         }
 
-        return new WString(WindowsHelpers.toWPath(path));
+        return WindowsHelpers.toWPath(path);
     }
 
     public static final ToNativeConverter<WString, Pointer> Converter = new ToNativeConverter<WString, Pointer>() {
