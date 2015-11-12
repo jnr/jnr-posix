@@ -3,6 +3,7 @@ package jnr.posix.windows;
 import java.io.File;;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.text.NumberFormat;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
@@ -91,6 +92,7 @@ public class WindowsFileTest {
 
         try {
             FileStat st = posix.stat(f.getAbsolutePath());
+            assertEquals("100755", Integer.toOctalString(st.mode()));
             assertTrue(st.isExecutable());
         } finally {
             f.delete();
@@ -100,6 +102,7 @@ public class WindowsFileTest {
 
         try {
             FileStat st = posix.stat(f.getAbsolutePath());
+            assertEquals("100755", Integer.toOctalString(st.mode()));
             assertTrue(st.isExecutable());
         } finally {
             f.delete();

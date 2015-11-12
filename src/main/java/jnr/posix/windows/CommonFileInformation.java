@@ -49,7 +49,10 @@ public abstract class CommonFileInformation extends jnr.ffi.Struct {
         int attr = getFileAttributes();
         int mode = S_IRUSR;
 
-        if ((attr & FILE_ATTRIBUTE_READONLY) != 0) mode |= S_IWUSR;
+        if ((attr & FILE_ATTRIBUTE_READONLY) == 0) {
+            mode |= S_IWUSR;
+
+        }
         mode |= (attr & FILE_ATTRIBUTE_DIRECTORY) != 0 ? (S_IFDIR | S_IXUSR) : S_IFREG;
 
         path = path.toLowerCase();
