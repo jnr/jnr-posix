@@ -80,14 +80,15 @@ public abstract class CommonFileInformation extends jnr.ffi.Struct {
         return (getFileSizeHigh() << 32) | getFileSizeLow();
     }
 
-    private static final int HOURS = 24;
-    private static final int MINUTES = 60;
-    private static final int SECONDS = 60;
+    // FIXME: I used same equation in C to get number.  I did something wrong with the math here in Java
+    //private static final int HOURS = 24;
+    //private static final int MINUTES = 60;
+    // private static final int SECONDS = 60;
     private static final int MICROSECONDS = 1000 * 1000;
     // on number of days a year: https://imicrothinking.wordpress.com/tag/365-2425-days/
     private static final double DAYS_BETWEEN_WINDOWS_AND_UNIX = (1970 - 1601) * 365.2425;
-    private static final long MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS =
-            (long) (DAYS_BETWEEN_WINDOWS_AND_UNIX * HOURS * SECONDS * MINUTES * MICROSECONDS);
+    private static final long MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS = 11644473600000000L;
+           // (long) (DAYS_BETWEEN_WINDOWS_AND_UNIX * HOURS * SECONDS * MINUTES * MICROSECONDS);
 
     private long asMicroSeconds(long windowsNanosecondTime) {
         return (windowsNanosecondTime / 10) - MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS;
