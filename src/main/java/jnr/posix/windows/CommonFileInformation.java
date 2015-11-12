@@ -45,13 +45,14 @@ public abstract class CommonFileInformation extends jnr.ffi.Struct {
     public abstract long getFileSizeHigh();
     public abstract long getFileSizeLow();
 
-    public short getMode(java.lang.String path) {
+    public int getMode(java.lang.String path) {
         int attr = getFileAttributes();
-        short mode = S_IRUSR;
+        int mode = S_IRUSR;
 
         if ((attr & FILE_ATTRIBUTE_READONLY) != 0) mode |= S_IWUSR;
-        mode |= (attr & FILE_ATTRIBUTE_DIRECTORY) != 0 ? S_IFDIR | S_IXUSR : S_IFREG;
+        mode |= (attr & FILE_ATTRIBUTE_DIRECTORY) != 0 ? (S_IFDIR | S_IXUSR) : S_IFREG;
 
+        path = path.toLowerCase();
         if (path != null && (mode & S_IFREG) != 0 &&
                 (path.endsWith(".bat") || path.endsWith(".cmd") || path.endsWith(".com") || path.endsWith(".exe"))) {
             mode |= S_IXUSR;

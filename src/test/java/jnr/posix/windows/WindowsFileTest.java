@@ -86,6 +86,28 @@ public class WindowsFileTest {
     }
 
     @Test
+    public void testExecutableSuffixesAreExecutable() throws Throwable {
+        File f = File.createTempFile("stat", ".exe");
+
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertTrue(st.isExecutable());
+        } finally {
+            f.delete();
+        }
+
+        f = File.createTempFile("STAT", ".EXE");
+
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertTrue(st.isExecutable());
+        } finally {
+            f.delete();
+        }
+
+    }
+
+    @Test
     public void testBlocksAndBlockSizeReturn() throws Throwable {
         File f = File.createTempFile("stat", null);
 

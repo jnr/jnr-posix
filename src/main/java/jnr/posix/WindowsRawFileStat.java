@@ -12,6 +12,7 @@ public class WindowsRawFileStat extends JavaFileStat {
     private int st_rdev;
     private int st_dev;
     private int st_nlink;
+    private int st_mode;
 
     public WindowsRawFileStat(POSIX posix, POSIXHandler handler) {
         super(posix, handler);
@@ -35,6 +36,14 @@ public class WindowsRawFileStat extends JavaFileStat {
         st_size = isDirectory() ? 0 : fileInfo.getFileSize();
         st_nlink = 1;
         st_mode &= ~(S_IWGRP | S_IWOTH);
+    }
+
+    public int mode() {
+        return st_mode;
+    }
+
+    public boolean isExecutable() {
+        return (st_mode & S_IXUSR) != 0;
     }
 
     public int gid() {
