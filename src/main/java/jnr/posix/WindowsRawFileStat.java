@@ -60,4 +60,14 @@ public class WindowsRawFileStat extends JavaFileStat {
     public long rdev() {
         return st_rdev;
     }
+
+    @Override
+    public long blocks() {
+        return -1;
+    }
+
+    @Override
+    public long blockSize() {
+        return -1;
+    }
 }

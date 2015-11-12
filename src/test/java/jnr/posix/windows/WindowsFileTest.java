@@ -83,7 +83,19 @@ public class WindowsFileTest {
         } finally {
             f.delete();
         }
+    }
 
+    @Test
+    public void testBlocksAndBlockSizeReturn() throws Throwable {
+        File f = File.createTempFile("stat", null);
+
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertTrue(st.blocks() == -1);
+            assertTrue(st.blockSize() == -1);
+        } finally {
+            f.delete();
+        }
     }
 
     @Test
