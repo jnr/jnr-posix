@@ -73,6 +73,20 @@ public class WindowsFileTest {
     }
 
     @Test
+    public void testFakeUIDGUID() throws Throwable {
+        File f = File.createTempFile("stat", null);
+
+        try {
+            FileStat st = posix.stat(f.getAbsolutePath());
+            assertTrue(st.uid() == 0);
+            assertTrue(st.gid() == 0);
+        } finally {
+            f.delete();
+        }
+
+    }
+
+    @Test
         public void testLongFileRegular() throws Throwable {
         Pair pair = makeLongPath();
         String path = pair.leaf.getAbsolutePath();

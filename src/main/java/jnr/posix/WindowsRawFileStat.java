@@ -37,6 +37,14 @@ public class WindowsRawFileStat extends JavaFileStat {
         st_mode &= ~(S_IWGRP | S_IWOTH);
     }
 
+    public int gid() {
+        return 0;
+    }
+
+    public int uid() {
+        return 0;
+    }
+
     public long atime() {
         return st_atime;
     }
