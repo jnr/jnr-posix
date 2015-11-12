@@ -22,7 +22,7 @@ public class WindowsRawFileStat extends JavaFileStat {
         setup(fileInfo);
 
         if (WindowsHelpers.isDriveLetterPath(path)) {
-            int letterAsNumber = path.charAt(0) - 'A';
+            int letterAsNumber = Character.toUpperCase(path.charAt(0)) - 'A';
             st_rdev = letterAsNumber;
             st_dev = letterAsNumber;
         }

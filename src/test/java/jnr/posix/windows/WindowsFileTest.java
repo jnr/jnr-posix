@@ -13,6 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class WindowsFileTest {
     private static POSIX posix;
@@ -61,6 +62,14 @@ public class WindowsFileTest {
         tmp2.mkdirs();
 
         return new Pair(tmp, tmp2);
+    }
+
+    @Test
+    public void testLowercaseDriveLetter() throws Throwable {
+        // FIXME: Not all systems have a C drive but nearly all do
+        FileStat st = posix.stat("c:/");
+        assertTrue(st.dev() == 2);
+        assertTrue(st.rdev() == 2);
     }
 
     @Test
