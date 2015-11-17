@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
+import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
 import jnr.ffi.byref.NumberByReference;
@@ -21,7 +22,6 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import jnr.constants.platform.Signal;
 
 public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -645,7 +645,25 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public String gethostname() {
-        return libc().gethostname();
+        int length = 256;
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        int result;
+        try {
+            result = libc().gethostname(buffer, buffer.capacity() - 1);
+        } catch (java.lang.UnsatisfiedLinkError e) {
+            result = -1;
+        }
+        if (result == 0) {
+            buffer.position(0);
+            buffer.limit(length);
+            String ascii = Charset.forName("ASCII").decode(buffer).toString();
+            int zeroPos = ascii.indexOf(0);
+            if (zeroPos > 0 && zeroPos < buffer.capacity()) {
+                ascii = ascii.substring(0, zeroPos);
+            }
+            return ascii;
+        }
+        return helper.gethostname();
     }
 
     public int sendmsg(int socket, MsgHdr message, int flags) {

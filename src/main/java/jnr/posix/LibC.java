@@ -145,7 +145,7 @@ public interface LibC {
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
 
-    String gethostname();
+    int gethostname(@Out ByteBuffer buffer, int len);
     int rename(CharSequence oldName, CharSequence newName);
     long getcwd(byte[] cwd, int len);
     int fsync(int fd);
