@@ -49,6 +49,7 @@ public class Platform {
     private static final String WINDOWS_VISTA = "vista";
     private static final String WINDOWS_7 = "windows 7";
     private static final String WINDOWS_8 = "windows 8";
+    private static final String WINDOWS_10 = "windows 10";
     private static final String MAC_OS = "mac os";
     private static final String DARWIN = "darwin";
     private static final String FREEBSD = "freebsd";
@@ -66,7 +67,9 @@ public class Platform {
     public static final boolean IS_WINDOWS_VISTA = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_VISTA) > -1;
     public static final boolean IS_WINDOWS_SERVER = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_SERVER) > -1;
     public static final boolean IS_WINDOWS_7 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_7) > -1;
+    // Note: JDK < 8u60 incorrectly reports 'Windows 8.1' for Windows 10: https://bugs.openjdk.java.net/browse/JDK-8066504
     public static final boolean IS_WINDOWS_8 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_8) > -1;
+    public static final boolean IS_WINDOWS_10 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_10) > -1;
     public static final boolean IS_MAC = OS_NAME_LC.startsWith(MAC_OS) || OS_NAME_LC.startsWith(DARWIN);
     public static final boolean IS_FREEBSD = OS_NAME_LC.startsWith(FREEBSD);
     public static final boolean IS_OPENBSD = OS_NAME_LC.startsWith(OPENBSD);
@@ -74,16 +77,12 @@ public class Platform {
     public static final boolean IS_SOLARIS = OS_NAME_LC.startsWith(SOLARIS);
     public static final boolean IS_BSD = IS_MAC || IS_FREEBSD || IS_OPENBSD;
 
-    public static final String envCommand() throws Exception {
+    public static final String envCommand() {
         if (IS_WINDOWS) {
             if (IS_WINDOWS_9X) {
                 return "command.com /c set";
-            } else if (IS_WINDOWS_NT || IS_WINDOWS_20X || IS_WINDOWS_XP ||
-                       IS_WINDOWS_SERVER || IS_WINDOWS_VISTA ||
-                       IS_WINDOWS_7 || IS_WINDOWS_8) {
-                return "cmd.exe /c set";
             } else {
-              throw new Exception("Unsupported version of Windows detected: " + OS_NAME_LC);
+                return "cmd.exe /c set";
             }
         }
         return "env";
