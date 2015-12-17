@@ -155,4 +155,12 @@ public class FileStatTest {
             }
         }
     }
+
+    @Test public void statIsWritable() throws Throwable {
+      String tempDirectory = System.getenv("TEMP");
+      FileStat st = posix.stat(tempDirectory);
+
+      // FIXME: This fails on JRuby, but succeeds here. Why?
+      assertTrue("Temp directory incorrectly considered non-writable", st.isWritable());
+    }
 }
