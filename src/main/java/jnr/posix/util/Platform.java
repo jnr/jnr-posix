@@ -11,8 +11,8 @@
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
  *
- * 
- *  
+ *
+ *
  * Alternatively, the contents of this file may be used under the terms of
  * either of the GNU General Public License Version 2 or later (the "GPL"),
  * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
@@ -48,6 +48,8 @@ public class Platform {
     private static final String WINDOWS_SERVER = "server";
     private static final String WINDOWS_VISTA = "vista";
     private static final String WINDOWS_7 = "windows 7";
+    private static final String WINDOWS_8 = "windows 8";
+    private static final String WINDOWS_10 = "windows 10";
     private static final String MAC_OS = "mac os";
     private static final String DARWIN = "darwin";
     private static final String FREEBSD = "freebsd";
@@ -65,19 +67,21 @@ public class Platform {
     public static final boolean IS_WINDOWS_VISTA = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_VISTA) > -1;
     public static final boolean IS_WINDOWS_SERVER = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_SERVER) > -1;
     public static final boolean IS_WINDOWS_7 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_7) > -1;
+    // Note: JDK < 8u60 incorrectly reports 'Windows 8.1' for Windows 10: https://bugs.openjdk.java.net/browse/JDK-8066504
+    public static final boolean IS_WINDOWS_8 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_8) > -1;
+    public static final boolean IS_WINDOWS_10 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_10) > -1;
     public static final boolean IS_MAC = OS_NAME_LC.startsWith(MAC_OS) || OS_NAME_LC.startsWith(DARWIN);
     public static final boolean IS_FREEBSD = OS_NAME_LC.startsWith(FREEBSD);
     public static final boolean IS_OPENBSD = OS_NAME_LC.startsWith(OPENBSD);
-    public static final boolean IS_LINUX = OS_NAME_LC.startsWith(LINUX);   
+    public static final boolean IS_LINUX = OS_NAME_LC.startsWith(LINUX);
     public static final boolean IS_SOLARIS = OS_NAME_LC.startsWith(SOLARIS);
     public static final boolean IS_BSD = IS_MAC || IS_FREEBSD || IS_OPENBSD;
-    
+
     public static final String envCommand() {
         if (IS_WINDOWS) {
             if (IS_WINDOWS_9X) {
                 return "command.com /c set";
-            } else if (IS_WINDOWS_NT || IS_WINDOWS_20X || IS_WINDOWS_XP ||
-                       IS_WINDOWS_SERVER || IS_WINDOWS_VISTA || IS_WINDOWS_7) {
+            } else {
                 return "cmd.exe /c set";
             }
         }
@@ -93,7 +97,7 @@ public class Platform {
         if (arch.equals("amd64")) arch = "x86_64";
         ARCH = arch;
     }
-    
+
     public static final Map<String, String> OS_NAMES = new HashMap<String, String>();
     static {
         OS_NAMES.put("Mac OS X", DARWIN);
@@ -101,12 +105,12 @@ public class Platform {
         OS_NAMES.put("Linux", LINUX);
     }
 
-    public static String getOSName()  {
+    public static String getOSName() {
         String theOSName = OS_NAMES.get(OS_NAME);
-        
+
         return theOSName == null ? OS_NAME : theOSName;
     }
-    
+
     /**
      * An extension over <code>System.getProperty</code> method.
      * Handles security restrictions, and returns the default
