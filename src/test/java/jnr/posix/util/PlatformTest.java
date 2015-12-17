@@ -44,7 +44,7 @@ public class PlatformTest extends TestCase {
         assertTrue("Not 32 or 64-bit platform?", Platform.IS_32_BIT ^ Platform.IS_64_BIT);
     }
 
-    public void testEnvCommand()  {
+    public void testEnvCommand() {
         String command = Platform.envCommand();
         if (Platform.IS_WINDOWS_9X)  {
             assertEquals("Fails on Windows 95/98", "command.com /c set", command);

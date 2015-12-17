@@ -1,4 +1,3 @@
-
 package jnr.posix;
 
 import java.io.FileOutputStream;
@@ -36,7 +35,6 @@ public class FileStatTest {
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
-
 
     @AfterClass
     public static void tearDownClass() throws Exception {
@@ -131,7 +129,7 @@ public class FileStatTest {
         assertTrue(stat == null);
     }
 
-    
+
     @Test public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
@@ -141,7 +139,7 @@ public class FileStatTest {
                 assertEquals("struct size is wrong", 128, new SolarisFileStat64.Layout(runtime).size());
             }
         }
-        
+
         if (Platform.IS_SOLARIS) {
             File f = File.createTempFile("stat", null);
             try {
