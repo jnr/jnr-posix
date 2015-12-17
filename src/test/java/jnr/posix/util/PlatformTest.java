@@ -45,11 +45,11 @@ public class PlatformTest extends TestCase {
     }
 
     public void testEnvCommand()  {
-        String command =Platform.envCommand();
+        String command = Platform.envCommand();
         if (Platform.IS_WINDOWS_9X)  {
             assertEquals("Fails on Windows 95/98", "command.com /c set", command);
         }
-        if (Platform.IS_WINDOWS & !Platform.IS_WINDOWS_9X)  {
+        if (Platform.IS_WINDOWS && !Platform.IS_WINDOWS_9X)  {
             assertEquals("Fails on Windows other than 95/98", "cmd.exe /c set", command);
         }
         if (!Platform.IS_WINDOWS)  {
