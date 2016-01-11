@@ -157,4 +157,16 @@ public class FileStatTest {
             }
         }
     }
+
+    @Test
+    public void filestatDirectory() throws Throwable {
+        File f = File.createTempFile("stat", null).getParentFile();
+        try {
+            FileStat stat = posix.stat(f.getAbsolutePath());
+
+            assertTrue(stat.isDirectory());
+        } finally {
+            f.delete();
+        }
+    }
 }
