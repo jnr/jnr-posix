@@ -21,7 +21,7 @@ import jnr.posix.windows.WindowsByHandleFileInformation;
 import jnr.posix.windows.WindowsFileInformation;
 import jnr.posix.windows.WindowsFindData;
 
-final class WindowsPOSIX extends BaseNativePOSIX {
+final public class WindowsPOSIX extends BaseNativePOSIX {
     private final static int FILE_TYPE_CHAR = 0x0002;
 
     private final static Map<Integer, Errno> errorToErrnoMapper
@@ -347,13 +347,22 @@ final class WindowsPOSIX extends BaseNativePOSIX {
                 return -1;
             }
 
-            WindowsFindData findData = new WindowsFindData(getRuntime());
-            HANDLE handle = wlibc().FindFirstFileW(wpath, findData);
-            if (handle == HANDLE.valueOf(HANDLE.INVALID_HANDLE_VALUE)) return -1;
-            wlibc().FindClose(handle);
-
-            ((WindowsRawFileStat) stat).setup(path, findData);
+            return findFirstFile(path, stat);
         }
+
+        return 0;
+    }
+
+    // Public so we can test this via unit-testing.  This makes me wish we had a whole different interface for
+    // windows APIs user32/kernel32 that this class could consume easily.  We are clearly missing an abstraction
+    // or project here.
+    public int findFirstFile(String path, FileStat stat) {
+        byte[] wpath = WString.path(path, true);
+        WindowsFindData findData = new WindowsFindData(getRuntime());
+        HANDLE handle = wlibc().FindFirstFileW(wpath, findData);
+        if (handle == HANDLE.valueOf(HANDLE.INVALID_HANDLE_VALUE)) return -1;
+        wlibc().FindClose(handle);
+        ((WindowsRawFileStat) stat).setup(path, findData);
 
         return 0;
     }

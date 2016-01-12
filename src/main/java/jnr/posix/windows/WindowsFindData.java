@@ -1,19 +1,13 @@
 package jnr.posix.windows;
 
 import jnr.ffi.*;
-import jnr.ffi.Runtime;
 
 /**
  * Created by enebo on 9/20/2015.
  */
 public class WindowsFindData extends CommonFileInformation {
     public static final int MAX_PATH = 260;
-    public static class s8 extends jnr.ffi.Struct {
-        private Signed8 signed8 = new Signed8();
-        public s8(Runtime runtime) {
-            super(runtime);
-        }
-    }
+
     final UnsignedLong dwFileAttributes;
     // FIXME: I have no idea why I could not include FileTime here but having it do its own layout seems to change
     // something.
@@ -27,8 +21,8 @@ public class WindowsFindData extends CommonFileInformation {
     final UnsignedLong nFileSizeLow;
     final UnsignedLong dwReserved0;
     final UnsignedLong dwReserved1;
-    final s8[] cFileName;
-    final s8[] cAlternateFileName;
+    final Padding cFileName;
+    final Padding cAlternateFileName;
 
     public WindowsFindData(jnr.ffi.Runtime runtime) {
         super(runtime);
@@ -44,8 +38,8 @@ public class WindowsFindData extends CommonFileInformation {
         nFileSizeLow = new UnsignedLong();
         dwReserved0 = new UnsignedLong();
         dwReserved1 = new UnsignedLong();
-        cFileName = Struct.arrayOf(getRuntime(), s8.class, MAX_PATH);
-        cAlternateFileName = Struct.arrayOf(getRuntime(), s8.class, 14);
+        cFileName = new Padding(NativeType.UCHAR, MAX_PATH);
+        cAlternateFileName = new Padding(NativeType.UCHAR, 14);
     }
 
     public HackyFileTime getCreationTime() {

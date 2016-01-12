@@ -8,6 +8,7 @@ import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
 import jnr.posix.POSIXFactory;
+import jnr.posix.WindowsPOSIX;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -195,5 +196,21 @@ public class WindowsFileTest {
 
         assertEquals(0, res);
         assertFalse(tmp.exists());
+    }
+
+    @Test
+    public void testFindFirstFile() throws Throwable {
+        File f = File.createTempFile("stat", null);
+        try {
+
+            POSIX posix = POSIXFactory.getNativePOSIX();
+            FileStat stat = posix.allocateStat();
+            int result = ((WindowsPOSIX) posix).findFirstFile(f.getAbsolutePath(), stat);
+
+            assertEquals(0, result);
+            assertTrue(stat.isFile());
+        } finally {
+            f.delete();
+        }
     }
 }
