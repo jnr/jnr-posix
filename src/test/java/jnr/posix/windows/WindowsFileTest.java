@@ -213,4 +213,12 @@ public class WindowsFileTest {
             f.delete();
         }
     }
+
+    @Test
+    public void testFindFirstFileBogusFile() throws Throwable {
+        POSIX posix = POSIXFactory.getNativePOSIX();
+        FileStat stat = posix.allocateStat();
+        int result = ((WindowsPOSIX) posix).findFirstFile("sdjfhjfsdfhdsdfhsdj", stat);
+        assertTrue(result < 0);
+    }
 }

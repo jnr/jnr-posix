@@ -360,7 +360,7 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         byte[] wpath = WString.path(path, true);
         WindowsFindData findData = new WindowsFindData(getRuntime());
         HANDLE handle = wlibc().FindFirstFileW(wpath, findData);
-        if (handle == HANDLE.valueOf(HANDLE.INVALID_HANDLE_VALUE)) return -1;
+        if (!handle.isValid()) return -1;
         wlibc().FindClose(handle);
         ((WindowsRawFileStat) stat).setup(path, findData);
 
