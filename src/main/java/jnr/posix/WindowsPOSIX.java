@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jnr.posix.util.MethodName;
+import jnr.posix.util.Platform;
 import jnr.posix.util.WindowsHelpers;
 import jnr.posix.windows.CommonFileInformation;
 import jnr.posix.windows.WindowsByHandleFileInformation;
@@ -333,8 +334,18 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         return stat(path, stat); // windows stat honors windows equiv of softlinks and dangling ones.
     }
 
+    public int posixcompat_stat(String path, FileStat stat) {
+        byte[] wpath = WString.path(path, true);
+        return wlibc()._wstat64(wpath, stat);
+    }
+
     @Override
     public int stat(String path, FileStat stat) {
+        // FIXME: for unknown reasons any fallover to findFirstFile will crash on a 32 bit version of JVM+Win7.
+        // As a work-around we will fall back to our old code for 32 bit systems.  The main drawback of this
+        // is the lack of UNC and long path names.
+        if (Platform.IS_32_BIT) return posixcompat_stat(path, new WindowsFileStat(this));
+
         WindowsFileInformation info = new WindowsFileInformation(getRuntime());
         byte[] wpath = WString.path(path, true);
         if (wlibc().GetFileAttributesExW(wpath, 0, info) != 0) {
