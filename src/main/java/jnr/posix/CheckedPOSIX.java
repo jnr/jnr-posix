@@ -527,4 +527,8 @@ final class CheckedPOSIX implements POSIX {
     public int fdatasync(int fd) {
         try {return posix.fsync(fd); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public int mkfifo(String path, int mode) {
+        try {return posix.mkfifo(path, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

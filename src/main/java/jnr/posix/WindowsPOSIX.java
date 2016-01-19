@@ -808,4 +808,10 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
             throw new RuntimeException("no support for native passwd");
         }
     };
+
+    public int mkfifo(String filename, int mode) {
+        handler.unimplementedError("mkfifo");
+
+        return -1;
+    }
 }

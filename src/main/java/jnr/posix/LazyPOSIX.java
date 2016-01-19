@@ -493,11 +493,11 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int sendmsg(int socket, MsgHdr message, int flags) {
-        return posix().sendmsg( socket, message, flags );
+        return posix().sendmsg(socket, message, flags);
     }
 
     public int recvmsg(int socket, MsgHdr message, int flags) {
-        return posix().recvmsg( socket, message, flags );
+        return posix().recvmsg(socket, message, flags);
     }
 
     public int truncate(CharSequence path, long length) {
@@ -522,5 +522,9 @@ final class LazyPOSIX implements POSIX {
 
     public int fdatasync(int fd) {
         return posix().fdatasync(fd);
+    }
+
+    public int mkfifo(String path, int mode) {
+        return posix().mkfifo(path, mode);
     }
 }

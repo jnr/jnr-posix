@@ -172,4 +172,5 @@ public interface  POSIX {
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
     int fsync(int fd);
     int fdatasync(int fd);
+    int mkfifo(String filename, int mode);
 }

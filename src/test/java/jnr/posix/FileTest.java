@@ -509,6 +509,26 @@ public class FileTest {
         }
     }
 
+    @Test
+    public void mkfifoTest() throws Throwable {
+        if (!Platform.IS_WINDOWS) {
+            File tmp = File.createTempFile("mkfifoTest", "tmp");
+            tmp.deleteOnExit();
+
+            int ret = posix.mkfifo(tmp.getAbsolutePath(), 0666);
+
+            FileInputStream fis = new FileInputStream(tmp);
+            FileOutputStream fos = new FileOutputStream(tmp);
+
+            byte[] content = "hello".getBytes();
+
+            fos.write(content);
+            fis.read(content);
+
+            assertArrayEquals("hello".getBytes(), content);
+        }
+    }
+
     private int getFdFromDescriptor(FileDescriptor descriptor) {
         if (Platform.IS_WINDOWS) {
             HANDLE handle = JavaLibCHelper.gethandle(descriptor);

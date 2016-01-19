@@ -48,11 +48,13 @@ final class SolarisPOSIX extends BaseNativePOSIX {
             super(runtime);
         }
 
-        public final off_t l_start = new off_t();
-        public final off_t l_len = new off_t();
-        public final pid_t l_pid = new pid_t();
         public final int16_t l_type = new int16_t(); // short
         public final int16_t l_whence = new int16_t(); // short
+        public final off_t l_start = new off_t();
+        public final off_t l_len = new off_t();
+        public final int32_t l_sysid = new int32_t(); // int
+        public final pid_t l_pid = new pid_t();
+        public final int32_t[] l_pad = new int32_t[4]; // int[4]
     }
 
     private static final Layout FLOCK_LAYOUT = new Layout(jnr.ffi.Runtime.getSystemRuntime());
@@ -74,9 +76,9 @@ final class SolarisPOSIX extends BaseNativePOSIX {
                 errno(EINVAL.intValue());
                 return -1;
         }
-        FLOCK_LAYOUT.l_whence.set(lock, (short)SEEK_SET);
-        FLOCK_LAYOUT.l_start.set(lock, 0L);
-        FLOCK_LAYOUT.l_len.set(lock, 0L);
+        FLOCK_LAYOUT.l_whence.set(lock, (short) SEEK_SET);
+        FLOCK_LAYOUT.l_start.set(lock, 0);
+        FLOCK_LAYOUT.l_len.set(lock, 0);
 
         return libc().fcntl(fd, (operation & LOCK_NB) != 0 ? Fcntl.F_SETLK.intValue() : Fcntl.F_SETLKW.intValue(), lock);
     }

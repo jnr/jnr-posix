@@ -34,4 +34,5 @@ public interface UnixLibC extends LibC {
     public int posix_spawnattr_getsigdefault(Pointer attr, Pointer sigdefault);
     public int sigprocmask(int how, Pointer set, Pointer get);
 
+    int mkfifo(CharSequence filename, int mode);
 }

@@ -755,4 +755,8 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
     };
 
+    public int mkfifo(String filename, int mode) {
+        return ((UnixLibC) libc()).mkfifo(filename, mode);
+    }
+
 }
