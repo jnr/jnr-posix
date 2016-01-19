@@ -346,12 +346,6 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         } else {
             int e = errno();
 
-            // On 32-bits is we get access denied we crash populating struct in findfirstfile.
-            if (e == ERROR_ACCESS_DENIED.intValue() && Platform.IS_32_BIT) {
-                e = ERROR_FILE_NOT_FOUND.intValue();
-                LastError.setLastError(getRuntime(), e);
-            }
-
             if (e == ERROR_FILE_NOT_FOUND.intValue() || e == ERROR_PATH_NOT_FOUND.intValue()
                     || e == ERROR_BAD_NETPATH.intValue()) {
                 return -1;
