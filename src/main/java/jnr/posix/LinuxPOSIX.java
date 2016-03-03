@@ -177,4 +177,69 @@ final class LinuxPOSIX extends BaseNativePOSIX {
             return arg != null ? new LinuxPasswd((Pointer) arg) : null;
         }
     };
+
+    static final public class Syscall {
+        static final ABI _ABI_X86_32 = new ABI_X86_32();
+        static final ABI _ABI_X86_64 = new ABI_X86_64();
+
+        public static ABI abi() {
+            if ("x86_64".equals(Platform.ARCH)) {
+                if (Platform.IS_64_BIT) {
+                    return _ABI_X86_64;
+                }
+            } else if ("i386".equals(Platform.ARCH)) {
+                return _ABI_X86_32;
+            }
+            return null;
+        }
+
+        interface ABI {
+            public int __NR_ioprio_set();
+            public int __NR_ioprio_get();
+        }
+
+        /** @see /usr/include/asm/unistd_32.h */
+        final static class ABI_X86_32 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 289;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 290;
+            }
+        }
+
+        /** @see /usr/include/asm/unistd_64.h */
+        final static class ABI_X86_64 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 251;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 252;
+            }
+        }
+    }
+
+    public int ioprio_get(int which, int who) {
+        Syscall.ABI abi = Syscall.abi();
+        if (abi == null) {
+            handler.unimplementedError("ioprio_get");
+            return -1;
+        }
+
+        return libc().syscall(abi.__NR_ioprio_get(), which, who);
+    }
+
+    public int ioprio_set(int which, int who, int ioprio) {
+        Syscall.ABI abi = Syscall.abi();
+        if (abi == null) {
+            handler.unimplementedError("ioprio_set");
+            return -1;
+        }
+
+        return libc().syscall(abi.__NR_ioprio_set(), which, who, ioprio);
+    }
 }

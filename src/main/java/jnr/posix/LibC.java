@@ -155,5 +155,10 @@ public interface LibC {
     int recvmsg(int socket, @Direct MsgHdr message, int flags);
 
     Variable<Long> environ();
+
+    int syscall(int number);
+    int syscall(int number, int arg1);
+    int syscall(int number, int arg1, int arg2);
+    int syscall(int number, int arg1, int arg2, int arg3);
 }
 
