@@ -88,6 +88,7 @@ public interface LibC {
 
     int fcntl(int fd, int fnctl, Pointer arg);
     int fcntl(int fd, int fnctl);
+    int fcntl(int fd, int fnctl, int arg);
     @Deprecated
     int fcntl(int fd, int fnctl, int... arg);
     int access(CharSequence path, int amode);

@@ -392,14 +392,14 @@ public class FileTest {
     }
 
     @Test
-    public void fcntlTest() throws Throwable {
+    public void fcntlIntTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             int[] fds = new int[2];
             int ret = posix.pipe(fds);
             assertEquals(0, ret);
             int flags = posix.fcntlInt(fds[0], Fcntl.F_GETFD, 0);
             posix.fcntlInt(fds[0], Fcntl.F_SETFD, flags | 1); // FD_CLOEXEC
-            assertEquals(1, posix.fcntlInt(fds[0], Fcntl.F_GETFD, 0));
+            assertEquals(flags | 1, posix.fcntlInt(fds[0], Fcntl.F_GETFD, 0));
         }
     }
 
