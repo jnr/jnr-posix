@@ -32,6 +32,7 @@ public class FileStatTest {
     }
 
     private static POSIX posix;
+
     @BeforeClass
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
@@ -50,7 +51,8 @@ public class FileStatTest {
     public void tearDown() {
     }
 
-    @Test public void filestat() throws Throwable {
+    @Test
+    public void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
         int size = 1567;
         //Thread.sleep(2000);
@@ -132,7 +134,43 @@ public class FileStatTest {
     }
 
     
-    @Test public void structStatSize() throws Throwable {
+    @Test
+    public void fileStatNanoTime() throws Throwable {
+        // Currently only linux file stat support nano time resolution
+        jnr.ffi.Platform nativePlatform = jnr.ffi.Platform.getNativePlatform();
+        if (nativePlatform.getOS() == jnr.ffi.Platform.OS.LINUX) {
+            File f = File.createTempFile("stat", null);
+            try {
+                FileStat st = posix.stat(f.getAbsolutePath());
+                assertNotNull("posix.stat failed", st);
+
+                FileStat stat = posix.allocateStat();
+                int result = posix.stat(f.getAbsolutePath(), stat);
+                assertNotNull("posix.stat failed", st);
+                assertEquals(0, result);
+
+                if (Platform.IS_32_BIT) {
+                    LinuxFileStat32 fstat32 = (LinuxFileStat32) stat;
+                    assertTrue(fstat32.cTimeNanoSecs() > 0);
+                    assertTrue(fstat32.mTimeNanoSecs() > 0);
+                    assertTrue(fstat32.aTimeNanoSecs() > 0);
+                    assertEquals(fstat32.cTimeNanoSecs(), fstat32.mTimeNanoSecs());
+                } else {
+                    LinuxFileStat64 fstat64 = (LinuxFileStat64) stat;
+                    assertTrue(fstat64.cTimeNanoSecs() > 0);
+                    assertTrue(fstat64.mTimeNanoSecs() > 0);
+                    assertTrue(fstat64.aTimeNanoSecs() > 0);
+
+                    assertEquals(fstat64.cTimeNanoSecs(), fstat64.mTimeNanoSecs());
+                }
+            } finally {
+                f.delete();
+            }
+        }
+    }
+
+    @Test
+    public void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
             if (Platform.IS_32_BIT) {
@@ -141,7 +179,7 @@ public class FileStatTest {
                 assertEquals("struct size is wrong", 128, new SolarisFileStat64.Layout(runtime).size());
             }
         }
-        
+
         if (Platform.IS_SOLARIS) {
             File f = File.createTempFile("stat", null);
             try {
