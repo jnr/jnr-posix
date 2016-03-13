@@ -1,6 +1,6 @@
 package jnr.posix.windows;
 
-import java.io.File;;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.text.NumberFormat;
