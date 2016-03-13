@@ -449,7 +449,12 @@ final class JavaPOSIX implements POSIX {
         handler.unimplementedError("futimes");
         return unimplementedInt("futimes");
     }
-    
+
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        handler.unimplementedError("lutimes");
+        return unimplementedInt("lutimes");
+    }
+
     public int wait(int[] status) {
         return unimplementedInt("wait");
     }

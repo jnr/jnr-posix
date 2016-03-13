@@ -110,6 +110,33 @@ public class FileTest {
     }
 
     @Test
+    public void lutimesTest() throws Throwable {
+        // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
+        if (!Platform.IS_WINDOWS) {
+            File f1 = File.createTempFile("lutimes", null);
+            File f2 = new File(f1.getParentFile(), "lutimes-link");
+            posix.symlink(f1.getAbsolutePath(), f2.getAbsolutePath());
+
+            int rval = posix.utimes(f1.getAbsolutePath(), new long[]{800, 0}, new long[]{900, 0});
+            assertEquals("utimes did not return 0", 0, rval);
+
+            rval = posix.lutimes(f2.getAbsolutePath(), new long[]{1800, 0}, new long[]{1900, 0});
+            assertEquals("lutimes did not return 0", 0, rval);
+
+            FileStat stat = posix.stat(f1.getAbsolutePath());
+            assertEquals("atime seconds failed", 800, stat.atime());
+            assertEquals("mtime seconds failed", 900, stat.mtime());
+
+            stat = posix.lstat(f2.getAbsolutePath());
+            assertEquals("atime seconds failed", 1800, stat.atime());
+            assertEquals("mtime seconds failed", 1900, stat.mtime());
+
+            f1.delete();
+            f2.delete();
+        }
+    }
+
+    @Test
     public void futimeTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("jnr-posix-futime", "tmp");

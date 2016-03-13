@@ -360,6 +360,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.futimes(fd, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int lutimes(String path, long[] atimeval, long[] mtimeval) {
+        try { return posix.lutimes(path, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int wait(int[] status) {
         try { return posix.wait(status); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

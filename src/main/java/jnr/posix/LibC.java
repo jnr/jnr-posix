@@ -117,6 +117,7 @@ public interface LibC {
     int utimes(CharSequence path, @In Timeval[] times);
     int utimes(String path, @In Pointer times);
     int futimes(int fd, @In Timeval[] times);
+    int lutimes(CharSequence path, @In Timeval[] times);
     int fork();
     int waitpid(long pid, @Out int[] status, int options);
     int wait(@Out int[] status);

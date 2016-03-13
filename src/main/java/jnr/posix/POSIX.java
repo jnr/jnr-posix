@@ -109,6 +109,7 @@ public interface  POSIX {
     int utimes(String path, long[] atimeval, long[] mtimeval);
     int utimes(String path, Pointer times);
     int futimes(int fd, long[] atimeval, long[] mtimeval);
+    int lutimes(String path, long[] atimeval, long[] mtimeval);
     int waitpid(int pid, int[] status, int flags);
     int waitpid(long pid, int[] status, int flags);
     int wait(int[] status);
