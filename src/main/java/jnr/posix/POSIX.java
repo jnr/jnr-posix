@@ -175,4 +175,6 @@ public interface  POSIX {
     int fsync(int fd);
     int fdatasync(int fd);
     int mkfifo(String filename, int mode);
+
+    int daemon(int nochdir, int noclose);
 }

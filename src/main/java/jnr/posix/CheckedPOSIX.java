@@ -538,4 +538,8 @@ final class CheckedPOSIX implements POSIX {
     public int mkfifo(String path, int mode) {
         try {return posix.mkfifo(path, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public int daemon(int nochdir, int noclose) {
+        try {return posix.daemon(nochdir, noclose); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }
