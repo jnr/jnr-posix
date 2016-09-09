@@ -535,4 +535,8 @@ final class LazyPOSIX implements POSIX {
     public int mkfifo(String path, int mode) {
         return posix().mkfifo(path, mode);
     }
+
+    public int daemon(int nochdir, int noclose) {
+        return posix().daemon(nochdir, noclose);
+    }
 }

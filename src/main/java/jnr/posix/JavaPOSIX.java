@@ -694,6 +694,11 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("mkfifo not available for Java");
     }
 
+    public int daemon(int nochdir, int noclose) {
+        handler.unimplementedError("daemon");
+        return unimplementedInt("daemon not available for Java");
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
