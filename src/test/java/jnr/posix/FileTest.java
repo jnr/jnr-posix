@@ -411,7 +411,7 @@ public class FileTest {
 
         int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
         posix.ftruncate(fd, 21);
-        posix.lseek(fd, 0, 0);
+        posix.lseekLong(fd, 0, 0);
         byte[] buf = new byte[21];
         int read = posix.read(fd, buf, 31);
         assertEquals(21, read);
@@ -553,6 +553,19 @@ public class FileTest {
             fis.read(content);
 
             assertArrayEquals("hello".getBytes(), content);
+        }
+    }
+
+    @Test
+    public void lseekTest() throws Throwable {
+        if (!Platform.IS_WINDOWS) {
+            int fd = posix.open("/dev/zero", 0, 0);
+
+            // use 2^33 to ensure we're out of int range
+            long offset = (long) Math.pow(2, 33);
+            long seek = posix.lseekLong(fd, offset, 0);
+
+            assertEquals(seek, offset);
         }
     }
 

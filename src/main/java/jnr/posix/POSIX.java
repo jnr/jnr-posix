@@ -153,6 +153,7 @@ public interface  POSIX {
     int pwrite(int fd, ByteBuffer buf, int n, int offset);
     int pread(int fd, ByteBuffer buf, int n, int offset);
     int lseek(int fd, long offset, int whence);
+    long lseekLong(int fd, long offset, int whence);
     int pipe(int[] fds);
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);

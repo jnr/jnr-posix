@@ -626,6 +626,12 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public long lseekLong(int fd, long offset, int whence) {
+        handler.unimplementedError("lseek");
+
+        return -1;
+    }
+
     public int pipe(int[] fds) {
         handler.unimplementedError("pipe");
 

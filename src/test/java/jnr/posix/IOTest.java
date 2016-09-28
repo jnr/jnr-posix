@@ -34,7 +34,7 @@ public class IOTest {
             Assert.assertEquals(5, written);
 
             byte[] buf = new byte[5];
-            posix.lseek(fd, 0, 0); // no jnr-constants for SEEK_SET
+            posix.lseekLong(fd, 0, 0); // no jnr-constants for SEEK_SET
             int read = posix.read(fd, buf, 5);
             Assert.assertEquals(5, read);
             Assert.assertArrayEquals(hello, buf);
@@ -42,12 +42,12 @@ public class IOTest {
             byte[] goodbye = "goodbye".getBytes();
             written = posix.pwrite(fd, goodbye, 7, 3);
             Assert.assertEquals(7, written);
-            Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
+            Assert.assertEquals(5, posix.lseekLong(fd, 0, 1)); // SEEK_CUR
 
             byte[] bye = new byte[3];
             read = posix.pread(fd, bye, 3, 7);
             Assert.assertEquals(3, read);
-            Assert.assertEquals(5, posix.lseek(fd, 0, 1)); // SEEK_CUR
+            Assert.assertEquals(5, posix.lseekLong(fd, 0, 1)); // SEEK_CUR
             Assert.assertArrayEquals("bye".getBytes(), bye);
         }
     }

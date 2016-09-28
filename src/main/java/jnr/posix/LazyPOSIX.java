@@ -492,6 +492,10 @@ final class LazyPOSIX implements POSIX {
         return posix().lseek(fd, offset, whence);
     }
 
+    public long lseekLong(int fd, long offset, int whence) {
+        return posix().lseekLong(fd, offset, whence);
+    }
+
     public int pipe(int[] fds) {
         return posix().pipe(fds);
     }

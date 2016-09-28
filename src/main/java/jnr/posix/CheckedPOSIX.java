@@ -495,6 +495,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.lseek(fd, offset, whence); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public long lseekLong(int fd, long offset, int whence) {
+        try { return posix.lseekLong(fd, offset, whence); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int pipe(int[] fds) {
         try {return posix.pipe(fds); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

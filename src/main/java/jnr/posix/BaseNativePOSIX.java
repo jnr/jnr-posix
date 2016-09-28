@@ -647,6 +647,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int lseek(int fd, long offset, int whence) {
+        return (int) libc().lseek(fd, offset, whence);
+    }
+
+    public long lseekLong(int fd, long offset, int whence) {
         return libc().lseek(fd, offset, whence);
     }
 

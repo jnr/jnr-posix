@@ -132,7 +132,7 @@ public interface LibC {
     int pread(int fd, @Out byte[] src, int len, int offset);
     int pwrite(int fd, @In ByteBuffer src, int len, int offset);
     int pwrite(int fd, @In byte[] src, int len, int offset);
-    int lseek(int fd, long offset, int whence);
+    long lseek(int fd, long offset, int whence);
     int close(int fd);
     int execv(CharSequence path, @In CharSequence... argv);
     int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);
