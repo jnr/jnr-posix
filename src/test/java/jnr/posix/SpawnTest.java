@@ -32,7 +32,7 @@ public class SpawnTest {
     public static void setUpClass() throws Exception {
         if (Platform.getNativePlatform().isUnix()) {
             posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-            libc = Library.loadLibrary(LibC.class, "c");
+            libc = Library.loadLibrary(LibC.class, jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName());
         }
     }
 
