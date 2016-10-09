@@ -164,5 +164,7 @@ public interface LibC {
     int syscall(int number, int arg1, int arg2, int arg3);
 
     int daemon(int nochdir, int noclose);
+
+    int getgroups(int size, long[] groups);
 }
 

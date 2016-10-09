@@ -546,4 +546,12 @@ final class CheckedPOSIX implements POSIX {
     public int daemon(int nochdir, int noclose) {
         try {return posix.daemon(nochdir, noclose); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public long[] getgroups() {
+        try {return posix.getgroups(); } catch (UnsatisfiedLinkError ule) { return null; }
+    }
+
+    public int getgroups(int size, long[] groups) {
+        try {return posix.getgroups(size, groups); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

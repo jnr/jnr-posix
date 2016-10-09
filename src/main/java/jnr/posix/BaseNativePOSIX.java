@@ -18,6 +18,7 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -781,4 +782,26 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().daemon(nochdir, noclose);
     }
 
+    @Override
+    public long[] getgroups() {
+        final int size = getgroups(0, null);
+        final long[] groups = new long[size];
+
+        final int actualSize = getgroups(size, groups);
+
+        if (actualSize == -1) {
+            return null;
+        }
+
+        if (actualSize < size) {
+            return Arrays.copyOfRange(groups, 0, actualSize);
+        }
+
+        return groups;
+    }
+
+    @Override
+    public int getgroups(int size, long[] groups) {
+        return libc().getgroups(size, groups);
+    }
 }
