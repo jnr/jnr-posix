@@ -507,7 +507,7 @@ final class JavaPOSIX implements POSIX {
 
     private int unimplementedInt(String message) {
         handler.unimplementedError(message);
-        
+
         return -1;
     }
 
@@ -703,6 +703,16 @@ final class JavaPOSIX implements POSIX {
     public int daemon(int nochdir, int noclose) {
         handler.unimplementedError("daemon");
         return unimplementedInt("daemon not available for Java");
+    }
+
+    public long[] getgroups() {
+        handler.unimplementedError("getgroups");
+        return null;
+    }
+
+    public int getgroups(int size, long[] groups) {
+        handler.unimplementedError("getgroups");
+        return unimplementedInt("getgroups not available for Java");
     }
 
     static final class LoginInfo {

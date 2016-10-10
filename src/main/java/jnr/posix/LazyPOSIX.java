@@ -543,4 +543,12 @@ final class LazyPOSIX implements POSIX {
     public int daemon(int nochdir, int noclose) {
         return posix().daemon(nochdir, noclose);
     }
+
+    public long[] getgroups() {
+        return posix().getgroups();
+    }
+
+    public int getgroups(int size, long[] groups) {
+        return posix().getgroups(size, groups);
+    }
 }

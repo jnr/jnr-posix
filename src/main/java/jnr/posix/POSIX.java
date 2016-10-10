@@ -178,4 +178,7 @@ public interface  POSIX {
     int mkfifo(String filename, int mode);
 
     int daemon(int nochdir, int noclose);
+
+    long[] getgroups();
+    int getgroups(int size, long[] groups);
 }
