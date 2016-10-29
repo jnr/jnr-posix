@@ -558,7 +558,7 @@ public class FileTest {
 
     @Test
     public void lseekTest() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
+        if (Platform.IS_MAC) {
             int fd = posix.open("/dev/zero", 0, 0);
 
             // use 2^33 to ensure we're out of int range
