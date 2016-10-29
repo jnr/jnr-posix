@@ -551,4 +551,8 @@ final class LazyPOSIX implements POSIX {
     public int getgroups(int size, long[] groups) {
         return posix().getgroups(size, groups);
     }
+
+    public String nl_langinfo(int item) {
+        return posix().nl_langinfo(item);
+    }
 }

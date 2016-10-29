@@ -804,4 +804,9 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public int getgroups(int size, long[] groups) {
         return libc().getgroups(size, groups);
     }
+
+    @Override
+    public String nl_langinfo(int item) {
+        return libc().nl_langinfo(item);
+    }
 }
