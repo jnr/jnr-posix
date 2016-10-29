@@ -554,4 +554,8 @@ final class CheckedPOSIX implements POSIX {
     public int getgroups(int size, long[] groups) {
         try {return posix.getgroups(size, groups); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public String nl_langinfo(int item) {
+        try {return posix.nl_langinfo(item); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
+    }
 }

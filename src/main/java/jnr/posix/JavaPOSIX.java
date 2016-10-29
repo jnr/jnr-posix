@@ -715,6 +715,11 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("getgroups not available for Java");
     }
 
+    public String nl_langinfo(int item) {
+        handler.unimplementedError("nl_langinfo");
+        return null;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");

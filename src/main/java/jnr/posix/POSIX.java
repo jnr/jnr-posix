@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import jnr.constants.platform.Signal;
 
-public interface  POSIX {
+public interface POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
 
     /**
@@ -181,4 +181,6 @@ public interface  POSIX {
 
     long[] getgroups();
     int getgroups(int size, long[] groups);
+
+    String nl_langinfo(int item);
 }
