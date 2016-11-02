@@ -134,7 +134,7 @@ public interface LibC {
     int pwrite(int fd, @In byte[] src, int len, int offset);
     long lseek(int fd, long offset, int whence);
     int close(int fd);
-    int execv(CharSequence path, @In CharSequence... argv);
+    int execv(CharSequence path, @In CharSequence[] argv);
     int execve(CharSequence path, @In CharSequence[] argv, @In CharSequence[] envp);
     int chdir(CharSequence path);
 
