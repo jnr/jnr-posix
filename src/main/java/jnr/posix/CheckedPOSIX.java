@@ -558,4 +558,9 @@ final class CheckedPOSIX implements POSIX {
     public String nl_langinfo(int item) {
         try {return posix.nl_langinfo(item); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
+
+    @Override
+    public String strerror(int code) {
+        try {return posix.strerror(code); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
+    }
 }

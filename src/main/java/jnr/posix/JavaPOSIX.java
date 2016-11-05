@@ -720,6 +720,12 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
+    @Override
+    public String strerror(int code) {
+        handler.unimplementedError("strerror");
+        return null;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
