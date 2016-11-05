@@ -115,6 +115,7 @@ public interface POSIX {
     int wait(int[] status);
     int errno();
     void errno(int value);
+    String strerror(int code);
     int chdir(String path);
     boolean isNative();
     /** Returns null if isNative returns false. */

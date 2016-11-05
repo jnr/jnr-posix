@@ -168,5 +168,7 @@ public interface LibC {
     int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
+
+    String strerror(int errno);
 }
 
