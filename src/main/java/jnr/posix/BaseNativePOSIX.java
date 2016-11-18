@@ -785,7 +785,8 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     @Override
     public long[] getgroups() {
         final int size = getgroups(0, null);
-        final long[] groups = new long[size];
+        final int[] groups = new int[size];
+        final long[] castGroups = new long[size];
 
         final int actualSize = getgroups(size, groups);
 
@@ -793,15 +794,19 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             return null;
         }
 
-        if (actualSize < size) {
-            return Arrays.copyOfRange(groups, 0, actualSize);
+        for (int i = 0; i < actualSize; i++) {
+            castGroups[i] = groups[i] & 0xFFFFFFFFL;
         }
 
-        return groups;
+        if (actualSize < size) {
+            return Arrays.copyOfRange(castGroups, 0, actualSize);
+        }
+
+        return castGroups;
     }
 
     @Override
-    public int getgroups(int size, long[] groups) {
+    public int getgroups(int size, int[] groups) {
         return libc().getgroups(size, groups);
     }
 

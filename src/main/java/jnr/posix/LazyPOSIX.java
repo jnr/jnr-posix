@@ -548,7 +548,7 @@ final class LazyPOSIX implements POSIX {
         return posix().getgroups();
     }
 
-    public int getgroups(int size, long[] groups) {
+    public int getgroups(int size, int[] groups) {
         return posix().getgroups(size, groups);
     }
 

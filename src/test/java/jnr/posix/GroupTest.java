@@ -1,8 +1,12 @@
 
 package jnr.posix;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import jnr.constants.platform.LangInfo;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -76,6 +80,41 @@ public class GroupTest {
                 assertNotNull(grp.getGID());
                 for (String member : grp.getMembers()) {
                     assertNotNull(member);
+                }
+            }
+        }
+    }
+
+    @Test
+    public void getgroups() throws Throwable {
+        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+            InputStreamReader isr = null;
+            BufferedReader reader = null;
+
+            try {
+                isr = new InputStreamReader(Runtime.getRuntime().exec("id -G").getInputStream());
+                reader = new BufferedReader(isr);
+
+                String[] groupIdsAsStrings = reader.readLine().split(" ");
+                long[] expectedGroupIds = new long[groupIdsAsStrings.length];
+
+                for (int i = 0; i < groupIdsAsStrings.length; i++) {
+                    expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
+                }
+
+                long[] actualGroupIds = posix.getgroups();
+
+                Arrays.sort(expectedGroupIds);
+                Arrays.sort(actualGroupIds);
+
+                assertArrayEquals(expectedGroupIds, actualGroupIds);
+            } finally {
+                if (reader != null) {
+                    reader.close();
+                }
+
+                if (isr != null) {
+                    isr.close();
                 }
             }
         }

@@ -180,7 +180,7 @@ public interface POSIX {
     int daemon(int nochdir, int noclose);
 
     long[] getgroups();
-    int getgroups(int size, long[] groups);
+    int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
 }

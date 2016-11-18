@@ -710,7 +710,7 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
-    public int getgroups(int size, long[] groups) {
+    public int getgroups(int size, int[] groups) {
         handler.unimplementedError("getgroups");
         return unimplementedInt("getgroups not available for Java");
     }

@@ -165,7 +165,7 @@ public interface LibC {
 
     int daemon(int nochdir, int noclose);
 
-    int getgroups(int size, long[] groups);
+    int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
 }
