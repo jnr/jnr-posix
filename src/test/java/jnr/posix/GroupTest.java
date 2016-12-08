@@ -2,6 +2,7 @@
 package jnr.posix;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,35 +89,61 @@ public class GroupTest {
     @Test
     public void getgroups() throws Throwable {
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            InputStreamReader isr = null;
-            BufferedReader reader = null;
+            String[] groupIdsAsStrings = exec("id -G").split(" ");
+            long[] expectedGroupIds = new long[groupIdsAsStrings.length];
 
-            try {
-                isr = new InputStreamReader(Runtime.getRuntime().exec("id -G").getInputStream());
-                reader = new BufferedReader(isr);
+            for (int i = 0; i < groupIdsAsStrings.length; i++) {
+                expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
+            }
 
-                String[] groupIdsAsStrings = reader.readLine().split(" ");
-                long[] expectedGroupIds = new long[groupIdsAsStrings.length];
+            long[] actualGroupIds = posix.getgroups();
 
-                for (int i = 0; i < groupIdsAsStrings.length; i++) {
-                    expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
-                }
+            // getgroups does not specify whether the effective group ID is included along with the supplementary
+            // group IDs. However, `id -G` always includes all group IDs. So, we must do something of a fuzzy match.
+            // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
+            // effective group ID before comparing the two arrays.
+            if (actualGroupIds.length == expectedGroupIds.length - 1) {
+                long effectiveGroupId = Long.parseLong(exec("id -g"));
+                expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
+            }
 
-                long[] actualGroupIds = posix.getgroups();
+            Arrays.sort(expectedGroupIds);
+            Arrays.sort(actualGroupIds);
 
-                Arrays.sort(expectedGroupIds);
-                Arrays.sort(actualGroupIds);
+            assertArrayEquals(expectedGroupIds, actualGroupIds);
+        }
+    }
 
-                assertArrayEquals(expectedGroupIds, actualGroupIds);
-            } finally {
-                if (reader != null) {
-                    reader.close();
-                }
+    private String exec(String command) throws IOException {
+        InputStreamReader isr = null;
+        BufferedReader reader = null;
 
-                if (isr != null) {
-                    isr.close();
-                }
+        try {
+            isr = new InputStreamReader(Runtime.getRuntime().exec(command).getInputStream());
+            reader = new BufferedReader(isr);
+
+            return reader.readLine();
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+
+            if (isr != null) {
+                isr.close();
             }
         }
+    }
+
+    private long[] removeElement(long[] array, long value) {
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == value) {
+                long[] ret = new long[array.length - 1];
+                System.arraycopy(array, 0, ret, 0, i);
+                System.arraycopy(array, i + 1, ret, i, array.length - i - 1);
+                return ret;
+            }
+        }
+
+        return array;
     }
 }
