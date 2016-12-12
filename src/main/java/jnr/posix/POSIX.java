@@ -145,14 +145,25 @@ public interface POSIX {
     int close(int fd);
     int unlink(CharSequence path);
     int open(CharSequence path, int flags, int perm);
-    int write(int fd, byte[] buf, int n);
+
+    long read(int fd, byte[] buf, long n);
+    long write(int fd, byte[] buf, long n);
+    long read(int fd, ByteBuffer buf, long n);
+    long write(int fd, ByteBuffer buf, long n);
+    long pread(int fd, byte[] buf, long n, long offset);
+    long pwrite(int fd, byte[] buf, long n, long offset);
+    long pread(int fd, ByteBuffer buf, long n, long offset);
+    long pwrite(int fd, ByteBuffer buf, long n, long offset);
+
     int read(int fd, byte[] buf, int n);
-    int pwrite(int fd, byte[] buf, int n, int offset);
-    int pread(int fd, byte[] buf, int n, int offset);
-    int write(int fd, ByteBuffer buf, int n);
+    int write(int fd, byte[] buf, int n);
     int read(int fd, ByteBuffer buf, int n);
-    int pwrite(int fd, ByteBuffer buf, int n, int offset);
+    int write(int fd, ByteBuffer buf, int n);
+    int pread(int fd, byte[] buf, int n, int offset);
+    int pwrite(int fd, byte[] buf, int n, int offset);
     int pread(int fd, ByteBuffer buf, int n, int offset);
+    int pwrite(int fd, ByteBuffer buf, int n, int offset);
+
     int lseek(int fd, long offset, int whence);
     long lseekLong(int fd, long offset, int whence);
     int pipe(int[] fds);

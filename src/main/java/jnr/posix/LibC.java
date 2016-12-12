@@ -33,11 +33,9 @@ import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.ffi.Variable;
 import jnr.ffi.annotations.*;
-import jnr.ffi.types.clock_t;
+import jnr.ffi.types.*;
 
 import java.nio.ByteBuffer;
-
-import jnr.ffi.types.intptr_t;
 
 public interface LibC {
     CharSequence crypt(CharSequence key, CharSequence salt);
@@ -124,14 +122,25 @@ public interface LibC {
     int getpriority(int which, int who);
     int setpriority(int which, int who, int prio);
     @IgnoreError int isatty(int fd);
-    int read(int fd, @Out ByteBuffer dst, int len);
-    int write(int fd, @In ByteBuffer src, int len);
+
+    @ssize_t long read(int fd, @Out byte[] dst, @size_t long len);
+    @ssize_t long write(int fd, @In byte[] src, @size_t long len);
+    @ssize_t long read(int fd, @Out ByteBuffer dst, @size_t long len);
+    @ssize_t long write(int fd, @In ByteBuffer src, @size_t long len);
+    @ssize_t long pread(int fd, @Out byte[] src, @size_t long len, @off_t long offset);
+    @ssize_t long pwrite(int fd, @In byte[] src, @size_t long len, @off_t long offset);
+    @ssize_t long pread(int fd, @Out ByteBuffer src, @size_t long len, @off_t long offset);
+    @ssize_t long pwrite(int fd, @In ByteBuffer src, @size_t long len, @off_t long offset);
+
     int read(int fd, @Out byte[] dst, int len);
     int write(int fd, @In byte[] src, int len);
-    int pread(int fd, @Out ByteBuffer src, int len, int offset);
+    int read(int fd, @Out ByteBuffer dst, int len);
+    int write(int fd, @In ByteBuffer src, int len);
     int pread(int fd, @Out byte[] src, int len, int offset);
-    int pwrite(int fd, @In ByteBuffer src, int len, int offset);
     int pwrite(int fd, @In byte[] src, int len, int offset);
+    int pread(int fd, @Out ByteBuffer src, int len, int offset);
+    int pwrite(int fd, @In ByteBuffer src, int len, int offset);
+
     long lseek(int fd, long offset, int whence);
     int close(int fd);
     int execv(CharSequence path, @In CharSequence[] argv);

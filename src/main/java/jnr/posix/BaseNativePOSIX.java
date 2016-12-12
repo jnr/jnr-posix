@@ -615,34 +615,52 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().open(path, flags, perm);
     }
 
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         return libc().read(fd, buf, n);
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         return libc().write(fd, buf, n);
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         return libc().read(fd, buf, n);
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         return libc().write(fd, buf, n);
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         return libc().pread(fd, buf, n, offset);
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         return libc().pwrite(fd, buf, n, offset);
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+    public int write(int fd, byte[] buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        return libc().read(fd, buf, n);
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        return libc().write(fd, buf, n);
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return libc().pread(fd, buf, n, offset);
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return libc().pwrite(fd, buf, n, offset);
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         return libc().pread(fd, buf, n, offset);
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         return libc().pwrite(fd, buf, n, offset);
     }

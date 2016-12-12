@@ -459,34 +459,52 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.open(path, flags, perm); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int write(int fd, byte[] buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        try { return posix.read(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        try { return posix.write(fd, buf, n); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         try { return posix.pread(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         try { return posix.pwrite(fd, buf, n, offset); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

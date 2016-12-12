@@ -572,48 +572,83 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
-    public int read(int fd, byte[] buf, int n) {
+
+    public long read(int fd, byte[] buf, long n) {
         handler.unimplementedError("read");
 
         return -1;
     }
-
-    public int write(int fd, byte[] buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         handler.unimplementedError("write");
 
         return -1;
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
+    public long read(int fd, ByteBuffer buf, long n) {
         handler.unimplementedError("read");
 
         return -1;
     }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, ByteBuffer buf, long n) {
         handler.unimplementedError("write");
 
         return -1;
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long pread(int fd, byte[] buf, long n, long offset) {
         handler.unimplementedError("pread");
 
         return -1;
     }
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        handler.unimplementedError("pwrite");
 
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return -1;
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         handler.unimplementedError("pwrite");
 
         return -1;
     }
 
+    public int read(int fd, byte[] buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+    public int write(int fd, byte[] buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("read");
+
+        return -1;
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        handler.unimplementedError("write");
+
+        return -1;
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pread");
+
+        return -1;
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        handler.unimplementedError("pwrite");
+
+        return -1;
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         handler.unimplementedError("pread");
 
         return -1;
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         handler.unimplementedError("pwrite");
 

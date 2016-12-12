@@ -456,34 +456,53 @@ final class LazyPOSIX implements POSIX {
         return posix().open(path, flags, perm);
     }
 
-    public int write(int fd, byte[] buf, int n) {
-        return posix().write(fd, buf, n);
-    }
-
-    public int read(int fd, byte[] buf, int n) {
+    public long read(int fd, byte[] buf, long n) {
         return posix().read(fd, buf, n);
     }
-
-    public int read(int fd, ByteBuffer buf, int n) {
-        return posix().read(fd, buf, n);
-    }
-
-    public int write(int fd, ByteBuffer buf, int n) {
+    public long write(int fd, byte[] buf, long n) {
         return posix().write(fd, buf, n);
     }
-
-    public int pread(int fd, byte[] buf, int n, int offset) {
+    public long read(int fd, ByteBuffer buf, long n) {
+        return posix().read(fd, buf, n);
+    }
+    public long write(int fd, ByteBuffer buf, long n) {
+        return posix().write(fd, buf, n);
+    }
+    public long pread(int fd, byte[] buf, long n, long offset) {
         return posix().pread(fd, buf, n, offset);
     }
-
-    public int pwrite(int fd, byte[] buf, int n, int offset) {
+    public long pwrite(int fd, byte[] buf, long n, long offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
+    public long pread(int fd, ByteBuffer buf, long n, long offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+    public long pwrite(int fd, ByteBuffer buf, long n, long offset) {
         return posix().pwrite(fd, buf, n, offset);
     }
 
+    public int read(int fd, byte[] buf, int n)
+    {
+        return posix().read(fd, buf, n);
+    }
+    public int write(int fd, byte[] buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+    public int read(int fd, ByteBuffer buf, int n) {
+        return posix().read(fd, buf, n);
+    }
+    public int write(int fd, ByteBuffer buf, int n) {
+        return posix().write(fd, buf, n);
+    }
+    public int pread(int fd, byte[] buf, int n, int offset) {
+        return posix().pread(fd, buf, n, offset);
+    }
+    public int pwrite(int fd, byte[] buf, int n, int offset) {
+        return posix().pwrite(fd, buf, n, offset);
+    }
     public int pread(int fd, ByteBuffer buf, int n, int offset) {
         return posix().pread(fd, buf, n, offset);
     }
-
     public int pwrite(int fd, ByteBuffer buf, int n, int offset) {
         return posix().pwrite(fd, buf, n, offset);
     }
