@@ -579,4 +579,14 @@ final class LazyPOSIX implements POSIX {
     public String strerror(int code) {
         return posix().strerror(code);
     }
+
+    @Override
+    public Timespec allocateTimespec() {
+        return posix().allocateTimespec();
+    }
+
+    @Override
+    public int clock_gettime(int clock, Timespec time) {
+        return posix().clock_gettime(clock, time);
+    }
 }

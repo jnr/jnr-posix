@@ -179,5 +179,7 @@ public interface LibC {
     String nl_langinfo(int item);
 
     String strerror(int errno);
+
+    int clock_gettime(int clockID, Timespec time);
 }
 

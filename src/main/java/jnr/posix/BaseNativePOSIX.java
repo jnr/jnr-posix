@@ -837,4 +837,14 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public String strerror(int code) {
         return libc().strerror(code);
     }
+
+    @Override
+    public Timespec allocateTimespec() {
+        return new DefaultNativeTimespec(getRuntime());
+    }
+
+    @Override
+    public int clock_gettime(int clock, Timespec time) {
+        return libc().clock_gettime(clock, time);
+    }
 }

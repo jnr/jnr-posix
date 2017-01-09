@@ -761,6 +761,18 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
+    @Override
+    public Timespec allocateTimespec() {
+        handler.unimplementedError("allocateTimespec");
+        return null;
+    }
+
+    @Override
+    public int clock_gettime(int clock, Timespec time) {
+        handler.unimplementedError("clock_gettime");
+        return -1;
+    }
+
     static final class LoginInfo {
         public static final int UID = IDHelper.getInt("-u");
         public static final int GID = IDHelper.getInt("-g");
