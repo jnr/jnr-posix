@@ -31,6 +31,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
+import jnr.ffi.Struct;
 import jnr.ffi.Variable;
 import jnr.ffi.annotations.*;
 import jnr.ffi.types.*;
@@ -180,6 +181,6 @@ public interface LibC {
 
     String strerror(int errno);
 
-    int clock_gettime(int clockID, Timespec time);
+    int clock_gettime(int clockID, @Out @Transient Struct time);
 }
 

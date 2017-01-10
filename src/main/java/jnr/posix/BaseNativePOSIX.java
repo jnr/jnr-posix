@@ -845,6 +845,6 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     @Override
     public int clock_gettime(int clock, Timespec time) {
-        return libc().clock_gettime(clock, time);
+        return libc().clock_gettime(clock, (Struct) time);
     }
 }
