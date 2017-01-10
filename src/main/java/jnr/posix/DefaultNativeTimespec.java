@@ -1,8 +1,6 @@
 package jnr.posix;
 
-import jnr.ffi.Struct;
-
-public final class DefaultNativeTimespec extends Struct implements Timespec {
+public final class DefaultNativeTimespec extends Timespec {
     public final SignedLong ts_sec = new SignedLong();
     public final SignedLong ts_nsec = new SignedLong();
 

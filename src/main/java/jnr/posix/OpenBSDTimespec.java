@@ -1,8 +1,6 @@
 package jnr.posix;
 
-import jnr.ffi.Struct;
-
-public final class OpenBSDTimespec extends Struct implements Timespec {
+public final class OpenBSDTimespec extends Timespec {
     public final Signed64 ts_sec = new Signed64();
     public final SignedLong ts_nsec = new SignedLong();
 

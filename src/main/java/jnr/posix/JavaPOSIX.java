@@ -763,22 +763,12 @@ final class JavaPOSIX implements POSIX {
 
     @Override
     public Timespec allocateTimespec() {
-        return new JavaTimespec();
+        handler.unimplementedError("allocateTimespec");
+        return null;
     }
 
     @Override
     public int clock_gettime(int clock, Timespec time) {
-        if (clock == 0) {
-            long millis = System.currentTimeMillis();
-            long sec = millis / 1000;
-            long nsec = millis % 1000 * 1000000;
-
-            time.sec(sec);
-            time.nsec(nsec);
-
-            return 0;
-        }
-
         handler.unimplementedError("clock_gettime");
         return -1;
     }
