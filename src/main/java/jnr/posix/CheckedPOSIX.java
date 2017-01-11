@@ -581,4 +581,14 @@ final class CheckedPOSIX implements POSIX {
     public String strerror(int code) {
         try {return posix.strerror(code); } catch (UnsatisfiedLinkError ule) { return unimplementedString(); }
     }
+
+    @Override
+    public Timeval allocateTimeval() {
+        try {return posix.allocateTimeval(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    @Override
+    public int gettimeofday(Timeval tv) {
+        try {return posix.gettimeofday(tv); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
 }

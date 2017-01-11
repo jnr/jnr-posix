@@ -170,7 +170,7 @@ public interface POSIX {
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
     int rename(CharSequence oldName, CharSequence newName);
-    String getcwd();
+    String getcwd();th
 
     int socketpair(int domain, int type, int protocol, int[] fds);
     int sendmsg(int socket, MsgHdr message, int flags);
@@ -195,4 +195,7 @@ public interface POSIX {
     int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
+
+    Timeval allocateTimeval();
+    int gettimeofday(Timeval tv);
 }
