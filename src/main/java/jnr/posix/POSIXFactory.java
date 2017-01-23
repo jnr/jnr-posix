@@ -170,7 +170,7 @@ public class POSIXFactory {
     private static String[] libraries() {
         switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
             case LINUX:
-                return new String[] { "libc.so.6", "libcrypt.so.1" };
+                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName(), "libcrypt.so.1" };
             
             case SOLARIS:
                 return new String[] { "socket", "nsl", jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName() };
