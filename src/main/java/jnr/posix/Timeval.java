@@ -7,4 +7,8 @@ abstract public class Timeval extends Struct {
         super(runtime);
     }
     abstract public void setTime(long[] timeval);
+    public abstract void sec(long sec);
+    public abstract void usec(long usec);
+    public abstract long sec();
+    public abstract long usec();
 }

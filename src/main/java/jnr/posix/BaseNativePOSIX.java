@@ -837,4 +837,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     public String strerror(int code) {
         return libc().strerror(code);
     }
+
+    @Override
+    public Timeval allocateTimeval() { return new DefaultNativeTimeval(getRuntime()); }
+
+    @Override
+    public int gettimeofday(Timeval tv) { return libc().gettimeofday(tv, 0); }
 }
