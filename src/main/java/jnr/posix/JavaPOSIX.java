@@ -755,6 +755,11 @@ final class JavaPOSIX implements POSIX {
         return null;
     }
 
+    public String setlocale(int category, String locale) {
+        handler.unimplementedError("setlocale");
+        return null;
+    }
+
     @Override
     public String strerror(int code) {
         handler.unimplementedError("strerror");

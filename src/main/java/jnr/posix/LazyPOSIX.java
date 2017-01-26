@@ -575,6 +575,10 @@ final class LazyPOSIX implements POSIX {
         return posix().nl_langinfo(item);
     }
 
+    public String setlocale(int category, String locale) {
+        return posix().setlocale(category, locale);
+    }
+
     @Override
     public String strerror(int code) {
         return posix().strerror(code);

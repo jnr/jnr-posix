@@ -834,6 +834,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     @Override
+    public String setlocale(int category, String locale) {
+        return libc().setlocale(category, locale);
+    }
+
+    @Override
     public String strerror(int code) {
         return libc().strerror(code);
     }

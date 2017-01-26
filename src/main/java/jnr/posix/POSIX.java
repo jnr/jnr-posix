@@ -195,6 +195,7 @@ public interface POSIX {
     int getgroups(int size, int[] groups);
 
     String nl_langinfo(int item);
+    String setlocale(int category, String locale);
 
     Timeval allocateTimeval();
     int gettimeofday(Timeval tv);
