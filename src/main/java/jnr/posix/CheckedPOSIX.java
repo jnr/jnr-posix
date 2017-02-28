@@ -236,6 +236,11 @@ final class CheckedPOSIX implements POSIX {
     public boolean isatty(FileDescriptor descriptor) {
         try { return posix.isatty(descriptor); } catch (UnsatisfiedLinkError ule) { return unimplementedBool(); }
     }
+
+    public int isatty(int descriptor) {
+        try { return posix.isatty(descriptor); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int kill(int pid, int signal) {
         return kill((long) pid, signal);
     }

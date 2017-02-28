@@ -475,7 +475,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public boolean isatty(FileDescriptor fd) {
-       return libc().isatty(helper.getfd(fd)) != 0;
+       return isatty(helper.getfd(fd)) != 0;
+    }
+
+    public int isatty(int fd) {
+        return libc().isatty(fd);
     }
 
     public int errno() {

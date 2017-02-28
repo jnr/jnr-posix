@@ -220,18 +220,22 @@ public class JavaLibCHelper {
 
         return -1;
     }
-    
-    public static HANDLE gethandle(FileDescriptor descriptor) {
-        if (descriptor == null || FILE_DESCRIPTOR_HANDLE == null) return HANDLE.valueOf(-1);
-        try {
-            return HANDLE.valueOf(FILE_DESCRIPTOR_HANDLE.getLong(descriptor));
-        } catch (SecurityException e) {
-        } catch (IllegalArgumentException e) {
-        } catch (IllegalAccessException e) {
-        }
 
-        return HANDLE.valueOf(-1);
-    }
+     public static HANDLE gethandle(FileDescriptor descriptor) {
+         if (descriptor == null || FILE_DESCRIPTOR_HANDLE == null) return HANDLE.valueOf(-1);
+         try {
+             return gethandle(FILE_DESCRIPTOR_HANDLE.getLong(descriptor));
+         } catch (SecurityException e) {
+         } catch (IllegalArgumentException e) {
+         } catch (IllegalAccessException e) {
+         }
+
+         return HANDLE.valueOf(-1);
+     }
+
+     public static HANDLE gethandle(long descriptor) {
+         return HANDLE.valueOf(descriptor);
+     }
 
     public String getlogin() {
         return System.getProperty("user.name");

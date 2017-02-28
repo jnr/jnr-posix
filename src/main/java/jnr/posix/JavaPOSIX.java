@@ -253,6 +253,12 @@ final class JavaPOSIX implements POSIX {
                 || fd == FileDescriptor.err);
     }
 
+    public int isatty(int fd) {
+        return (fd == 0
+                || fd == 1
+                || fd == 2) ? 1 : 0;
+    }
+
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }

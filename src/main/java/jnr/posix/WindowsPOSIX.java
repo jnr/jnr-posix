@@ -567,6 +567,14 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
     }
 
     @Override
+    public int isatty(int fd) {
+        HANDLE handle = JavaLibCHelper.gethandle(fd);
+
+        int type = wlibc().GetFileType(handle);
+        return type == FILE_TYPE_CHAR ? 1 : 0;
+    }
+
+    @Override
     public int mkdir(String path, int mode) {
         WString widePath = WString.path(path);
         int res = -1;
