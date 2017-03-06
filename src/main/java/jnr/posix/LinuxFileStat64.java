@@ -2,7 +2,7 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
-public final class LinuxFileStat64 extends BaseFileStat {
+public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFileStat {
     public static final class Layout extends StructLayout {
 
         public Layout(jnr.ffi.Runtime runtime) {

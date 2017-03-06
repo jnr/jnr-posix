@@ -33,7 +33,7 @@ package jnr.posix;
 
 import jnr.ffi.*;
 
-public final class LinuxFileStat32 extends BaseFileStat {
+public final class LinuxFileStat32 extends BaseFileStat implements NanosecondFileStat {
     private static final class Layout extends StructLayout {
 
         private Layout(jnr.ffi.Runtime runtime) {
@@ -75,6 +75,7 @@ public final class LinuxFileStat32 extends BaseFileStat {
         return layout.st_atim_sec.get(memory);
     }
 
+    @Override
     public long aTimeNanoSecs() {
         return layout.st_atim_nsec.get(memory);
     }
@@ -91,6 +92,7 @@ public final class LinuxFileStat32 extends BaseFileStat {
         return layout.st_ctim_sec.get(memory);
     }
 
+    @Override
     public long cTimeNanoSecs() {
         return layout.st_ctim_nsec.get(memory);
     }
@@ -115,6 +117,7 @@ public final class LinuxFileStat32 extends BaseFileStat {
         return layout.st_mtim_sec.get(memory);
     }
 
+    @Override
     public long mTimeNanoSecs() {
         return layout.st_mtim_nsec.get(memory);
     }

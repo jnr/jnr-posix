@@ -42,11 +42,10 @@ public class FileTest {
             assertEquals("atime seconds failed", 800, stat.atime());
             assertEquals("mtime seconds failed", 900, stat.mtime());
 
-            // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
-            // representative.  We really just want to verify that the usec portion of the timeval is passed throug
-            // to the POSIX call.
-            if (stat instanceof LinuxFileStat64) {
-                LinuxFileStat64 linuxStat = (LinuxFileStat64) stat;
+            // The nano secs part is available in other stat implementations. We really just want to verify that the
+            // nsec portion of the timeval is passed through to the POSIX call.
+            if (stat instanceof NanosecondFileStat) {
+                NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
                 assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
                 assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
@@ -98,8 +97,8 @@ public class FileTest {
             // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
             // representative.  We really just want to verify that the usec portion of the timeval is passed throug
             // to the POSIX call.
-            if (stat instanceof LinuxFileStat64) {
-                LinuxFileStat64 linuxStat = (LinuxFileStat64) stat;
+            if (stat instanceof NanosecondFileStat) {
+                NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
                 assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
                 assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());

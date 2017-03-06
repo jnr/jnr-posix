@@ -37,7 +37,7 @@ import jnr.ffi.StructLayout;
 /**
  * This corresponds with struct stat64x on AIX
  */
-public final class AixFileStat extends BaseFileStat {
+public final class AixFileStat extends BaseFileStat implements NanosecondFileStat {
     private static final class Layout extends StructLayout {
 
         private Layout(jnr.ffi.Runtime runtime) {
@@ -131,5 +131,20 @@ public final class AixFileStat extends BaseFileStat {
 
     public int uid() {
         return (int) layout.st_uid.get(memory);
+    }
+
+    @Override
+    public long aTimeNanoSecs() {
+        return layout.st_atime_n.get(memory);
+    }
+
+    @Override
+    public long cTimeNanoSecs() {
+        return layout.st_ctime_n.get(memory);
+    }
+
+    @Override
+    public long mTimeNanoSecs() {
+        return layout.st_mtime_n.get(memory);
     }
 }

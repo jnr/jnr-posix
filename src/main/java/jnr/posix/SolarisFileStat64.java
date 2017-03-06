@@ -4,7 +4,7 @@ package jnr.posix;
 
 import jnr.ffi.*;
 
-public class SolarisFileStat64 extends BaseFileStat {
+public class SolarisFileStat64 extends BaseFileStat implements NanosecondFileStat {
     static final class Layout extends StructLayout {
 
         Layout(jnr.ffi.Runtime runtime) {
@@ -89,5 +89,20 @@ public class SolarisFileStat64 extends BaseFileStat {
 
     public int uid() {
         return layout.st_uid.get(memory);
+    }
+
+    @Override
+    public long aTimeNanoSecs() {
+        return layout.st_atim_nsec.get(memory);
+    }
+
+    @Override
+    public long cTimeNanoSecs() {
+        return layout.st_ctim_nsec.get(memory);
+    }
+
+    @Override
+    public long mTimeNanoSecs() {
+        return layout.st_mtim_nsec.get(memory);
     }
 }

@@ -33,7 +33,7 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
-public final class MacOSFileStat extends BaseFileStat {
+public final class MacOSFileStat extends BaseFileStat implements NanosecondFileStat {
     public static class Layout extends StructLayout {
 
         public Layout(jnr.ffi.Runtime runtime) {
@@ -120,5 +120,20 @@ public final class MacOSFileStat extends BaseFileStat {
 
     public int uid() {
         return layout.st_uid.get(memory);
+    }
+
+    @Override
+    public long aTimeNanoSecs() {
+        return layout.st_atimensec.get(memory);
+    }
+
+    @Override
+    public long cTimeNanoSecs() {
+        return layout.st_ctimensec.get(memory);
+    }
+
+    @Override
+    public long mTimeNanoSecs() {
+        return layout.st_mtimensec.get(memory);
     }
 }

@@ -33,7 +33,7 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
-public final class OpenBSDFileStat extends BaseFileStat {
+public final class OpenBSDFileStat extends BaseFileStat implements NanosecondFileStat{
     private static final class Layout extends StructLayout {
 
         private Layout(jnr.ffi.Runtime runtime) {
@@ -119,5 +119,20 @@ public final class OpenBSDFileStat extends BaseFileStat {
 
     public int uid() {
         return (int)layout.st_uid.get(memory);
+    }
+
+    @Override
+    public long aTimeNanoSecs() {
+        return layout.st_atimensec.get(memory);
+    }
+
+    @Override
+    public long cTimeNanoSecs() {
+        return layout.st_ctimensec.get(memory);
+    }
+
+    @Override
+    public long mTimeNanoSecs() {
+        return layout.st_mtimensec.get(memory);
     }
 }

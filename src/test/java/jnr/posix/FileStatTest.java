@@ -149,20 +149,11 @@ public class FileStatTest {
                 assertNotNull("posix.stat failed", st);
                 assertEquals(0, result);
 
-                if (Platform.IS_32_BIT) {
-                    LinuxFileStat32 fstat32 = (LinuxFileStat32) stat;
-                    assertTrue(fstat32.cTimeNanoSecs() > 0);
-                    assertTrue(fstat32.mTimeNanoSecs() > 0);
-                    assertTrue(fstat32.aTimeNanoSecs() > 0);
-                    assertEquals(fstat32.cTimeNanoSecs(), fstat32.mTimeNanoSecs());
-                } else {
-                    LinuxFileStat64 fstat64 = (LinuxFileStat64) stat;
-                    assertTrue(fstat64.cTimeNanoSecs() > 0);
-                    assertTrue(fstat64.mTimeNanoSecs() > 0);
-                    assertTrue(fstat64.aTimeNanoSecs() > 0);
-
-                    assertEquals(fstat64.cTimeNanoSecs(), fstat64.mTimeNanoSecs());
-                }
+                NanosecondFileStat fstat32 = (NanosecondFileStat) stat;
+                assertTrue(fstat32.cTimeNanoSecs() > 0);
+                assertTrue(fstat32.mTimeNanoSecs() > 0);
+                assertTrue(fstat32.aTimeNanoSecs() > 0);
+                assertEquals(fstat32.cTimeNanoSecs(), fstat32.mTimeNanoSecs());
             } finally {
                 f.delete();
             }
