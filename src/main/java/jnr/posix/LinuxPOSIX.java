@@ -2,6 +2,7 @@ package jnr.posix;
 
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.Platform;
@@ -42,6 +43,16 @@ final class LinuxPOSIX extends BaseNativePOSIX {
 
     public MsgHdr allocateMsgHdr() {
         return new LinuxMsgHdr(this);
+    }
+
+    @Override
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 80);
+    }
+
+    @Override
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 336);
     }
 
     public SocketMacros socketMacros() {
