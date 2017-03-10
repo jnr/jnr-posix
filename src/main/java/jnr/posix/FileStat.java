@@ -65,6 +65,8 @@ public interface FileStat {
     public long rdev();
     /**
      * Note: Name 'st_size' since Structure has a 'size' method already
+     *
+     * @return size of the stat structure
      */
     public long st_size();
     public int uid();

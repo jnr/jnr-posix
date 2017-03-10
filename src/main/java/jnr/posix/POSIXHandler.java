@@ -28,48 +28,54 @@ public interface POSIXHandler {
     /**
      * Specify that posix method is unimplemented.  In JRuby we generate an
      * exception with this.
+     *
+     * @param methodName the POSIX method that failed
      */
     public void unimplementedError(String methodName);
     
     public void warn(WARNING_ID id, String message, Object... data);
     
     /**
-     * Should we provide verbose output about POSIX activities
+     * @return should we provide verbose output about POSIX activities
      */
     public boolean isVerbose();
 
     /**
-     * Get current working directory of your runtime.
+     * @return current working directory of your runtime.
      */
     public File getCurrentWorkingDirectory();
     
     /**
-     * Get current set of environment variables of your runtime.
+     * @return current set of environment variables of your runtime.
      */
     public String[] getEnv();
     
     /**
-     * Get your runtime's current InputStream
+     * @return your runtime's current input stream
      */
     public InputStream getInputStream();
     
     /**
-     * Get your runtime's current OutputStream
+     * @return your runtime's current output stream
      */
     public PrintStream getOutputStream();
     
     /**
-     * Get your runtimes process ID.  This is only intended for non-native POSIX support (e.g.
+     * Get your runtime's process ID.  This is only intended for non-native POSIX support (e.g.
      * environments where JNA cannot load or security restricted environments).  In JRuby we
      * found a number of packages which would rather have some identity for the runtime than
      * nothing.
      * 
      * Note: If you do not want this to work you impl can just call unimplementedError(String).
+     *
+     * @return your runtime's process ID
      */
     public int getPID();
     
     /**
      * Get your runtime's current ErrorStream
+     *
+     * @return your runtime's current error stream
      */
     public PrintStream getErrorStream();
 }

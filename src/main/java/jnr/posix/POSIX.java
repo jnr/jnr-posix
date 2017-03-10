@@ -31,13 +31,22 @@ public interface POSIX {
     /**
      * Shell expanding and escaping version of exec which handles all the
      * preparation of a command line or command list.
+     *
+     * @param path the path to execute
+     * @param argv the arguments to pass, with arg0 equal to the desired process name
+     * @return does not return if successful; -1 if failed
      */
     int exec(String path, String... argv);
     
     /**
      * Shell expanding and escaping version of exec which handles all the
      * preparation of a command line or command list.
-     */    
+     *
+     * @param path the path to execute
+     * @param argv the arguments to pass, with arg0 equal to the desired process name
+     * @param envp a set of KEY=VALUE environment strings to set for the new execution
+     * @return does not return if successful; -1 if failed
+     */
     int exec(String path, String[] argv, String[] envp);
     
     int execv(String path, String[] argv);  
@@ -119,7 +128,11 @@ public interface POSIX {
     String strerror(int code);
     int chdir(String path);
     boolean isNative();
-    /** Returns null if isNative returns false. */
+    /**
+     * Returns null if isNative returns false.
+     *
+     * @return the LibC implementation for this POSIX
+     */
     LibC libc();
     ProcessMaker newProcessMaker(String... command);
     ProcessMaker newProcessMaker();
@@ -184,6 +197,11 @@ public interface POSIX {
      *
      * @deprecated This version does not pass args because jnr-ffi does not support variadic invocation.
      * @see jnr.posix.POSIX#fcntlInt(int, jnr.constants.platform.Fcntl, int)
+     *
+     * @param fd the file descriptor on which to act
+     * @param fcntlConst the {@link Fcntl} enum value for the flag to set
+     * @param arg arguments for the flag or null if none
+     * @return 0 if success, -1 if error
      */
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
     int fsync(int fd);

@@ -601,6 +601,9 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
      * http://support.microsoft.com/kb/326549
      * I think the logic is based around idea that if you removed all other files it would
      * be empty but will stay marked as read-only.
+     *
+     * @param path the path to remove
+     * @return 0 if successful, -1 if failed
      */
     @Override
     public int rmdir(String path) {
@@ -641,6 +644,7 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
      * @param program to be invoked
      * @param argv is all args including argv0 being what is executed
      * @param path is path to be searched when needed (delimited by ; on windows)
+     * @param envp is a set of KEY=VALUE strings to be set in the child process
      * @return the pid
      */    
     public int aspawn(boolean overlay, String program, String[] argv, String path, String[] envp) {
@@ -728,7 +732,8 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
      * @param overlay is P_OVERLAY if true and P_NOWAIT if false
      * @param command full command string
      * @param program program to be invoked
-     * @param path is path to be searched when needed (delimited by ; on windows)     * 
+     * @param path is path to be searched when needed (delimited by ; on windows)
+     * @param envp is a set of KEY=VALUE strings to be set in the child process
      * @return the pid
      */
     public int spawn(boolean overlay, String command, String program, String path, String[] envp) {

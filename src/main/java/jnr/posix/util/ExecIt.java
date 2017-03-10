@@ -38,7 +38,10 @@ import jnr.posix.POSIXHandler;
 public class ExecIt {
     protected final POSIXHandler handler;
 
-    /** Creates a new instance of ShellLauncher */
+    /** Creates a new instance of ShellLauncher
+     *
+     * @param handler the {@link POSIXHandler} to use
+     */
     public ExecIt(POSIXHandler handler) {
         this.handler = handler;
     }
