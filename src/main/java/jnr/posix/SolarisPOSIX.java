@@ -88,4 +88,12 @@ final class SolarisPOSIX extends BaseNativePOSIX {
             return arg != null ? new SolarisPasswd((Pointer) arg) : null;
         }
     };
+
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
+
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
 }
