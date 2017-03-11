@@ -32,6 +32,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Memory;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
 import jnr.posix.util.MethodName;
@@ -69,4 +70,12 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
             return arg != null ? new FreeBSDPasswd((Pointer) arg) : null;
         }
     };
+
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
+
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
 }

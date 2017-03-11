@@ -32,6 +32,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Memory;
 import jnr.ffi.Struct;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
@@ -79,5 +80,13 @@ final class OpenBSDPOSIX extends BaseNativePOSIX {
             times[1].setTime(mtimeval);
         }
         return libc().utimes(path, times);
+    }
+
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
+
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 8);
     }
 }
