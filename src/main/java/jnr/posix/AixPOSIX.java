@@ -32,6 +32,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
 import jnr.posix.util.MethodName;
@@ -71,4 +72,12 @@ final class AixPOSIX extends BaseNativePOSIX {
             return arg != null ? new AixPasswd((Pointer) arg) : null;
         }
     };
+
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 4);
+    }
+
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 60);
+    }
 }
