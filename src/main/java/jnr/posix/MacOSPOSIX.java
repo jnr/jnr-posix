@@ -25,6 +25,16 @@ final class MacOSPOSIX extends BaseNativePOSIX {
         return new MacOSMsgHdr(this);
     }
 
+    @Override
+    public Pointer allocatePosixSpawnFileActions() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
+
+    @Override
+    public Pointer allocatePosixSpawnattr() {
+        return Memory.allocateDirect(getRuntime(), 8);
+    }
+
     public SocketMacros socketMacros() {
         return MacOSSocketMacros.INSTANCE;
     }

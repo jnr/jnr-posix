@@ -575,7 +575,7 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     private Pointer nativeFileActions(Collection<? extends SpawnFileAction> fileActions) {
-        Pointer nativeFileActions = Memory.allocateDirect(getRuntime(), 128);
+        Pointer nativeFileActions = allocatePosixSpawnFileActions();
         ((UnixLibC) libc()).posix_spawn_file_actions_init(nativeFileActions);
         for (SpawnFileAction action : fileActions) {
             action.act(this, nativeFileActions);
@@ -585,7 +585,7 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     private Pointer nativeSpawnAttributes(Collection<? extends SpawnAttribute> spawnAttributes) {
-        Pointer nativeSpawnAttributes = Memory.allocateDirect(getRuntime(), 128);
+        Pointer nativeSpawnAttributes = allocatePosixSpawnattr();
         ((UnixLibC) libc()).posix_spawnattr_init(nativeSpawnAttributes);
         for (SpawnAttribute action : spawnAttributes) {
             action.set(this, nativeSpawnAttributes);
