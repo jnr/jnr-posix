@@ -834,4 +834,16 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
 
         return -1;
     }
+
+    public Timeval allocateTimeval() {
+        return new DefaultNativeTimeval(getRuntime());
+    }
+
+    // TODO: Replace with Win32 calls. See jnr/jnr-posix#98.
+    public int gettimeofday(Timeval tv) {
+        long currentMillis = System.currentTimeMillis();
+        tv.sec(currentMillis / 1000);
+        tv.usec(currentMillis % 1000 * 1000);
+        return 0;
+    }
 }
