@@ -22,14 +22,14 @@ public class LinuxPOSIXTest {
     @ClassRule
     public static RunningOnLinux rule = new RunningOnLinux();
 
-    private static LinuxPOSIX linuxPOSIX = null;
+    private static Linux linuxPOSIX = null;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         POSIX posix = POSIXFactory.getNativePOSIX();
 
-        if (posix instanceof LinuxPOSIX) {
-            linuxPOSIX = (LinuxPOSIX) posix;
+        if (posix instanceof Linux) {
+            linuxPOSIX = (Linux) posix;
         }
     }
 

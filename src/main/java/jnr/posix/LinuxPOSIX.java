@@ -9,7 +9,7 @@ import jnr.posix.util.Platform;
 
 import java.io.FileDescriptor;
 
-final class LinuxPOSIX extends BaseNativePOSIX {
+final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
     private volatile boolean use_fxstat64 = true;
     private volatile boolean use_lxstat64 = true;
     private volatile boolean use_xstat64 = true;
