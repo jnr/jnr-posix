@@ -196,6 +196,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
     static final public class Syscall {
         static final ABI _ABI_X86_32 = new ABI_X86_32();
         static final ABI _ABI_X86_64 = new ABI_X86_64();
+        static final ABI _ABI_AARCH64 = new ABI_AARCH64();
 
         public static ABI abi() {
             if ("x86_64".equals(Platform.ARCH)) {
@@ -204,6 +205,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 }
             } else if ("i386".equals(Platform.ARCH)) {
                 return _ABI_X86_32;
+            } else if ("aarch64".equals(Platform.ARCH)) {
+                return _ABI_AARCH64;
             }
             return null;
         }
@@ -234,6 +237,18 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             @Override
             public int __NR_ioprio_get() {
                 return 252;
+            }
+        }
+
+        /** @see /usr/include/asm-generic/unistd.h */
+        final static class ABI_AARCH64 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 30;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 31 ;
             }
         }
     }
