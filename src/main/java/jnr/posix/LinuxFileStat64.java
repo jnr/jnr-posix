@@ -9,22 +9,22 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
             super(runtime);
         }
 
-        public final Signed64 st_dev = new Signed64();
-        public final Signed64 st_ino = new Signed64();
-        public final Signed64 st_nlink = new Signed64();
-        public final Signed32 st_mode = new Signed32();
-        public final Signed32 st_uid = new Signed32();
-        public final Signed32 st_gid = new Signed32();
-        public final Signed64 st_rdev = new Signed64();
-        public final Signed64 st_size = new Signed64();
-        public final Signed64 st_blksize = new Signed64();
-        public final Signed64 st_blocks = new Signed64();
-        public final Signed64 st_atime = new Signed64();     // Time of last access (time_t)
-        public final Signed64 st_atimensec = new Signed64(); // Time of last access (nanoseconds)
-        public final Signed64 st_mtime = new Signed64();     // Last data modification time (time_t)
-        public final Signed64 st_mtimensec = new Signed64(); // Last data modification time (nanoseconds)
-        public final Signed64 st_ctime = new Signed64();     // Time of last status change (time_t)
-        public final Signed64 st_ctimensec = new Signed64(); // Time of last status change (nanoseconds)
+        public final dev_t st_dev = new dev_t();
+        public final ino_t st_ino = new ino_t();
+        public final nlink_t st_nlink = new nlink_t();
+        public final mode_t st_mode = new mode_t();
+        public final uid_t st_uid = new uid_t();
+        public final gid_t st_gid = new gid_t();
+        public final dev_t st_rdev = new dev_t();
+        public final size_t st_size = new size_t();
+        public final blksize_t st_blksize = new blksize_t();
+        public final blkcnt_t st_blocks = new blkcnt_t();
+        public final time_t st_atime = new time_t();     // Time of last access (time_t)
+        public final SignedLong st_atimensec = new SignedLong(); // Time of last access (nanoseconds)
+        public final time_t st_mtime = new time_t();     // Last data modification time (time_t)
+        public final SignedLong st_mtimensec = new SignedLong(); // Last data modification time (nanoseconds)
+        public final time_t st_ctime = new time_t();     // Time of last status change (time_t)
+        public final SignedLong st_ctimensec = new SignedLong(); // Time of last status change (nanoseconds)
         public final Signed64 __unused4 = new Signed64();
         public final Signed64 __unused5 = new Signed64();
         public final Signed64 __unused6 = new Signed64();
@@ -65,7 +65,7 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
     }
 
     public int gid() {
-        return layout.st_gid.get(memory);
+        return (int) layout.st_gid.get(memory);
     }
 
     public long ino() {
@@ -73,7 +73,7 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
     }
 
     public int mode() {
-        return layout.st_mode.get(memory);
+        return (int) layout.st_mode.get(memory);
     }
 
     public long mtime() {
@@ -97,6 +97,6 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
     }
 
     public int uid() {
-        return layout.st_uid.get(memory);
+        return (int) layout.st_uid.get(memory);
     }
 }
