@@ -37,7 +37,11 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         if (Platform.IS_32_BIT) {
             return new LinuxFileStat32(this);
         } else {
-            return new LinuxFileStat64(this);
+            if ("aarch64".equals(Platform.ARCH)) {
+                return new LinuxFileStatAARCH64(this);
+            } else {
+                return new LinuxFileStat64(this);
+            }
         }
     }
 
