@@ -1,8 +1,9 @@
 package jnr.posix;
 
 import jnr.ffi.StructLayout;
+import jnr.posix.util.Platform;
 
-public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFileStat {
+public final class LinuxFileStatAARCH64 extends BaseFileStat implements NanosecondFileStat {
     public static final class Layout extends StructLayout {
 
         public Layout(jnr.ffi.Runtime runtime) {
@@ -11,28 +12,26 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
 
         public final dev_t st_dev = new dev_t();
         public final ino_t st_ino = new ino_t();
-        public final nlink_t st_nlink = new nlink_t();
         public final mode_t st_mode = new mode_t();
+        public final nlink_t st_nlink = new nlink_t();
         public final uid_t st_uid = new uid_t();
         public final gid_t st_gid = new gid_t();
         public final dev_t st_rdev = new dev_t();
         public final size_t st_size = new size_t();
         public final blksize_t st_blksize = new blksize_t();
         public final blkcnt_t st_blocks = new blkcnt_t();
-        public final time_t st_atime = new time_t();     // Time of last access (time_t)
+        public final time_t st_atime = new time_t();             // Time of last access
         public final SignedLong st_atimensec = new SignedLong(); // Time of last access (nanoseconds)
-        public final time_t st_mtime = new time_t();     // Last data modification time (time_t)
+        public final time_t st_mtime = new time_t();             // Last data modification time
         public final SignedLong st_mtimensec = new SignedLong(); // Last data modification time (nanoseconds)
-        public final time_t st_ctime = new time_t();     // Time of last status change (time_t)
+        public final time_t st_ctime = new time_t();             // Time of last status change
         public final SignedLong st_ctimensec = new SignedLong(); // Time of last status change (nanoseconds)
         public final Signed64 __unused4 = new Signed64();
-        public final Signed64 __unused5 = new Signed64();
-        public final Signed64 __unused6 = new Signed64();
     }
 
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
-    public LinuxFileStat64(LinuxPOSIX posix) {
+    public LinuxFileStatAARCH64(LinuxPOSIX posix) {
         super(posix, layout);
     }
 
