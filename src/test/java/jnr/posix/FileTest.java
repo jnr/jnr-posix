@@ -47,7 +47,7 @@ public class FileTest {
             if (stat instanceof NanosecondFileStat) {
                 NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
-                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
+//                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
                 assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
             }
 
@@ -100,7 +100,7 @@ public class FileTest {
             if (stat instanceof NanosecondFileStat) {
                 NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
-                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
+//                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
                 assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
             }
 
