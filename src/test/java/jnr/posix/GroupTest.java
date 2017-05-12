@@ -49,7 +49,7 @@ public class GroupTest {
     @Test
     public void getgrnam() {
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            final String LOGIN = "root";
+            final String LOGIN = "daemon";
             Group grp = posix.getgrnam(LOGIN);
             assertNotNull(grp);
             assertEquals("Login name not equal", LOGIN, grp.getName());
