@@ -16,7 +16,7 @@ public final class LinuxFileStat64 extends BaseFileStat implements NanosecondFil
         public final uid_t st_uid = new uid_t();
         public final gid_t st_gid = new gid_t();
         public final dev_t st_rdev = new dev_t();
-        public final size_t st_size = new size_t();
+        public final off_t st_size = new off_t();
         public final blksize_t st_blksize = new blksize_t();
         public final blkcnt_t st_blocks = new blkcnt_t();
         public final time_t st_atime = new time_t();     // Time of last access (time_t)
