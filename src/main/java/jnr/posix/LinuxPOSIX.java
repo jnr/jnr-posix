@@ -19,7 +19,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         super(libcProvider, handler);
 
 
-        if (Platform.IS_32_BIT) {
+        if (Platform.IS_32_BIT || "sparcv9".equals(Platform.ARCH)) {
             statVersion = 3;
         } else {
             FileStat stat = allocateStat();
@@ -40,7 +40,11 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             if ("aarch64".equals(Platform.ARCH)) {
                 return new LinuxFileStatAARCH64(this);
             } else {
-                return new LinuxFileStat64(this);
+                if ("sparcv9".equals(Platform.ARCH)) {
+                    return new LinuxFileStatSPARCV9(this);
+                } else{
+                    return new LinuxFileStat64(this);
+                }
             }
         }
     }
@@ -197,6 +201,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         static final ABI _ABI_X86_32 = new ABI_X86_32();
         static final ABI _ABI_X86_64 = new ABI_X86_64();
         static final ABI _ABI_AARCH64 = new ABI_AARCH64();
+        static final ABI _ABI_SPARCV9 = new ABI_SPARCV9();
 
         public static ABI abi() {
             if ("x86_64".equals(Platform.ARCH)) {
@@ -207,6 +212,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 return _ABI_X86_32;
             } else if ("aarch64".equals(Platform.ARCH)) {
                 return _ABI_AARCH64;
+            } else if ("sparcv9".equals(Platform.ARCH)) {
+                return _ABI_SPARCV9;
             }
             return null;
         }
@@ -249,6 +256,18 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             @Override
             public int __NR_ioprio_get() {
                 return 31 ;
+            }
+        }
+
+        /** @see /usr/include/asm/unistd.h */
+        final static class ABI_SPARCV9 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 196;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 218;
             }
         }
     }
