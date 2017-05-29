@@ -3,6 +3,7 @@ package jnr.posix;
 import jnr.constants.platform.OpenFlags;
 import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
+import jnr.constants.platform.WaitFlags;
 import static jnr.constants.platform.Errno.*;
 import static jnr.constants.platform.windows.LastError.*;
 
@@ -491,16 +492,38 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int waitpid(int pid, int[] status, int flags) {
-        handler.unimplementedError("waitpid");
+        if (pid <= 0) {
+            handler.unimplementedError("waitpid");
+        }
 
-        return -1;
+        HANDLE h = wlibc().OpenProcess(WindowsLibC.PROCESS_QUERY_INFORMATION, 0, pid);
+        if (h == null) {
+            return -1; // TODO: Throw exception
+        }
+
+        // Block
+        if ((flags & WaitFlags.WNOHANG.intValue()) != 0) {
+            wlibc().WaitForSingleObject(h, WindowsLibC.INFINITE);
+        }
+
+        IntByReference exitCode = new IntByReference();
+        wlibc().GetExitCodeProcess(h, exitCode);
+        wlibc().CloseHandle(h);
+        int code = exitCode.getValue();
+        if (code == 259) {
+            return 0;
+        } else {
+            status[0] = code;
+            return pid;
+        }
     }
 
     @Override
     public int waitpid(long pid, int[] status, int flags) {
-        handler.unimplementedError("waitpid");
-
-        return -1;
+        if (pid > Integer.MAX_VALUE) {
+            throw new java.lang.IllegalArgumentException("waitpid");
+        }
+        return waitpid((int) pid, status, flags);
     }
 
     @Override

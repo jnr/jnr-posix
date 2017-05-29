@@ -29,7 +29,9 @@ public interface WindowsLibC extends LibC {
     public static final int FILE_TYPE_PIPE = 0x0003;
     public static final int FILE_TYPE_REMOTE = 0x8000;
     public static final int FILE_TYPE_UNKNOWN = 0x0000;
-    
+
+    public static final int PROCESS_QUERY_INFORMATION = 0x0400;
+
     public int _open_osfhandle(HANDLE handle, int flags);
     public HANDLE _get_osfhandle(int fd);
     public int _close(int fd);
@@ -57,6 +59,8 @@ public interface WindowsLibC extends LibC {
                                  @In byte[] currentDirectory,
                                  WindowsStartupInfo startupInfo,
                                  WindowsProcessInformation processInformation);
+
+    public HANDLE OpenProcess(@In int desiredAccess, @In int inheritHandle, @In int processId);
 
     public int FileTimeToSystemTime(@In FileTime fileTime, @Out @Transient SystemTime systemTime);
     public int GetFileAttributesW(@In WString path);
