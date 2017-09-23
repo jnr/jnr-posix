@@ -450,6 +450,34 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().lutimes(path, times);
     }
 
+    public int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag) {
+        Timespec[] times = null;
+        if (atimespec != null && mtimespec != null) {
+            times = Struct.arrayOf(getRuntime(), DefaultNativeTimespec.class, 2);
+            times[0].setTime(atimespec);
+            times[1].setTime(mtimespec);
+        }
+        return libc().utimensat(dirfd, path, times, flag);
+    }
+
+    public int utimensat(int dirfd, String path, Pointer times, int flag) {
+        return libc().utimensat(dirfd, path, times, flag);
+    }
+
+    public int futimens(int fd, long[] atimespec, long[] mtimespec) {
+        Timespec[] times = null;
+        if (atimespec != null && mtimespec != null) {
+            times = Struct.arrayOf(getRuntime(), DefaultNativeTimespec.class, 2);
+            times[0].setTime(atimespec);
+            times[1].setTime(mtimespec);
+        }
+        return libc().futimens(fd, times);
+    }
+
+    public int futimens(int fd, Pointer times) {
+        return libc().futimens(fd, times);
+    }
+
     public int fork() {
         return libc().fork();
     }

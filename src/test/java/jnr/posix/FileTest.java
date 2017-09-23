@@ -98,7 +98,7 @@ public class FileTest {
             // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
             // representative.  We really just want to verify that the usec portion of the timeval is passed throug
             // to the POSIX call.
-            if (stat instanceof NanosecondFileStat && !Platform.IS_MAC) {
+            if (hasNanosecondPrecision(stat)) {
                 NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
 //                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
@@ -107,6 +107,41 @@ public class FileTest {
 
             f.delete();
         }
+    }
+
+    @Test
+    public void utimensatAbsolutePath() throws Throwable {
+        File file = File.createTempFile("utimensat", null);
+        utimensat(file, 0);
+    }
+
+    @Test
+    public void utimensatRelativePath() throws Throwable {
+        String path = "utimensat";
+        File file = new File(path);
+        file.createNewFile();
+        int parentFd = posix.open(".", OpenFlags.O_DIRECTORY.intValue(), 0444);
+        utimensat(file, parentFd);
+    }
+
+    @Test
+    public void futimens() throws Throwable {
+        File file = File.createTempFile("futimens", null);
+        FileStat fileStat = posix.stat(file.getPath());
+        if (!hasNanosecondPrecision(fileStat)) {
+            file.delete();
+            return;
+        }
+
+        long atimeSeconds = fileStat.atime()+1;
+        long mtimeSeconds = fileStat.mtime()-1;
+        long atimeNanoSeconds = 123456789;
+        long mtimeNanoSeconds = 135;
+        int fd = posix.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
+        posix.futimens(fd,
+                new long[] {atimeSeconds, atimeNanoSeconds},
+                new long[] {mtimeSeconds, mtimeNanoSeconds});
+        assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
     }
 
     @Test
@@ -594,5 +629,38 @@ public class FileTest {
         } else {
             return JavaLibCHelper.toFileDescriptor(fd);
         }
+    }
+
+    private boolean hasNanosecondPrecision(FileStat fileStat) {
+        return fileStat instanceof NanosecondFileStat && !Platform.IS_MAC;
+    }
+
+    private void utimensat(File file, int parentFd) {
+        String path = file.getAbsolutePath();
+        FileStat fileStat = posix.stat(path);
+        if (!hasNanosecondPrecision(fileStat)) {
+            file.delete();
+            return;
+        }
+
+        long atimeSeconds = fileStat.atime()+2;
+        long mtimeSeconds = fileStat.mtime()-2;
+        long atimeNanoSeconds = 123456789;
+        long mtimeNanoSeconds = 135;
+        posix.utimensat(parentFd,
+                path,
+                new long[] {atimeSeconds, atimeNanoSeconds},
+                new long[] {mtimeSeconds, mtimeNanoSeconds},
+                0);
+        assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
+    }
+
+    private void assertStatNanoSecond(File file, long atimeSeconds, long atimeNanoSeconds, long mtimeSeconds, long mtimeNanoSeconds) {
+        NanosecondFileStat nanosecondFileStat = (NanosecondFileStat) posix.stat(file.getPath());
+        assertEquals("Access timestamp should be updated", atimeSeconds, nanosecondFileStat.atime());
+        assertEquals("Modification timestamp should be updated", mtimeSeconds, nanosecondFileStat.mtime());
+        assertEquals("Access time precision should be in ns", atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs());
+        assertEquals("Modification time precision should be in ns", mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs());
+        file.delete();
     }
 }

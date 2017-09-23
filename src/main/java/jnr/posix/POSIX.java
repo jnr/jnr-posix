@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Fcntl;
+import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.posix.util.ProcessMaker;
@@ -9,7 +10,6 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
-import jnr.constants.platform.Signal;
 
 public interface POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
@@ -120,6 +120,10 @@ public interface POSIX {
     int utimes(String path, Pointer times);
     int futimes(int fd, long[] atimeval, long[] mtimeval);
     int lutimes(String path, long[] atimeval, long[] mtimeval);
+    int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag);
+    int utimensat(int dirfd, String path, Pointer times, int flag);
+    int futimens(int fd, long[] atimespec, long[] mtimespec);
+    int futimens(int fd, Pointer times);
     int waitpid(int pid, int[] status, int flags);
     int waitpid(long pid, int[] status, int flags);
     int wait(int[] status);
