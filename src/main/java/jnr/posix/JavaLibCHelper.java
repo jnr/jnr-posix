@@ -63,98 +63,101 @@ public class JavaLibCHelper {
     private final POSIXHandler handler;
     private final Map<String, String> env;
     
-    private static final Class SEL_CH_IMPL;
-    private static final Method SEL_CH_IMPL_GET_FD;
-    private static final Class FILE_CHANNEL_IMPL;
-    private static final Field FILE_CHANNEL_IMPL_FD;
-    private static final Field FILE_DESCRIPTOR_FD;
-    private static final Field FILE_DESCRIPTOR_HANDLE;
 
     public JavaLibCHelper(POSIXHandler handler) {
         this.env = new HashMap<String, String>();
         this.handler = handler;
     }
     
-    static {
-        Method getFD;
-        Class selChImpl;
-        try {
-            selChImpl = Class.forName("sun.nio.ch.SelChImpl");
+    private static class ReflectiveAccess {
+        private static final Class SEL_CH_IMPL;
+        private static final Method SEL_CH_IMPL_GET_FD;
+        private static final Class FILE_CHANNEL_IMPL;
+        private static final Field FILE_CHANNEL_IMPL_FD;
+        private static final Field FILE_DESCRIPTOR_FD;
+        private static final Field FILE_DESCRIPTOR_HANDLE;
+
+        static {
+            Method getFD;
+            Class selChImpl;
             try {
-                getFD = selChImpl.getMethod("getFD");
-                getFD.setAccessible(true);
+                selChImpl = Class.forName("sun.nio.ch.SelChImpl");
+                try {
+                    getFD = selChImpl.getMethod("getFD");
+                    getFD.setAccessible(true);
+                } catch (Exception e) {
+                    getFD = null;
+                }
             } catch (Exception e) {
+                selChImpl = null;
                 getFD = null;
             }
-        } catch (Exception e) {
-            selChImpl = null;
-            getFD = null;
-        }
-        SEL_CH_IMPL = selChImpl;
-        SEL_CH_IMPL_GET_FD = getFD;
-        
-        Field fd;
-        Class fileChannelImpl;
-        try {
-            fileChannelImpl = Class.forName("sun.nio.ch.FileChannelImpl");
+            SEL_CH_IMPL = selChImpl;
+            SEL_CH_IMPL_GET_FD = getFD;
+
+            Field fd;
+            Class fileChannelImpl;
             try {
-                fd = fileChannelImpl.getDeclaredField("fd");
-                fd.setAccessible(true);
+                fileChannelImpl = Class.forName("sun.nio.ch.FileChannelImpl");
+                try {
+                    fd = fileChannelImpl.getDeclaredField("fd");
+                    fd.setAccessible(true);
+                } catch (Exception e) {
+                    fd = null;
+                }
             } catch (Exception e) {
+                fileChannelImpl = null;
                 fd = null;
             }
-        } catch (Exception e) {
-            fileChannelImpl = null;
-            fd = null;
-        }
-        FILE_CHANNEL_IMPL = fileChannelImpl;
-        FILE_CHANNEL_IMPL_FD = fd;
-        
-        Field ffd;
-        try {
-            ffd = FileDescriptor.class.getDeclaredField("fd");
-            ffd.setAccessible(true);
-        } catch (Exception e) {
-            ffd = null;
-        }
-        FILE_DESCRIPTOR_FD = ffd;
+            FILE_CHANNEL_IMPL = fileChannelImpl;
+            FILE_CHANNEL_IMPL_FD = fd;
 
-        if (Platform.IS_WINDOWS) {
-            Field handle;
+            Field ffd;
             try {
-                handle = FileDescriptor.class.getDeclaredField("handle");
-                handle.setAccessible(true);
+                ffd = FileDescriptor.class.getDeclaredField("fd");
+                ffd.setAccessible(true);
             } catch (Exception e) {
-                handle = null;
+                ffd = null;
             }
-            FILE_DESCRIPTOR_HANDLE = handle;
-        } else {
-            FILE_DESCRIPTOR_HANDLE = null;
+            FILE_DESCRIPTOR_FD = ffd;
+
+            if (Platform.IS_WINDOWS) {
+                Field handle;
+                try {
+                    handle = FileDescriptor.class.getDeclaredField("handle");
+                    handle.setAccessible(true);
+                } catch (Exception e) {
+                    handle = null;
+                }
+                FILE_DESCRIPTOR_HANDLE = handle;
+            } else {
+                FILE_DESCRIPTOR_HANDLE = null;
+            }
         }
     }
-    
+
     public static FileDescriptor getDescriptorFromChannel(Channel channel) {
-        if (SEL_CH_IMPL_GET_FD != null && SEL_CH_IMPL.isInstance(channel)) {
+        if (ReflectiveAccess.SEL_CH_IMPL_GET_FD != null && ReflectiveAccess.SEL_CH_IMPL.isInstance(channel)) {
             // Pipe Source and Sink, Sockets, and other several other selectable channels
             try {
-                return (FileDescriptor)SEL_CH_IMPL_GET_FD.invoke(channel);
+                return (FileDescriptor)ReflectiveAccess.SEL_CH_IMPL_GET_FD.invoke(channel);
             } catch (Exception e) {
                 // return bogus below
             }
-        } else if (FILE_CHANNEL_IMPL_FD != null && FILE_CHANNEL_IMPL.isInstance(channel)) {
+        } else if (ReflectiveAccess.FILE_CHANNEL_IMPL_FD != null && ReflectiveAccess.FILE_CHANNEL_IMPL.isInstance(channel)) {
             // FileChannels
             try {
-                return (FileDescriptor)FILE_CHANNEL_IMPL_FD.get(channel);
+                return (FileDescriptor)ReflectiveAccess.FILE_CHANNEL_IMPL_FD.get(channel);
             } catch (Exception e) {
                 // return bogus below
             }
-        } else if (FILE_DESCRIPTOR_FD != null) {
+        } else if (ReflectiveAccess.FILE_DESCRIPTOR_FD != null) {
             // anything else that implements a getFD method that returns an int
             FileDescriptor unixFD = new FileDescriptor();
             
                 try {
                     Method getFD = channel.getClass().getMethod("getFD");
-                    FILE_DESCRIPTOR_FD.set(unixFD, (Integer)getFD.invoke(channel));
+                    ReflectiveAccess.FILE_DESCRIPTOR_FD.set(unixFD, (Integer)getFD.invoke(channel));
                     return unixFD;
                 } catch (Exception e) {
                     // return bogus below
@@ -210,9 +213,9 @@ public class JavaLibCHelper {
     }
 
     public static int getfdFromDescriptor(FileDescriptor descriptor) {
-        if (descriptor == null || FILE_DESCRIPTOR_FD == null) return -1;
+        if (descriptor == null || ReflectiveAccess.FILE_DESCRIPTOR_FD == null) return -1;
         try {
-            return FILE_DESCRIPTOR_FD.getInt(descriptor);
+            return ReflectiveAccess.FILE_DESCRIPTOR_FD.getInt(descriptor);
         } catch (SecurityException e) {
         } catch (IllegalArgumentException e) {
         } catch (IllegalAccessException e) {
@@ -222,9 +225,9 @@ public class JavaLibCHelper {
     }
 
      public static HANDLE gethandle(FileDescriptor descriptor) {
-         if (descriptor == null || FILE_DESCRIPTOR_HANDLE == null) return HANDLE.valueOf(-1);
+         if (descriptor == null || ReflectiveAccess.FILE_DESCRIPTOR_HANDLE == null) return HANDLE.valueOf(-1);
          try {
-             return gethandle(FILE_DESCRIPTOR_HANDLE.getLong(descriptor));
+             return gethandle(ReflectiveAccess.FILE_DESCRIPTOR_HANDLE.getLong(descriptor));
          } catch (SecurityException e) {
          } catch (IllegalArgumentException e) {
          } catch (IllegalAccessException e) {
@@ -378,7 +381,7 @@ public class JavaLibCHelper {
     public static FileDescriptor toFileDescriptor(int fileDescriptor) {
         FileDescriptor descriptor = new FileDescriptor();
         try {
-            FILE_DESCRIPTOR_FD.set(descriptor, fileDescriptor);
+            ReflectiveAccess.FILE_DESCRIPTOR_FD.set(descriptor, fileDescriptor);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -388,7 +391,7 @@ public class JavaLibCHelper {
     public static FileDescriptor toFileDescriptor(HANDLE fileDescriptor) {
         FileDescriptor descriptor = new FileDescriptor();
         try {
-            FILE_DESCRIPTOR_HANDLE.set(descriptor, fileDescriptor.toPointer().address());
+            ReflectiveAccess.FILE_DESCRIPTOR_HANDLE.set(descriptor, fileDescriptor.toPointer().address());
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
