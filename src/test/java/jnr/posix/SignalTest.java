@@ -28,6 +28,23 @@ public class SignalTest {
             }
         }
     }
+
+    @Test
+    public void testAlarm() {
+        if (!Platform.IS_WINDOWS) {
+            Signal s = Signal.SIGALRM;
+            final AtomicBoolean fired = new AtomicBoolean(false);
+            posix.signal(s, new SignalHandler() {
+                public void handle(int signal) {
+                    fired.set(true);
+                }
+            });
+
+            posix.alarm(200);
+            waitUntilTrue(fired, 400);
+            Assert.assertTrue(fired.get());
+        }
+    }
     
     @Test
     public void testBasicSignal() {
