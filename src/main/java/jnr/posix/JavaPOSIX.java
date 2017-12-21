@@ -259,6 +259,10 @@ final class JavaPOSIX implements POSIX {
                 || fd == 2) ? 1 : 0;
     }
 
+    public int alarm(int seconds) {
+        return unimplementedInt("alarm");    // FIXME: Can be implemented
+    }
+
     public int kill(int pid, int signal) {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }

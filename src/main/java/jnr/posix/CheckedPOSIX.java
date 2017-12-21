@@ -241,6 +241,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.isatty(descriptor); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int alarm(int seconds) {
+      return posix.alarm(seconds);
+    }
+
     public int kill(int pid, int signal) {
         return kill((long) pid, signal);
     }

@@ -78,6 +78,7 @@ public interface LibC {
     int getrlimit(int resource, Pointer rlim);
     int setrlimit(int resource, @In RLimit rlim);
     int setrlimit(int resource, Pointer rlim);
+    int alarm(int seconds);
     int kill(int pid, int signal);
     int kill(long pid, int signal);
 

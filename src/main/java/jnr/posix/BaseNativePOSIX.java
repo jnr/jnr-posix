@@ -289,6 +289,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().setuid(uid);
     }
 
+    public int alarm(int seconds) {
+        return libc().alarm(seconds);
+    }
+
     public int kill(int pid, int signal) {
         return kill((long) pid, signal);
     }

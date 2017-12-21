@@ -238,6 +238,10 @@ final class LazyPOSIX implements POSIX {
         return posix().isatty(descriptor);
     }
 
+    public int alarm(int seconds) {
+        return posix().alarm(seconds);
+    }
+
     public int kill(int pid, int signal) {
         return kill((long) pid, signal);
     }
