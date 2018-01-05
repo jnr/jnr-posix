@@ -487,10 +487,13 @@ public class FileTest {
 
             posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
 
-            byte[] buffer = new byte[file.getAbsolutePath().length()];
-            assertEquals(buffer.length, posix.readlink(link.getAbsolutePath(), buffer, buffer.length));
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
+            byte[] buffer = new byte[fileLength];
 
-            assertArrayEquals(buffer, file.getAbsolutePath().getBytes());
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.length));
+
+            assertArrayEquals(fileBytes, buffer);
 
             link.delete();
             file.delete();
@@ -500,13 +503,16 @@ public class FileTest {
     @Test
     public void readlinkByteBufferTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
-            File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
 
             posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
 
-            ByteBuffer buffer = ByteBuffer.allocate(file.getAbsolutePath().length());
-            assertEquals(buffer.capacity(), posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
+            ByteBuffer buffer = ByteBuffer.allocate(fileLength);
+
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
 
             assertArrayEquals(buffer.array(), file.getAbsolutePath().getBytes());
 
@@ -518,18 +524,21 @@ public class FileTest {
     @Test
     public void readlinkPointerTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
-            File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
 
             int bufSize = 1024;
-            int filenameLength = file.getAbsolutePath().length();
 
             Pointer buffer = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(bufSize);
+
             posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+            
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
 
-            assertEquals(filenameLength, posix.readlink(link.getAbsolutePath(), buffer, bufSize));
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, bufSize));
 
-            assertEquals(buffer.getString(0, filenameLength, Charset.defaultCharset()), file.getAbsolutePath());
+            assertEquals(file.getAbsolutePath(), buffer.getString(0, fileLength, Charset.defaultCharset()));
 
             link.delete();
             file.delete();
