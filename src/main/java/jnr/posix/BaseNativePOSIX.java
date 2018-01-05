@@ -393,7 +393,7 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         
         buffer.position(0);
         buffer.limit(result);
-        return Charset.forName("ASCII").decode(buffer).toString();
+        return Charset.defaultCharset().decode(buffer).toString();
     }
 
     public int readlink(CharSequence path, byte[] buf, int bufsize) {
