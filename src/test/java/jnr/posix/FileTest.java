@@ -482,7 +482,7 @@ public class FileTest {
     @Test
     public void readlinkTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
-            File file = File.createTempFile("jnr-posix-readlink-test", "tmp");
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
 
             posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
