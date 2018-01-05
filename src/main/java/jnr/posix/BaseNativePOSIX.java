@@ -385,8 +385,8 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
     
     public String readlink(String oldpath) throws IOException {
-        // TODO: this should not be hardcoded to 256 bytes
-        ByteBuffer buffer = ByteBuffer.allocate(256);
+        // TODO: this should not be hardcoded to 1024 bytes
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
         int result = libc().readlink(oldpath, buffer, buffer.capacity());
         
         if (result == -1) return null;
