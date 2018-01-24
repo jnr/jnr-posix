@@ -369,6 +369,24 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.lutimes(path, atimeval, mtimeval); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag) {
+        try { return posix.utimensat(dirfd, path, atimespec, mtimespec, flag); } catch (UnsatisfiedLinkError ule) {
+            return unimplementedInt(); }
+    }
+
+    public int utimensat(int dirfd, String path, Pointer times, int flag) {
+        try { return posix.utimensat(dirfd, path, times, flag); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int futimens(int fd, long[] atimespec, long[] mtimespec) {
+        try { return posix.futimens(fd, atimespec, mtimespec); } catch (UnsatisfiedLinkError ule) {
+            return unimplementedInt(); }
+    }
+
+    public int futimens(int fd, Pointer times) {
+        try { return posix.futimens(fd, times); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int wait(int[] status) {
         try { return posix.wait(status); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
