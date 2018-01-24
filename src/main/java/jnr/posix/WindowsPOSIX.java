@@ -446,17 +446,40 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
 
     @Override
     public int utimes(String path, long[] atimeval, long[] mtimeval) {
-        byte[] wpath = WindowsHelpers.toWPath(path);
-        FileTime aTime = atimeval == null ? null : unixTimeToFileTime(atimeval[0]);
-        FileTime mTime = mtimeval == null ? null : unixTimeToFileTime(mtimeval[0]);
+        FileTime aTime = timevalToFileTime(atimeval);
+        FileTime mTime = timevalToFileTime(mtimeval);
+        return setFileTime(path, aTime, mTime);
+    }
 
-        if (aTime == null || mTime == null) {
-            FileTime nowFile = unixTimeToFileTime(System.currentTimeMillis() / 1000L);
+    @Override
+    public int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag) {
+        FileTime aTime = timespecToFileTime(atimespec);
+        FileTime mTime = timespecToFileTime(mtimespec);
+        return setFileTime(path, aTime, mTime);
+    }
 
-            if (aTime == null) aTime = nowFile;
-            if (mTime == null) mTime = nowFile;
+    private FileTime timevalToFileTime(long[] timeval) {
+        if (timeval == null) {
+            return nullFileTime();
         }
 
+        // timeval unit is (sec, microsec)
+        long unixEpochIn100ns = timeval[0] * 10000000 + timeval[1] * 10;
+        return unixTimeToFileTime(unixEpochIn100ns);
+    }
+
+    private FileTime timespecToFileTime(long[] timespec) {
+        if (timespec == null) {
+            return nullFileTime();
+        }
+
+        // timespec unit is (sec, nanosec)
+        long unixEpochIn100ns = timespec[0] * 10000000 + timespec[1] / 100;
+        return unixTimeToFileTime(unixEpochIn100ns);
+    }
+
+    private int setFileTime(String path, FileTime aTime, FileTime mTime) {
+        byte[] wpath = WindowsHelpers.toWPath(path);
         HANDLE handle = wlibc().CreateFileW(wpath, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
                 null, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, 0);
         if (!handle.isValid()) {
@@ -469,17 +492,29 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         return timeSet ? 0 : -1;
     }
 
-    private FileTime unixTimeToFileTime(long unixTimeSeconds) {
+    /**
+     *
+     * @param unixEpochIn100ns epoch time in 100-ns precision
+     * @return associated FILETIME structure
+     */
+    private FileTime unixTimeToFileTime(long unixEpochIn100ns) {
         // FILETIME is a 64-bit unsigned integer representing
         // the number of 100-nanosecond intervals since January 1, 1601
         // UNIX timestamp is number of seconds since January 1, 1970
         // 116444736000000000 = 10_000_000 * 60 * 60 * 24 * 365 * 369 + 89 leap days
-        long ft = (unixTimeSeconds + 11644473600L) * 10000000L;
+        long ft = 116444736000000000L + unixEpochIn100ns;
 
         //long ft = CommonFileInformation.asNanoSeconds(unixTimeSeconds);
         FileTime fileTime = new FileTime(getRuntime());
         fileTime.dwLowDateTime.set(ft & 0xFFFFFFFFL);
         fileTime.dwHighDateTime.set((ft >> 32) & 0xFFFFFFFFL);
+        return fileTime;
+    }
+
+    private FileTime nullFileTime() {
+        FileTime fileTime = new FileTime(getRuntime());
+        fileTime.dwLowDateTime.set(0);
+        fileTime.dwHighDateTime.set(0);
         return fileTime;
     }
 

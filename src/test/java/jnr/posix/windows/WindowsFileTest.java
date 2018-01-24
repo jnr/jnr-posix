@@ -221,4 +221,31 @@ public class WindowsFileTest {
         int result = ((WindowsPOSIX) posix).findFirstFile("sdjfhjfsdfhdsdfhsdj", stat);
         assertTrue(result < 0);
     }
+
+    @Test
+    public void utimensatWindows() throws Throwable {
+        File file = File.createTempFile("utimensat", null);
+        FileStat fileStat = posix.stat(file.getPath());
+
+        long atimeSeconds = fileStat.atime()+1;
+        long mtimeSeconds = fileStat.mtime()-1;
+
+        // Windows precision is 100 ns
+        long atimeNanoSeconds = 123456700;
+        long mtimeNanoSeconds = 987654300;
+
+        // dirfd is ignored when passing an absolute path
+        // flag can be used to update symlinks
+        posix.utimensat(0,
+                file.getAbsolutePath(),
+                new long[] {atimeSeconds, atimeNanoSeconds},
+                new long[] {mtimeSeconds, mtimeNanoSeconds},
+                0);
+
+        fileStat = posix.stat(file.getPath());
+        assertEquals("access time should be updated", atimeSeconds, fileStat.atime());
+        assertEquals("modification time should be updated", mtimeSeconds, fileStat.mtime());
+
+        file.delete();
+    }
 }

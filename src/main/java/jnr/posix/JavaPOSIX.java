@@ -461,6 +461,32 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("lutimes");
     }
 
+    public int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag) {
+        long mtimeMillis;
+        if (mtimespec != null) {
+            assert mtimespec.length == 2;
+            mtimeMillis = (mtimespec[0] * 1000) + (mtimespec[1] / 1000000);
+        } else {
+            mtimeMillis = System.currentTimeMillis();
+        }
+        new File(path).setLastModified(mtimeMillis);
+        return 0;
+    }
+
+    public int utimensat(int dirfd, String path, Pointer times, int flag) {
+        return unimplementedInt("utimensat");
+    }
+
+    public int futimens(int fd, long[] atimespec, long[] mtimespec) {
+        handler.unimplementedError("futimens");
+        return unimplementedInt("futimens");
+    }
+
+    public int futimens(int fd, Pointer times) {
+        handler.unimplementedError("futimens");
+        return unimplementedInt("futimens");
+    }
+
     public int wait(int[] status) {
         return unimplementedInt("wait");
     }

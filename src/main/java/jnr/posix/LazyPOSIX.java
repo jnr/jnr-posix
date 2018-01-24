@@ -366,6 +366,22 @@ final class LazyPOSIX implements POSIX {
         return posix().lutimes(path, atimeval, mtimeval);
     }
 
+    public int utimensat(int dirfd, String path, long[] atimespec, long[] mtimespec, int flag) {
+        return posix().utimensat(dirfd, path, atimespec, mtimespec, flag);
+    }
+
+    public int utimensat(int dirfd, String path, Pointer times, int flag) {
+        return posix().utimensat(dirfd, path, times, flag);
+    }
+
+    public int futimens(int fd, long[] atimespec, long[] mtimespec) {
+        return posix().futimens(fd, atimespec, mtimespec);
+    }
+
+    public int futimens(int fd, Pointer times) {
+        return posix().futimens(fd, times);
+    }
+
     public int wait(int[] status) {
         return posix().wait(status);
     }
