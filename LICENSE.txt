@@ -249,9 +249,9 @@ The complete text of the Eclipse Public License is as follows:
   Agreement more than one year after the cause of action arose. Each
   party waives its rights to a jury trial in any resulting litigation.
 
-The complete text of the Common Public License is as follows:
+The complete text of the Eclipse Public License is as follows:
 
-  Common Public License - v 1.0
+  Eclipse Public License - v 1.0
 
   THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS COMMON
   PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF
