@@ -80,4 +80,7 @@ final class AixPOSIX extends BaseNativePOSIX {
     public Pointer allocatePosixSpawnattr() {
         return Memory.allocateDirect(getRuntime(), 60);
     }
+
+    @Override
+    public Timeval allocateTimeval() { return new AixTimeval(getRuntime()); }
 }
