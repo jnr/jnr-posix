@@ -84,6 +84,7 @@ public interface LibC {
     int dup(int fd);
     int dup2(int oldFd, int newFd);
 
+    int fcntl(int fd, int fnctl, Flock arg);
     int fcntl(int fd, int fnctl, Pointer arg);
     int fcntl(int fd, int fnctl);
     int fcntl(int fd, int fnctl, int arg);
