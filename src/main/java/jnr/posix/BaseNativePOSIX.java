@@ -315,6 +315,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         }
     }
 
+    public int raise(int sig) {
+        return libc().raise(sig);
+    }
+
     public int lchmod(String filename, int mode) {
         try {
             return libc().lchmod(filename, mode);

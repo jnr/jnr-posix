@@ -253,6 +253,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.signal(sig, handler); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 
+    public int raise(int sig) {
+        try { return posix.raise(sig); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public int lchmod(String filename, int mode) {
         try { return posix.lchmod(filename, mode); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

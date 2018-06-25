@@ -250,6 +250,10 @@ final class LazyPOSIX implements POSIX {
         return posix().signal(sig, handler);
     }
 
+    public int raise(int sig) {
+        return posix().raise(sig);
+    }
+
     public int lchmod(String filename, int mode) {
         return posix().lchmod(filename, mode);
     }
