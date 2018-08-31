@@ -92,6 +92,7 @@ public interface POSIX {
     int kill(int pid, int signal);
     int kill(long pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);
+    int raise(int sig);
     int lchmod(String filename, int mode);
     int lchown(String filename, int user, int group);
     int link(String oldpath,String newpath);

@@ -290,6 +290,10 @@ final class JavaPOSIX implements POSIX {
         }
     }
 
+    public int raise(int sig) {
+        return unimplementedInt("raise");
+    }
+
     public int lchmod(String filename, int mode) {
         return unimplementedInt("lchmod");    // FIXME: Can be implemented
     }
