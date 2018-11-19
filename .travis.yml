@@ -15,8 +15,12 @@ matrix:
       jdk: openjdk9
     - os: linux
       jdk: openjdk10
+      env:
+        - MAVEN_OPTS: "--illegal-access=permit"
     - os: linux
       jdk: openjdk11
+      env:
+        - MAVEN_OPTS: "--illegal-access=permit"
 
 os:
   - linux
@@ -30,5 +34,3 @@ notifications:
     template:
       - "%{repository} (%{branch}:%{commit} by %{author}): %{message} (%{build_url})"
 
-env:
-  - MAVEN_OPTS: "--illegal-access=permit"
