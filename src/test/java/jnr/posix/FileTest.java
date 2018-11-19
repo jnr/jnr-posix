@@ -256,12 +256,13 @@ public class FileTest {
         assertArrayEquals(inContent, outContent);
     }
 
+    public static final int SEEK_SET = 0;
+
     @Test
     public void dup2Test() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
-        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
-        int oldFd = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
-        int newFd = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+        int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        int newFd = 1000;
 
         byte[] outContent = "foo".getBytes();
 
@@ -272,7 +273,7 @@ public class FileTest {
         FileDescriptor newFileDescriptor = toDescriptor(newFd);
 
         new FileOutputStream(toDescriptor(oldFd)).write(outContent);
-        raf.seek(0);
+        posix.lseek(newFd, SEEK_SET, 0);
 
         byte[] inContent = new byte[outContent.length];
         new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
@@ -284,15 +285,14 @@ public class FileTest {
     public void fcntlDupfdTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("fcntlTest", "tmp");
-            RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
-            int fd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(raf.getChannel()));
+            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), 0444);
 
             byte[] outContent = "foo".getBytes();
 
             int newFd = posix.fcntl(fd, Fcntl.F_DUPFD);
 
             new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
-            raf.seek(0);
+            posix.lseek(fd, SEEK_SET, 0);
 
             byte[] inContent = new byte[outContent.length];
             new FileInputStream(JavaLibCHelper.toFileDescriptor(newFd)).read(inContent, 0, 3);
