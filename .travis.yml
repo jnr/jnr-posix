@@ -29,3 +29,6 @@ notifications:
     on_failure: always
     template:
       - "%{repository} (%{branch}:%{commit} by %{author}): %{message} (%{build_url})"
+
+env:
+  - MAVEN_OPTS: "--illegal-access=permit"
