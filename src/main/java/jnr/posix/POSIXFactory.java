@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.ffi.Library;
+import jnr.ffi.LibraryLoader;
 import jnr.ffi.LibraryOption;
 import jnr.ffi.Struct;
 
@@ -16,6 +17,8 @@ import java.util.Map;
 public class POSIXFactory {
     // Weird inner-class resolution problem work-around FIXME: JRUBY-5889.  Someone fix JAFFL!
     private static final Class<Struct> BOGUS_HACK = Struct.class;
+    public static final jnr.ffi.Platform NATIVE_PLATFORM = jnr.ffi.Platform.getNativePlatform();
+    public static final String STANDARD_C_LIBRARY_NAME = NATIVE_PLATFORM.getStandardCLibraryName();
 
     /**
      * Get a POSIX instance. If useNativePosix is true, this works just like
@@ -113,7 +116,7 @@ public class POSIXFactory {
     }
     
     private static POSIX loadNativePOSIX(POSIXHandler handler) {
-        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+        switch (NATIVE_PLATFORM.getOS()) {
             case DARWIN:
                 return loadMacOSPOSIX(handler);
 
@@ -168,16 +171,16 @@ public class POSIXFactory {
     }
     
     private static String[] libraries() {
-        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+        switch (NATIVE_PLATFORM.getOS()) {
             case LINUX:
-                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName(), "libcrypt.so.1" };
-            
+                return new String[] {STANDARD_C_LIBRARY_NAME};
+
             case SOLARIS:
-                return new String[] { "socket", "nsl", jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName() };
+                return new String[] { "socket", "nsl", STANDARD_C_LIBRARY_NAME};
 
             case FREEBSD:
             case NETBSD:
-                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName(), "crypt" };
+                return new String[] {STANDARD_C_LIBRARY_NAME};
             
             case AIX:
                 return jnr.ffi.Runtime.getSystemRuntime().addressSize() == 4
@@ -186,14 +189,14 @@ public class POSIXFactory {
             
             case WINDOWS:
                 return new String[] { "msvcrt", "kernel32" };
-            
+
             default:
-                return new String[] { jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName() };
+                return new String[] {STANDARD_C_LIBRARY_NAME};
         }
     }
     
     private static Class<? extends LibC> libraryInterface() {
-        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+        switch (NATIVE_PLATFORM.getOS()) {
             case LINUX:
                 return LinuxLibC.class;
             
@@ -212,7 +215,7 @@ public class POSIXFactory {
     }
 
     private static FunctionMapper functionMapper() {
-        switch (jnr.ffi.Platform.getNativePlatform().getOS()) {
+        switch (NATIVE_PLATFORM.getOS()) {
             case AIX:
                 return new SimpleFunctionMapper.Builder()
                         .map("stat", "stat64x")
@@ -271,16 +274,45 @@ public class POSIXFactory {
         return Collections.unmodifiableMap(options);
     }
 
-
     private static final class DefaultLibCProvider implements LibCProvider {
         public static final LibCProvider INSTANCE = new DefaultLibCProvider();
 
         private static final class SingletonHolder {
             public static LibC libc = Library.loadLibrary(libraryInterface(), options(), libraries());
+            public static Crypt crypt;
+            static {
+                Crypt c = null;
+
+                // FIXME: This is kinda gross but there's no way to tell jnr-ffi that some libraries are ok to fail
+                // See jruby/jruby#5447.
+                switch (NATIVE_PLATFORM.getOS()) {
+                    case LINUX:
+                    case NETBSD:
+                    case FREEBSD:
+                        try {
+                            LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                            c = loader.load("libcrypt.so.1");
+                        } catch (UnsatisfiedLinkError ule) {
+                            try {
+                                LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                                c = loader.load("crypt");
+                            } catch (UnsatisfiedLinkError ule2) {
+                                LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                                c = loader.load(STANDARD_C_LIBRARY_NAME);
+                            }
+                        }
+                }
+
+                crypt = c;
+            }
         }
 
         public final LibC getLibC() {
             return SingletonHolder.libc;
+        }
+
+        public final Crypt getCrypt() {
+            return SingletonHolder.crypt;
         }
     }
 }

@@ -26,6 +26,7 @@ import jnr.constants.platform.Signal;
 
 public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
+    private final Crypt crypt;
     
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
@@ -35,6 +36,7 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
         this.libc = libcProvider.getLibC();
+        this.crypt = libcProvider.getCrypt();
         this.helper = new JavaLibCHelper(handler);
     }
 
@@ -48,6 +50,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public final LibC libc() {
         return libc;
+    }
+
+    public final Crypt crypt() {
+        return crypt;
     }
 
     POSIXHandler handler() {
@@ -81,11 +87,23 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public CharSequence crypt(CharSequence key, CharSequence salt) {
-        return libc().crypt(key, salt);
+        Crypt crypt = crypt();
+
+        if (crypt == null) {
+            return JavaLibCHelper.crypt(key, salt);
+        }
+
+        return crypt.crypt(key, salt);
     }
 
     public byte[] crypt(byte[] key, byte[] salt) {
-        Pointer ptr = libc().crypt(key, salt);
+        Crypt crypt = crypt();
+
+        if (crypt == null) {
+            return JavaLibCHelper.crypt(key, salt);
+        }
+
+        Pointer ptr = crypt().crypt(key, salt);
         if (ptr == null) return null;
         int end = ptr.indexOf(0, (byte)0);
         byte[] bytes = new byte[end + 1];

@@ -38,8 +38,6 @@ import jnr.ffi.types.*;
 import java.nio.ByteBuffer;
 
 public interface LibC {
-    CharSequence crypt(CharSequence key, CharSequence salt);
-    Pointer crypt(byte[] key, byte[] salt);
     int chmod(CharSequence filename, int mode);
     int fchmod(int fd, int mode);
     int chown(CharSequence filename, int user, int group);
