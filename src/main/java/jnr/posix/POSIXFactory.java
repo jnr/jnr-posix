@@ -296,7 +296,7 @@ public class POSIXFactory {
                         try {
                             LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
                             c = loader.load(STANDARD_C_LIBRARY_NAME);
-                        } catch (UnsatisfiedLinkError ule) {
+                        } catch (UnsatisfiedLinkError ule3) {
                             // TODO: log somewhere? Warning?
                         }
                     }
