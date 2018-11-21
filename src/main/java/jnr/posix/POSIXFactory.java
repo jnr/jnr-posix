@@ -285,22 +285,17 @@ public class POSIXFactory {
 
                 // FIXME: This is kinda gross but there's no way to tell jnr-ffi that some libraries are ok to fail
                 // See jruby/jruby#5447.
-                switch (NATIVE_PLATFORM.getOS()) {
-                    case LINUX:
-                    case NETBSD:
-                    case FREEBSD:
-                        try {
-                            LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
-                            c = loader.load("libcrypt.so.1");
-                        } catch (UnsatisfiedLinkError ule) {
-                            try {
-                                LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
-                                c = loader.load("crypt");
-                            } catch (UnsatisfiedLinkError ule2) {
-                                LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
-                                c = loader.load(STANDARD_C_LIBRARY_NAME);
-                            }
-                        }
+                try {
+                    LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                    c = loader.load("libcrypt.so.1");
+                } catch (UnsatisfiedLinkError ule) {
+                    try {
+                        LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                        c = loader.load("crypt");
+                    } catch (UnsatisfiedLinkError ule2) {
+                        LibraryLoader<Crypt> loader = LibraryLoader.create(Crypt.class).failImmediately();
+                        c = loader.load(STANDARD_C_LIBRARY_NAME);
+                    }
                 }
 
                 crypt = c;
