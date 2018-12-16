@@ -33,7 +33,7 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
-public final class FreeBSDFileStat extends BaseFileStat implements NanosecondFileStat {
+public final class FreeBSDFileStat12 extends BaseFileStat implements NanosecondFileStat {
     private static final class Layout extends StructLayout {
 
         private Layout(jnr.ffi.Runtime runtime) {
@@ -44,11 +44,15 @@ public final class FreeBSDFileStat extends BaseFileStat implements NanosecondFil
         public final class dev_t extends Signed32 {}
 
         public final dev_t  st_dev = new dev_t();
-        public final Signed32  st_ino = new Signed32();
+        public final Signed64  st_ino = new Signed64();
+        // FIXME: this should be a 64-bit field
+        public final Signed32  st_nlink_upper = new Signed32();
+        public final Signed32  st_nlink = new Signed32();
         public final Signed16  st_mode = new Signed16();
-        public final Signed16  st_nlink = new Signed16();
+        public final Signed16  st_padding0 = new Signed16();
         public final Signed32  st_uid = new Signed32();
         public final Signed32  st_gid = new Signed32();
+        public final Signed32  st_padding1 = new Signed32();
         public final dev_t  st_rdev = new dev_t();
         public final time_t st_atime = new time_t();
         public final SignedLong st_atimensec = new SignedLong();
@@ -56,20 +60,19 @@ public final class FreeBSDFileStat extends BaseFileStat implements NanosecondFil
         public final SignedLong st_mtimensec = new SignedLong();
         public final time_t st_ctime = new time_t();
         public final SignedLong st_ctimensec = new SignedLong();
+        public final time_t    st_birthtime = new time_t();
+        public final SignedLong st_birthtimensec = new SignedLong();
         public final Signed64  st_size = new Signed64();
         public final Signed64  st_blocks = new Signed64();
         public final Signed32  st_blksize = new Signed32();
         public final Signed32  st_flags = new Signed32();
-        public final Signed32  st_gen = new Signed32();
-        public final Signed32  st_lspare = new Signed32();
-        public final time_t    st_birthtime = new time_t();
-        public final SignedLong st_birthtimensec = new SignedLong();
+        public final Signed64  st_gen = new Signed64();
         /* FIXME: This padding isn't quite correct */
         public final Signed64  st_qspare0 = new Signed64();
     }
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());
 
-    public FreeBSDFileStat(NativePOSIX posix) {
+    public FreeBSDFileStat12(NativePOSIX posix) {
         super(posix, layout);
     }
 

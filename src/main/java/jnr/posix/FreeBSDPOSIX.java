@@ -43,7 +43,11 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
     }
     
     public FileStat allocateStat() {
-        return new FreeBSDFileStat(this);
+        if (System.getProperty("os.version").compareTo("12.0") > 0) {
+            return new FreeBSDFileStat12(this);
+        } else {
+            return new FreeBSDFileStat(this);
+        }
     }
 
     public MsgHdr allocateMsgHdr() {
