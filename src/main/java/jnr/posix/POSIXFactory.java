@@ -125,6 +125,9 @@ public class POSIXFactory {
 
             case FREEBSD:
                 return loadFreeBSDPOSIX(handler);
+
+            case DRAGONFLY:
+                return loadDragonFlyPOSIX(handler);
             
             case OPENBSD:
                 return loadOpenBSDPOSIX(handler);
@@ -158,6 +161,10 @@ public class POSIXFactory {
         return new FreeBSDPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
 
+    public static POSIX loadDragonFlyPOSIX(POSIXHandler handler) {
+        return new DragonFlyPOSIX(DefaultLibCProvider.INSTANCE, handler);
+    }
+
     public static POSIX loadOpenBSDPOSIX(POSIXHandler handler) {
         return new OpenBSDPOSIX(DefaultLibCProvider.INSTANCE, handler);
     }
@@ -178,6 +185,7 @@ public class POSIXFactory {
             case SOLARIS:
                 return new String[] { "socket", "nsl", STANDARD_C_LIBRARY_NAME};
 
+            case DRAGONFLY:
             case FREEBSD:
             case NETBSD:
                 return new String[] {STANDARD_C_LIBRARY_NAME};

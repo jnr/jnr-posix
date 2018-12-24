@@ -51,6 +51,7 @@ public class Platform {
     private static final String MAC_OS = "mac os";
     private static final String DARWIN = "darwin";
     private static final String FREEBSD = "freebsd";
+    private static final String DRAGONFLY = "dragonfly";
     private static final String OPENBSD = "openbsd";
     private static final String LINUX = "linux";
     private static final String SOLARIS = "sunos";
@@ -67,10 +68,11 @@ public class Platform {
     public static final boolean IS_WINDOWS_7 = IS_WINDOWS && OS_NAME_LC.indexOf(WINDOWS_7) > -1;
     public static final boolean IS_MAC = OS_NAME_LC.startsWith(MAC_OS) || OS_NAME_LC.startsWith(DARWIN);
     public static final boolean IS_FREEBSD = OS_NAME_LC.startsWith(FREEBSD);
+    public static final boolean IS_DRAGONFLY = OS_NAME_LC.startsWith(DRAGONFLY);
     public static final boolean IS_OPENBSD = OS_NAME_LC.startsWith(OPENBSD);
     public static final boolean IS_LINUX = OS_NAME_LC.startsWith(LINUX);   
     public static final boolean IS_SOLARIS = OS_NAME_LC.startsWith(SOLARIS);
-    public static final boolean IS_BSD = IS_MAC || IS_FREEBSD || IS_OPENBSD;
+    public static final boolean IS_BSD = IS_MAC || IS_FREEBSD || IS_OPENBSD || IS_DRAGONFLY;
     
     public static final String envCommand() {
         if (IS_WINDOWS) {
