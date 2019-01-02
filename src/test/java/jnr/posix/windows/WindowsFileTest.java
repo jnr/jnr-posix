@@ -225,27 +225,94 @@ public class WindowsFileTest {
     @Test
     public void utimensatWindows() throws Throwable {
         File file = File.createTempFile("utimensat", null);
-        FileStat fileStat = posix.stat(file.getPath());
+        try {
+            FileStat fileStat = posix.stat(file.getPath());
 
-        long atimeSeconds = fileStat.atime()+1;
-        long mtimeSeconds = fileStat.mtime()-1;
+            long atimeSeconds = fileStat.atime() + 1;
+            long mtimeSeconds = fileStat.mtime() - 1;
 
-        // Windows precision is 100 ns
-        long atimeNanoSeconds = 123456700;
-        long mtimeNanoSeconds = 987654300;
+            // Windows precision is 100 ns
+            long atimeNanoSeconds = 123456700;
+            long mtimeNanoSeconds = 987654300;
 
-        // dirfd is ignored when passing an absolute path
-        // flag can be used to update symlinks
-        posix.utimensat(0,
-                file.getAbsolutePath(),
-                new long[] {atimeSeconds, atimeNanoSeconds},
-                new long[] {mtimeSeconds, mtimeNanoSeconds},
-                0);
+            // dirfd is ignored when passing an absolute path
+            // flag can be used to update symlinks
+            posix.utimensat(0,
+                    file.getAbsolutePath(),
+                    new long[]{atimeSeconds, atimeNanoSeconds},
+                    new long[]{mtimeSeconds, mtimeNanoSeconds},
+                    0);
 
-        fileStat = posix.stat(file.getPath());
-        assertEquals("access time should be updated", atimeSeconds, fileStat.atime());
-        assertEquals("modification time should be updated", mtimeSeconds, fileStat.mtime());
+            fileStat = posix.stat(file.getPath());
+            assertEquals("access time should be updated", atimeSeconds, fileStat.atime());
+            assertEquals("modification time should be updated", mtimeSeconds, fileStat.mtime());
+        } finally {
+            file.delete();
+        }
+    }
+    
+    @Test
+    public void utimensatWindowsCurrentTime() throws Throwable {
+        File file = File.createTempFile("file", null);
+        try {
+            FileStat fileStat = posix.stat(file.getPath());
+            long atimeSeconds = fileStat.atime();
+            long mtimeSeconds = fileStat.mtime();
+            long atimeSecondsInPast = atimeSeconds - 1000;
+            long mtimeSecondsInPast = mtimeSeconds - 1000;
 
-        file.delete();
+            posix.utimensat(0,
+                    file.getAbsolutePath(),
+                    new long[]{atimeSecondsInPast, 0},
+                    new long[]{mtimeSecondsInPast, 0}, 0);
+            fileStat = posix.stat(file.getPath());
+            assertEquals("access time should be updated", fileStat.atime(), atimeSecondsInPast);
+            assertEquals("modification time should be updated", fileStat.mtime(), mtimeSecondsInPast);
+
+            posix.utimensat(0, file.getAbsolutePath(), null, null, 0);
+
+            fileStat = posix.stat(file.getPath());
+            assertTrue("access time should be updated to current time",
+                    timeWithinRange(fileStat.atime(), atimeSeconds, 10));
+            assertTrue("modification time should be updated to current time",
+                    timeWithinRange(fileStat.mtime(), mtimeSeconds, 10));
+        } finally {
+            file.delete();
+        }
+    }
+
+    @Test
+    public void utimenWindowsCurrentTime() throws Throwable {
+        File file = File.createTempFile("file", null);
+        try {
+            FileStat fileStat = posix.stat(file.getPath());
+            long atimeSeconds = fileStat.atime();
+            long mtimeSeconds = fileStat.mtime();
+            long atimeSecondsInPast = atimeSeconds - 1000;
+            long mtimeSecondsInPast = mtimeSeconds - 1000;
+
+            posix.utimes(file.getAbsolutePath(),
+                    new long[]{atimeSecondsInPast, 0},
+                    new long[]{mtimeSecondsInPast, 0});
+            fileStat = posix.stat(file.getPath());
+            assertEquals("access time should be updated",
+                    fileStat.atime(), atimeSecondsInPast);
+            assertEquals("modification time should be updated",
+                    fileStat.mtime(), mtimeSecondsInPast);
+
+            posix.utimes(file.getAbsolutePath(), null, null);
+
+            fileStat = posix.stat(file.getPath());
+            assertTrue("access time should be updated to current time",
+                    timeWithinRange(fileStat.atime(), atimeSeconds, 10));
+            assertTrue("modification time should be updated to current time",
+                    timeWithinRange(fileStat.mtime(), mtimeSeconds, 10));
+        } finally {
+            file.delete();
+        }
+    }
+
+    private boolean timeWithinRange(long actual, long expected, long precision) {
+        return actual > (expected - precision) && actual < (expected + precision);
     }
 }

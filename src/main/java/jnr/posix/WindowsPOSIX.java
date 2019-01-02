@@ -460,7 +460,7 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
 
     private FileTime timevalToFileTime(long[] timeval) {
         if (timeval == null) {
-            return nullFileTime();
+            return currentFileTime();
         }
 
         // timeval unit is (sec, microsec)
@@ -470,7 +470,7 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
 
     private FileTime timespecToFileTime(long[] timespec) {
         if (timespec == null) {
-            return nullFileTime();
+            return currentFileTime();
         }
 
         // timespec unit is (sec, nanosec)
@@ -516,6 +516,10 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         fileTime.dwLowDateTime.set(0);
         fileTime.dwHighDateTime.set(0);
         return fileTime;
+    }
+
+    private FileTime currentFileTime() {
+      return unixTimeToFileTime(System.currentTimeMillis() * 10000);
     }
 
     @Override
