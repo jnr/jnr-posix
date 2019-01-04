@@ -37,13 +37,40 @@ import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.Pointer;
 import jnr.posix.util.MethodName;
 
+import java.lang.Runtime;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+
 final class FreeBSDPOSIX extends BaseNativePOSIX {
+    private final int freebsdVersion;
+
     FreeBSDPOSIX(LibCProvider libc, POSIXHandler handler) {
         super(libc, handler);
+
+        int parsed_version = 0;
+
+        // FreeBSD 12 introduces a new stat structure. Until jffi gets dlvsym() support
+        // to allow us to link explicitly to supported versions of functions, detect
+        // the current userspace version and cross our fingers.
+        try {
+            Process p = Runtime.getRuntime().exec("/bin/freebsd-version -u");
+            String version = new BufferedReader(new InputStreamReader(p.getInputStream())).readLine();
+
+            if (p.waitFor() == 0 && version != null) {
+                NumberFormat fmt = NumberFormat.getIntegerInstance();
+                fmt.setGroupingUsed(false);
+
+                parsed_version = fmt.parse(version, new ParsePosition(0)).intValue();
+            }
+        } catch (Exception e) { }
+
+        freebsdVersion = parsed_version;
     }
-    
+
     public FileStat allocateStat() {
-        if (System.getProperty("os.version").compareTo("12.0") > 0) {
+        if (freebsdVersion >= 12) {
             return new FreeBSDFileStat12(this);
         } else {
             return new FreeBSDFileStat(this);
