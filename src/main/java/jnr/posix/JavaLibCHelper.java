@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 import jnr.constants.platform.Errno;
 import jnr.posix.util.Chmod;
 import jnr.posix.util.ExecIt;
-import jnr.posix.util.FieldAccess;
 import jnr.posix.util.JavaCrypt;
 import jnr.posix.util.Platform;
 
@@ -242,6 +241,12 @@ public class JavaLibCHelper {
 
     public String getlogin() {
         return System.getProperty("user.name");
+    }
+
+    public String gethostname() {
+        String hn = System.getenv("HOSTNAME");
+        if (hn == null) hn = System.getenv("COMPUTERNAME");
+        return hn;
     }
 
     public int getpid() {

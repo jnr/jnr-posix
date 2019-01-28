@@ -583,6 +583,10 @@ final class LazyPOSIX implements POSIX {
         return posix().mkfifo(path, mode);
     }
 
+    public String gethostname() {
+        return posix().gethostname();
+    }
+
     public int daemon(int nochdir, int noclose) {
         return posix().daemon(nochdir, noclose);
     }

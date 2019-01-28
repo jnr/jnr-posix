@@ -14,6 +14,7 @@ import jnr.ffi.mapper.FromNativeContext;
 
 import java.io.FileDescriptor;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -318,6 +319,15 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         return -1;
     }
 
+    @Override
+    public String gethostname() {
+        ByteBuffer buffer = ByteBuffer.allocate(64);
+        IntByReference len = new IntByReference(buffer.capacity() - 1);
+        if (!wlibc().GetComputerNameW(buffer, len)) return helper.gethostname();
+        buffer.limit(len.intValue() * 2);
+        return Charset.forName("UTF-16LE").decode(buffer).toString();
+    }
+    
     public FileStat fstat(int fd) {
         WindowsFileStat stat = new WindowsFileStat(this);
         if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + fd);

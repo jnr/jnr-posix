@@ -108,6 +108,11 @@ public interface WindowsLibC extends LibC {
             @In WString envValue);
 
     @StdCall
+    boolean GetComputerNameW(
+            @Out ByteBuffer lpBuffer,
+            IntByReference nSize);
+
+    @StdCall
     boolean SetFileTime(
             HANDLE  hFile,
             FileTime lpCreationTime,

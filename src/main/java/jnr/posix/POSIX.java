@@ -190,6 +190,7 @@ public interface POSIX {
     int ftruncate(int fd, long offset);
     int rename(CharSequence oldName, CharSequence newName);
     String getcwd();
+    String gethostname();
 
     int socketpair(int domain, int type, int protocol, int[] fds);
     int sendmsg(int socket, MsgHdr message, int flags);
