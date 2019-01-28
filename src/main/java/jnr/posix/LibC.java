@@ -161,6 +161,7 @@ public interface LibC {
     int ftruncate(int fd, long offset);
     int rename(CharSequence oldName, CharSequence newName);
     long getcwd(byte[] cwd, int len);
+    int gethostname(@Out ByteBuffer buffer, int len);
     int fsync(int fd);
     int fdatasync(int fd);
 

@@ -622,4 +622,8 @@ final class CheckedPOSIX implements POSIX {
     public int gettimeofday(Timeval tv) {
         try {return posix.gettimeofday(tv); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
+
+    public String gethostname() {
+        try {return posix.gethostname(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
 }
