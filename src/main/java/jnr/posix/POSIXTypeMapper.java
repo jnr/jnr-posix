@@ -20,6 +20,8 @@ final class POSIXTypeMapper implements TypeMapper {
                 return SolarisPOSIX.PASSWD;
             } else if (Platform.IS_FREEBSD) {
                 return FreeBSDPOSIX.PASSWD;
+            } else if (Platform.IS_DRAGONFLY) {
+                return DragonFlyPOSIX.PASSWD;
             } else if (Platform.IS_OPENBSD) {
                 return OpenBSDPOSIX.PASSWD;
             } else if (Platform.IS_WINDOWS) {
