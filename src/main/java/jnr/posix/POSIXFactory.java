@@ -202,6 +202,9 @@ public class POSIXFactory {
             
             case AIX:
                 return AixLibC.class;
+
+            case FREEBSD:
+                return FreeBSDLibC.class;
             
             case SOLARIS:
                 return SolarisLibC.class;
