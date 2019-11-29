@@ -20,7 +20,7 @@ public class LinuxSocketMacros implements SocketMacros {
     }
 
     public int CMSG_LEN(int l) {
-        return CMSG_ALIGN( LinuxCmsgHdr.layout.size() + l );
+        return CMSG_ALIGN( LinuxCmsgHdr.layout.size() ) + l;
     }
 
     public Pointer CMSG_DATA(Pointer cmsg) {

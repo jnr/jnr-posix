@@ -1,5 +1,7 @@
 package jnr.posix;
 
+import java.util.ArrayList;
+import java.util.List;
 import jnr.ffi.Pointer;
 import jnr.ffi.Runtime;
 import jnr.ffi.StructLayout;
@@ -73,7 +75,7 @@ class LinuxMsgHdr extends BaseMsgHdr {
 
         CmsgHdr[] controls = getControls();
         for (int i = 0; i < controls.length; ++i) {
-            buf.append(((MacOSCmsgHdr) controls[i]).toString("    "));
+            buf.append(((LinuxCmsgHdr) controls[i]).toString("    "));
             if (i < controls.length - 1) {
                 buf.append(",\n");
             } else {
@@ -145,5 +147,27 @@ class LinuxMsgHdr extends BaseMsgHdr {
 
     public int getFlags() {
         return layout.msg_flags.get(this.memory);
+    }
+
+    @Override
+    public CmsgHdr[] getControls() {
+        int len = getControlLen();
+        if (len == 0) {
+            return new CmsgHdr[0];
+        }
+
+        List<CmsgHdr> control = new ArrayList<CmsgHdr>();
+
+        int offset = 0;
+
+        Pointer controlPtr = getControlPointer();
+
+        while (offset < len) {
+            CmsgHdr each = allocateCmsgHdrInternal(posix, controlPtr.slice(offset), -1);
+            offset += LinuxSocketMacros.INSTANCE.CMSG_ALIGN( each.getLen() );
+            control.add(each);
+        }
+
+        return control.toArray(new CmsgHdr[control.size()]);
     }
 }
