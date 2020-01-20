@@ -32,6 +32,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Sysconf;
+import jnr.constants.platform.Fcntl;
 import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
 import jnr.ffi.mapper.FromNativeContext;
@@ -40,6 +41,22 @@ import jnr.posix.util.MethodName;
 import java.io.FileDescriptor;
 
 final class AixPOSIX extends BaseNativePOSIX {
+    // These should probably be put into jnr-constants instead eventually, but
+    // they're here for now as a one-off to work around AIX flock issues
+    private enum FlockFlags {
+        LOCK_SH(1),
+        LOCK_EX(2),
+        LOCK_NB(4),
+        LOCK_UN(8);
+        private final int value;
+        FlockFlags(int value) {
+            this.value = value;
+        }
+        public final int intValue() {
+            return value;
+        }
+    }
+
     AixPOSIX(LibCProvider libc, POSIXHandler handler) {
         super(libc, handler);
     }
@@ -80,4 +97,42 @@ final class AixPOSIX extends BaseNativePOSIX {
     public Pointer allocatePosixSpawnattr() {
         return Memory.allocateDirect(getRuntime(), 60);
     }
+
+    // AIX flock lives in libbsd instead of libc.  AIX flock locks fully
+    // interact with fcntl locks, so we can implement flock in terms of fcntl,
+    // which is what we do here to avoid having to pull in that lib.
+    @Override
+    public int flock(int fd, int operation) {
+        int cmd = Fcntl.F_SETLKW.intValue();
+        short type = 0;
+
+        // Map the flock call flags to a fcntl flock type flag
+        if ((operation & FlockFlags.LOCK_SH.intValue()) != 0) {
+            type = (short)Fcntl.F_RDLCK.intValue();
+        } else if ((operation & FlockFlags.LOCK_EX.intValue()) != 0) {
+            type = (short)Fcntl.F_WRLCK.intValue();
+        } else if ((operation & FlockFlags.LOCK_UN.intValue()) != 0) {
+            type = (short)Fcntl.F_UNLCK.intValue();
+        }
+
+        // Switch to the fcntl non-blocking command
+        if ((operation & FlockFlags.LOCK_NB.intValue()) != 0) {
+            cmd = Fcntl.F_SETLK.intValue();
+        }
+
+        Flock flock = allocateFlock();
+        flock.type(type);
+        flock.whence((short)0);
+        flock.start(0);
+        flock.len(0);
+        return libc().fcntl(fd, cmd, flock);
+    }
+
+    @Override
+    public Timeval allocateTimeval() { return new AixTimeval(getRuntime()); }
+
+    // This isn't an override yet, because Flock would have to be implemented
+    // for all platforms, or at least with a DefaultNative implementation.  This
+    // is fine for now, because only AIX uses the flock structure
+    public Flock allocateFlock() { return new AixFlock(getRuntime()); }
 }
