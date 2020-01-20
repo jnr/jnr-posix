@@ -67,4 +67,7 @@ class LinuxCmsgHdr extends BaseCmsgHdr {
         return buf.toString();
     }
 
+    public String toString(){
+        return toString( "" );
+    }
 }

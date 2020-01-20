@@ -36,6 +36,7 @@ import jnr.ffi.annotations.*;
 import jnr.ffi.types.*;
 
 import java.nio.ByteBuffer;
+import jnr.ffi.byref.IntByReference;
 
 public interface LibC {
     int chmod(CharSequence filename, int mode);
@@ -169,6 +170,9 @@ public interface LibC {
     int socketpair(int domain, int type, int protocol, @Out int[] fds);
     int sendmsg(int socket, @In MsgHdr message, int flags);
     int recvmsg(int socket, @Direct MsgHdr message, int flags);
+
+    int setsockopt(int s, int level, int optname, @In ByteBuffer optval, int optlen);
+    int getsockopt(int s, int level, int optname, @Out ByteBuffer optval, @In @Out IntByReference optlen);
 
     Variable<Long> environ();
 
