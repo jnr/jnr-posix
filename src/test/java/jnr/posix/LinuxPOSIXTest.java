@@ -17,16 +17,30 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
 
 import static jnr.posix.LinuxIoPrio.*;
 
 public class LinuxPOSIXTest {
 
     @ClassRule
-    public static RunningOnLinux rule = new RunningOnLinux();
+    public static ConditionalTestRule rule = new ConditionalTestRule() {
+        public boolean isSatisfied() {
+            Platform platform = Platform.getNativePlatform();
+            Platform.OS os = platform.getOS();
+            Platform.CPU cpu = platform.getCPU();
+
+            if (os != Platform.OS.LINUX) return false;
+
+            switch (cpu) {
+                case PPC:
+                case PPC64:
+                case PPC64LE:
+                    return false;
+            }
+
+            return true;
+        }
+    };
 
     private static Linux linuxPOSIX = null;
 
@@ -174,8 +188,3 @@ public class LinuxPOSIXTest {
     }
 }
 
-class RunningOnLinux extends ConditionalTestRule {
-    public boolean isSatisfied() {
-        return jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX);
-    }
-}
