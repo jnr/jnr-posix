@@ -135,9 +135,9 @@ public class LinuxPOSIXTest {
         inMessage.allocateControls(new int[]{4, 12});
         int recvStatus = linuxPOSIX.recvmsg(fds[1], inMessage, 0);
 
-        Assert.assertTrue(recvStatus == dataBytes.length);
+        Assert.assertEquals(dataBytes.length, recvStatus);
 
-        Assert.assertTrue(inMessage.getControls().length == 2);
+        Assert.assertEquals(2, inMessage.getControls().length);
 
         CmsgHdr[] controls = inMessage.getControls();
         for (int x = 0; x < controls.length; x++) {
