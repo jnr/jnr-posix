@@ -159,6 +159,7 @@ public interface POSIX {
     int dup2(int oldFd, int newFd);
 
     int fcntlInt(int fd, Fcntl fcntlConst, int arg);
+    int fcntl(int fd, Fcntl fcntlConst, int arg);
     int fcntl(int fd, Fcntl fcntlConst);
     int access(CharSequence path, int amode);
     int close(int fd);
@@ -209,6 +210,7 @@ public interface POSIX {
      * @param arg arguments for the flag or null if none
      * @return 0 if success, -1 if error
      */
+    @Deprecated
     int fcntl(int fd, Fcntl fcntlConst, int... arg);
     int fsync(int fd);
     int fdatasync(int fd);

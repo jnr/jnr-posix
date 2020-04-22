@@ -582,6 +582,11 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("fcntl");
     }
 
+    public int fcntl(int fd, Fcntl fcntlConst, int arg) {
+        return unimplementedInt("fcntl");
+    }
+
+    @Deprecated
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return unimplementedInt("fcntl");
     }

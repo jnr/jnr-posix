@@ -17,16 +17,30 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
 
 import static jnr.posix.LinuxIoPrio.*;
 
 public class LinuxPOSIXTest {
 
     @ClassRule
-    public static RunningOnLinux rule = new RunningOnLinux();
+    public static ConditionalTestRule rule = new ConditionalTestRule() {
+        public boolean isSatisfied() {
+            Platform platform = Platform.getNativePlatform();
+            Platform.OS os = platform.getOS();
+            Platform.CPU cpu = platform.getCPU();
+
+            if (os != Platform.OS.LINUX) return false;
+
+            switch (cpu) {
+                case PPC:
+                case PPC64:
+                case PPC64LE:
+                    return false;
+            }
+
+            return true;
+        }
+    };
 
     private static Linux linuxPOSIX = null;
 
@@ -135,9 +149,9 @@ public class LinuxPOSIXTest {
         inMessage.allocateControls(new int[]{4, 12});
         int recvStatus = linuxPOSIX.recvmsg(fds[1], inMessage, 0);
 
-        Assert.assertTrue(recvStatus == dataBytes.length);
+        Assert.assertEquals(dataBytes.length, recvStatus);
 
-        Assert.assertTrue(inMessage.getControls().length == 2);
+        Assert.assertEquals(2, inMessage.getControls().length);
 
         CmsgHdr[] controls = inMessage.getControls();
         for (int x = 0; x < controls.length; x++) {
@@ -174,8 +188,3 @@ public class LinuxPOSIXTest {
     }
 }
 
-class RunningOnLinux extends ConditionalTestRule {
-    public boolean isSatisfied() {
-        return jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX);
-    }
-}

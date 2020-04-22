@@ -289,7 +289,9 @@ public class FileTest {
 
             byte[] outContent = "foo".getBytes();
 
-            int newFd = posix.fcntl(fd, Fcntl.F_DUPFD);
+            // NOTE: This test used to call without the third argument, but this leads to undefined behavior.
+            // See https://github.com/jnr/jnr-posix/issues/144
+            int newFd = posix.fcntl(fd, Fcntl.F_DUPFD, 0);
 
             new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
             posix.lseek(fd, SEEK_SET, 0);
@@ -312,14 +314,15 @@ public class FileTest {
 
             byte[] outContent = "foo".getBytes();
 
-            int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, newFd);
+            int expectedFd = 100;
+            int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, expectedFd);
 
             new FileOutputStream(JavaLibCHelper.toFileDescriptor(newFd)).write(outContent);
 
             byte[] inContent = new byte[outContent.length];
             new FileInputStream(JavaLibCHelper.toFileDescriptor(dupFd)).read(inContent, 0, 3);
 
-            assertTrue(dupFd > newFd);
+            assertTrue(dupFd >= expectedFd);
             assertArrayEquals(inContent, outContent);
         }
     }

@@ -605,15 +605,25 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int fcntlInt(int fd, Fcntl fcntl, int arg) {
-        return libc().fcntl(fd, fcntl.intValue(), arg);
+        return fcntl(fd, fcntl, arg);
     }
 
     public int fcntl(int fd, Fcntl fcntl) {
         return libc().fcntl(fd, fcntl.intValue());
     }
 
-    public int fcntl(int fd, Fcntl fcntl, int... arg) {
-        return libc().fcntl(fd, fcntl.intValue());
+    public int fcntl(int fd, Fcntl fcntl, int arg) {
+        return libc().fcntl(fd, fcntl.intValue(), arg);
+    }
+
+    @Deprecated
+    public int fcntl(int fd, Fcntl fcntl, int... args) {
+        if (args != null) {
+            if (args.length == 1) {
+                return fcntl(fd, fcntl, args[0]);
+            }
+        }
+        throw new IllegalArgumentException("fcntl with variadic int args is unsupported");
     }
 
     public int access(CharSequence path, int amode) {

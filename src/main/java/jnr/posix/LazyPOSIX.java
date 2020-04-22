@@ -460,6 +460,11 @@ final class LazyPOSIX implements POSIX {
         return posix().fcntl(fd, fcntlConst);
     }
 
+    public int fcntl(int fd, Fcntl fcntlConst, int arg) {
+        return posix().fcntl(fd, fcntlConst, arg);
+    }
+
+    @Deprecated
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         return posix().fcntl(fd, fcntlConst);
     }
