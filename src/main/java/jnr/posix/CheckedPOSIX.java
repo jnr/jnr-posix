@@ -466,6 +466,11 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    public int fcntl(int fd, Fcntl fcntlConst, int arg) {
+        try { return posix.fcntl(fd, fcntlConst, arg); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    @Deprecated
     public int fcntl(int fd, Fcntl fcntlConst, int... arg) {
         try { return posix.fcntl(fd, fcntlConst); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
