@@ -286,9 +286,26 @@ public class POSIXFactory {
         public static final LibCProvider INSTANCE = new DefaultLibCProvider();
 
         private static final class SingletonHolder {
-            public static LibC libc = Library.loadLibrary(libraryInterface(), options(), libraries());
+            public static LibC libc;
             public static Crypt crypt;
             static {
+                LibraryLoader<? extends LibC> libcLoader = LibraryLoader.create(libraryInterface());
+
+                // always do a default search
+                libcLoader.searchDefault();
+
+                for (String library : libraries()) {
+                    libcLoader.library(library);
+                }
+
+                for (Map.Entry<LibraryOption, Object> entry : options().entrySet()) {
+                    libcLoader.option(entry.getKey(), entry.getValue());
+                }
+
+                libcLoader.failImmediately();
+
+                libc = libcLoader.load();
+
                 Crypt c = null;
 
                 // FIXME: This is kinda gross but there's no way to tell jnr-ffi that some libraries are ok to fail
