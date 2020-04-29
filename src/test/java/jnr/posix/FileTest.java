@@ -504,17 +504,18 @@ public class FileTest {
         jnr.constants.platform.Access.F_OK.intValue();
 
         // Set permissions to read-only and verify we don't have permissions to write.
-        posix.chmod(tmp.getCanonicalPath(), 0400);
-        assertEquals("access: ", -1, posix.access(tmp.getCanonicalPath(), Access.W_OK.intValue()));
-        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.R_OK.intValue()));
+        String canonicalPath = tmp.getCanonicalPath();
+        assertEquals("chmod 0400: ", 0, posix.chmod(canonicalPath, 0400));
+        assertEquals("access " + canonicalPath + " for write: ", -1, posix.access(canonicalPath, Access.W_OK.intValue()));
+        assertEquals("access " + canonicalPath + " for read: ", 0, posix.access(canonicalPath, Access.R_OK.intValue()));
 
-        // Reset the permissions to read-wrinte and verify we now have permissions to write.
-        posix.chmod(tmp.getCanonicalPath(), 0600);
-        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.W_OK.intValue()));
-        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.R_OK.intValue()));
+        // Reset the permissions to read-write and verify we now have permissions to write.
+        assertEquals("chmod 0600: ", 0, posix.chmod(canonicalPath, 0600));
+        assertEquals("access " + canonicalPath + " for write: ", 0, posix.access(canonicalPath, Access.W_OK.intValue()));
+        assertEquals("access " + canonicalPath + " for read: ", 0, posix.access(canonicalPath, Access.R_OK.intValue()));
 
         // F_OK just checks the file exists and should pass.
-        assertEquals("access: ", 0, posix.access(tmp.getCanonicalPath(), Access.F_OK.intValue()));
+        assertEquals("access " + canonicalPath + " exists: ", 0, posix.access(canonicalPath, Access.F_OK.intValue()));
     }
 
     @Test
