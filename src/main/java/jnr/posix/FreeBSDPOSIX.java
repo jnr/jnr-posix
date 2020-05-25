@@ -78,13 +78,11 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
     }
 
     public MsgHdr allocateMsgHdr() {
-        handler.unimplementedError(MethodName.getCallerMethodName());
-        return null;
+        return new FreeBSDMsgHdr(this);
     }
 
     public SocketMacros socketMacros() {
-        handler.unimplementedError(MethodName.getCallerMethodName());
-        return null;
+        return FreeBSDSocketMacros.INSTANCE;
     }
 
     public long sysconf(Sysconf name) {
