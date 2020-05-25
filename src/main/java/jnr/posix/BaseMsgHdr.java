@@ -61,7 +61,8 @@ public abstract class BaseMsgHdr implements MsgHdr {
         int offset = 0;
         for (int i = 0; i < dataLengths.length; ++i) {
             int eachSpace = posix.socketMacros().CMSG_SPACE(dataLengths[i]);
-            CmsgHdr each = allocateCmsgHdrInternal(posix, ptr.slice(offset, eachSpace), eachSpace);
+            int len = posix.socketMacros().CMSG_LEN(dataLengths[i]);
+            CmsgHdr each = allocateCmsgHdrInternal(posix, ptr.slice(offset, eachSpace), len);
             cmsgs[i] = each;
             offset += eachSpace;
         }
