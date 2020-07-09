@@ -1,6 +1,8 @@
 package jnr.posix;
 
 import jnr.constants.platform.AddressFamily;
+import jnr.constants.platform.PosixFadvise;
+import jnr.constants.platform.OpenFlags;
 import jnr.constants.platform.Sock;
 import jnr.constants.platform.SocketLevel;
 import jnr.constants.platform.SocketOption;
@@ -13,6 +15,7 @@ import org.junit.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -185,6 +188,21 @@ public class LinuxPOSIXTest {
         } else {
             Assert.fail("Unable to determine cmsghdr type");
         }
+    }
+
+    @Test
+    public void testPosixFadvise() throws Throwable {
+        File file = File.createTempFile("posix_fadvise", null);
+        int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
+
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
+        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
+
+        linuxPOSIX.close(fd);
     }
 }
 
