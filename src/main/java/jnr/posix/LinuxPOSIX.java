@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.Errno;
+import jnr.constants.platform.PosixFadvise;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
@@ -305,5 +306,9 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         }
 
         return libc().syscall(abi.__NR_ioprio_set(), which, who, ioprio);
+    }
+
+    public int posix_fadvise(int fd, long offset, long len, PosixFadvise advise) {
+        return ((LinuxLibC) libc()).posix_fadvise(fd, offset, len, advise.intValue());
     }
 }
