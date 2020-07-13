@@ -66,7 +66,7 @@ public interface POSIXHandler {
      * found a number of packages which would rather have some identity for the runtime than
      * nothing.
      * 
-     * Note: If you do not want this to work you impl can just call unimplementedError(String).
+     * Note: If you do not want this to work you impl can just call {@link #unimplementedError(String)}.
      *
      * @return your runtime's process ID
      */

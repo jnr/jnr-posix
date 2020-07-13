@@ -102,4 +102,8 @@ public class JavaPOSIXTest {
 
         return file;
     }
+
+    @Test public void getpid() {
+        assertEquals(POSIXFactory.getNativePOSIX().getpid(), posix.getpid());
+    }
 }

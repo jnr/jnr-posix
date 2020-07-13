@@ -31,6 +31,7 @@ package jnr.posix;
 import static jnr.constants.platform.Errno.*;
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
@@ -250,7 +251,37 @@ public class JavaLibCHelper {
     }
 
     public int getpid() {
-        return handler.getPID();
+        try {
+            return handler.getPID();
+        } catch (UnsupportedOperationException uoe) {
+            // if handler raises UOE, as our default handler does, try other ways
+
+            // Java 9+ provide ProcessHandle.current
+            try {
+                Class processHandle = Class.forName("java.lang.ProcessHandle");
+                Method current = processHandle.getMethod("current");
+                Method pid = current.getClass().getMethod("pid");
+                return (int) (long) (Long) pid.invoke(current.invoke(null));
+            } catch (Exception e) {
+                // ignore, try Java 8 logic below
+            }
+
+            // Java 8- can use management beans to infer the pid
+            try {
+                String runtimeName = ManagementFactory.getRuntimeMXBean().getName();
+                int index = runtimeName.indexOf('@');
+
+                if (index > 0) {
+                    return (int) Long.parseLong(runtimeName.substring(0, index));
+                }
+            } catch (Exception e) {
+                // ignore, rethrow UOE below
+            }
+
+            // couldn't do it, rethrow
+            throw uoe;
+        }
+
     }
     ThreadLocal<Integer> pwIndex = new ThreadLocal<Integer>() {
         @Override
