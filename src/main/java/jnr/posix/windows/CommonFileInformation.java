@@ -1,7 +1,5 @@
 package jnr.posix.windows;
 
-import jnr.posix.FileTime;
-
 import static jnr.posix.FileStat.*;
 
 /**
@@ -67,16 +65,16 @@ public abstract class CommonFileInformation extends jnr.ffi.Struct {
         return mode;
     }
 
-    public long getLastWriteTimeMicroseconds() {
-        return asMicroSeconds(getLastWriteTime().getLongValue()) / MICROSECONDS;
+    public long getLastWriteTimeNanoseconds() {
+        return epochNanos(getLastWriteTime().getLongValue());
     }
 
-    public long getLastAccessTimeMicroseconds() {
-        return asMicroSeconds(getLastAccessTime().getLongValue()) / MICROSECONDS;
+    public long getLastAccessTimeNanoseconds() {
+        return epochNanos(getLastAccessTime().getLongValue());
     }
 
-    public long getCreationTimeMicroseconds() {
-        return asMicroSeconds(getCreationTime().getLongValue()) / MICROSECONDS;
+    public long getCreationTimeNanoseconds() {
+        return epochNanos(getCreationTime().getLongValue());
     }
 
     public long getFileSize() {
@@ -87,17 +85,17 @@ public abstract class CommonFileInformation extends jnr.ffi.Struct {
     //private static final int HOURS = 24;
     //private static final int MINUTES = 60;
     // private static final int SECONDS = 60;
-    private static final int MICROSECONDS = 1000 * 1000;
+    public static final int NANOSECONDS = 1000 * 1000 * 1000;
     // on number of days a year: https://imicrothinking.wordpress.com/tag/365-2425-days/
     private static final double DAYS_BETWEEN_WINDOWS_AND_UNIX = (1970 - 1601) * 365.2425;
-    private static final long MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS = 11644473600000000L;
+    private static final long NANOSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS = 11644473600L * NANOSECONDS;
            // (long) (DAYS_BETWEEN_WINDOWS_AND_UNIX * HOURS * SECONDS * MINUTES * MICROSECONDS);
 
-    private long asMicroSeconds(long windowsNanosecondTime) {
-        return (windowsNanosecondTime / 10) - MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS;
+    private long epochNanos(long windowsNanoChunks) {
+        return (windowsNanoChunks * 100) - NANOSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS;
     }
 
     public static long asNanoSeconds(long seconds) {
-        return (seconds * 1000 + MICROSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS) * 10;
+        return (seconds * 1000 + NANOSECONDS_TO_UNIX_EPOCH_FROM_WINDOWS / 1000) * 10;
     }
 }

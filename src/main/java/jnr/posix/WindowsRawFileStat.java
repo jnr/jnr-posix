@@ -2,13 +2,15 @@ package jnr.posix;
 
 import jnr.posix.util.WindowsHelpers;
 import jnr.posix.windows.CommonFileInformation;
-import jnr.posix.windows.WindowsFileInformation;
 
 /**
  *
  */
-public class WindowsRawFileStat extends JavaFileStat {
+public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileStat {
     private int st_atime;
+    private long st_atimensec;
+    private long st_mtimensec;
+    private long st_ctimensec;
     private int st_rdev;
     private int st_dev;
     private int st_nlink;
@@ -30,9 +32,15 @@ public class WindowsRawFileStat extends JavaFileStat {
     }
 
     public void setup(CommonFileInformation fileInfo) {
-        st_atime = (int) fileInfo.getLastAccessTimeMicroseconds();
-        st_mtime = (int) fileInfo.getLastWriteTimeMicroseconds();
-        st_ctime = (int) fileInfo.getCreationTimeMicroseconds();
+        long atime = fileInfo.getLastAccessTimeNanoseconds();
+        st_atimensec = atime % CommonFileInformation.NANOSECONDS;
+        st_atime = (int) (atime / CommonFileInformation.NANOSECONDS);
+        long mtime = fileInfo.getLastWriteTimeNanoseconds();
+        st_mtimensec = mtime % CommonFileInformation.NANOSECONDS;
+        st_mtime =  (int) (mtime / CommonFileInformation.NANOSECONDS);
+        long ctime = fileInfo.getCreationTimeNanoseconds();
+        st_ctimensec = ctime % CommonFileInformation.NANOSECONDS;
+        st_ctime =  (int) (ctime / CommonFileInformation.NANOSECONDS);
         st_size = isDirectory() ? 0 : fileInfo.getFileSize();
         st_nlink = 1;
         st_mode &= ~(S_IWGRP | S_IWOTH);
@@ -52,6 +60,21 @@ public class WindowsRawFileStat extends JavaFileStat {
 
     public long atime() {
         return st_atime;
+    }
+
+    @Override
+    public long aTimeNanoSecs() {
+        return st_atimensec;
+    }
+
+    @Override
+    public long cTimeNanoSecs() {
+        return st_ctimensec;
+    }
+
+    @Override
+    public long mTimeNanoSecs() {
+        return st_mtimensec;
     }
 
     public long dev() {
