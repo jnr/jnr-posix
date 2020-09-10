@@ -366,14 +366,17 @@ public class JavaLibCHelper {
         try {
             File file = new JavaSecuredFile(path);
             
-            if (!file.exists()) return -1;
-                
+            if (!file.exists()) {
+                errno(ENOENT);
+                return -1;
+            }
+
             jstat.setup(file.getCanonicalPath());
         } catch (IOException e) {
             // TODO: Throw error when we have problems stat'ing canonicalizing
         }
 
-        // TODO: Add error reporting for cases we can calculate: ENOTDIR, ENAMETOOLONG, ENOENT
+        // TODO: Add error reporting for cases we can calculate: ENOTDIR, ENAMETOOLONG,
         // EACCES, ELOOP, EFAULT, EIO
 
         return 0;

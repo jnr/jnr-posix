@@ -8,6 +8,7 @@ package jnr.posix;
 import java.io.File;
 import java.io.IOException;
 
+import jnr.constants.platform.Errno;
 import jnr.posix.JavaPOSIX;
 import jnr.posix.POSIX;
 import jnr.posix.Passwd;
@@ -73,6 +74,15 @@ public class JavaPOSIXTest {
         ret = posix.lstat(file.getPath(), stat);
 
         assertTrue(ret < 0);
+    }
+
+    @Test public void statMissingFileTest() throws IOException {
+        FileStat stat = posix.allocateStat();
+
+        int ret = posix.stat("does not exist", stat);
+
+        assertEquals(-1, ret);
+        assertEquals(Errno.ENOENT.intValue(), posix.errno());
     }
 
 	@Test
