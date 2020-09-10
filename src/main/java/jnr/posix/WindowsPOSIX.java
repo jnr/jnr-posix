@@ -13,6 +13,7 @@ import jnr.ffi.byref.IntByReference;
 import jnr.ffi.mapper.FromNativeContext;
 
 import java.io.FileDescriptor;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -324,7 +325,8 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         ByteBuffer buffer = ByteBuffer.allocate(64);
         IntByReference len = new IntByReference(buffer.capacity() - 1);
         if (!wlibc().GetComputerNameW(buffer, len)) return helper.gethostname();
-        buffer.limit(len.intValue() * 2);
+        // force Java 8 compatible Buffer method
+        ((Buffer) buffer).limit(len.intValue() * 2);
         return Charset.forName("UTF-16LE").decode(buffer).toString();
     }
     

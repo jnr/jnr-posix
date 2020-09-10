@@ -17,6 +17,7 @@ import jnr.posix.util.ProcessMaker;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -412,9 +413,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         int result = libc().readlink(oldpath, buffer, buffer.capacity());
         
         if (result == -1) return null;
-        
-        buffer.position(0);
-        buffer.limit(result);
+
+        // force Java 8 compatible Buffer method
+        Buffer buffer2 = buffer;
+        buffer2.position(0);
+        buffer2.limit(result);
         return Charset.defaultCharset().decode(buffer).toString();
     }
 
@@ -774,10 +777,12 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
             result = -1;
         }
         if (result == -1) return helper.gethostname();
-        buffer.position(0);
+        // force Java 8 compatible Buffer method
+        Buffer buffer2 = buffer;
+        buffer2.position(0);
         while (buffer.hasRemaining() && buffer.get() != 0);
-        buffer.limit(buffer.position() - 1);
-        buffer.position(0);
+        buffer2.limit(buffer.position() - 1);
+        buffer2.position(0);
         return Charset.forName("US-ASCII").decode(buffer).toString();
     }
 
