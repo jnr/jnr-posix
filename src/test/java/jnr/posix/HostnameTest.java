@@ -1,5 +1,6 @@
 package jnr.posix;
 
+import org.hamcrest.Matcher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ public class HostnameTest {
     
     @Test
     public void jPosixIsReasonable() {
-        assumeThat(System.getenv().keySet(), anyOf(hasItem("HOSTNAME"), hasItem("COMPUTERNAME")));
+        // cast here works around a generic resolution problem in Java 11+
+        assumeThat(System.getenv().keySet(), (Matcher) anyOf(hasItem("HOSTNAME"), hasItem("COMPUTERNAME")));
         assertNotNull(jPosix.gethostname());
     }
 
