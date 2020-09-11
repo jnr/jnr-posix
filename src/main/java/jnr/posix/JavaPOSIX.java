@@ -2,13 +2,14 @@ package jnr.posix;
 
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.Fcntl;
+import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
 import jnr.posix.util.Java5ProcessMaker;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
 import jnr.posix.util.ProcessMaker;
-import sun.misc.Signal;
+import jnr.posix.util.SunMiscSignal;
 
 import java.io.*;
 import java.nio.Buffer;
@@ -268,27 +269,8 @@ final class JavaPOSIX implements POSIX {
         return unimplementedInt("kill");    // FIXME: Can be implemented
     }
 
-    private static class SunMiscSignalHandler implements sun.misc.SignalHandler {
-        final SignalHandler handler;
-        public SunMiscSignalHandler(SignalHandler handler) {
-            this.handler = handler;
-        }
-        
-        public void handle(Signal signal) {
-            handler.handle(signal.getNumber());
-        }
-    }
-    
-    public SignalHandler signal(jnr.constants.platform.Signal sig, final SignalHandler handler) {
-        Signal s = new Signal(sig.name().substring("SIG".length()));
-        
-        sun.misc.SignalHandler oldHandler = Signal.handle(s, new SunMiscSignalHandler(handler));
-        
-        if (oldHandler instanceof SunMiscSignalHandler) {
-            return ((SunMiscSignalHandler)oldHandler).handler;
-        } else {
-            return null;
-        }
+    public SignalHandler signal(Signal sig, SignalHandler handler) {
+        return SunMiscSignal.signal(sig, handler);
     }
 
     public int raise(int sig) {
