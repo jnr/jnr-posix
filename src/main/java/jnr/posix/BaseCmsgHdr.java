@@ -3,7 +3,6 @@ package jnr.posix;
 import jnr.ffi.Memory;
 import jnr.ffi.Pointer;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 /**
@@ -42,8 +41,7 @@ abstract class BaseCmsgHdr implements CmsgHdr {
 
         ByteBuffer buf = ByteBuffer.allocate(bytes.length);
         buf.put(bytes);
-        // force Java 8 compatible Buffer method
-        ((Buffer) buf).flip();
+        buf.flip();
         return buf;
     }
 

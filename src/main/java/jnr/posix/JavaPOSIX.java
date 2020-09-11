@@ -12,7 +12,6 @@ import jnr.posix.util.ProcessMaker;
 import jnr.posix.util.SunMiscSignal;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -315,11 +314,9 @@ final class JavaPOSIX implements POSIX {
         int result = helper.readlink(path, buffer, buffer.capacity());
         
         if (result == -1) return null;
-
-        // force Java 8 compatible Buffer method
-        Buffer buffer2 = buffer;
-        buffer2.position(0);
-        buffer2.limit(result);
+        
+        buffer.position(0);
+        buffer.limit(result);
         return Charset.forName("ASCII").decode(buffer).toString();
     }
 
