@@ -3,10 +3,7 @@ package jnr.posix;
 import jnr.posix.util.WindowsHelpers;
 import jnr.posix.windows.CommonFileInformation;
 
-/**
- *
- */
-public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileStat {
+public class WindowsRawFileStat extends AbstractJavaFileStat implements NanosecondFileStat {
     private int st_atime;
     private long st_atimensec;
     private long st_mtimensec;
@@ -15,6 +12,9 @@ public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileSt
     private int st_dev;
     private int st_nlink;
     private int st_mode;
+    private long st_size;
+    private int st_ctime;
+    private int st_mtime;
 
     public WindowsRawFileStat(POSIX posix, POSIXHandler handler) {
         super(posix, handler);
@@ -37,10 +37,10 @@ public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileSt
         st_atime = (int) (atime / CommonFileInformation.NANOSECONDS);
         long mtime = fileInfo.getLastWriteTimeNanoseconds();
         st_mtimensec = mtime % CommonFileInformation.NANOSECONDS;
-        st_mtime =  (int) (mtime / CommonFileInformation.NANOSECONDS);
+        st_mtime = (int) (mtime / CommonFileInformation.NANOSECONDS);
         long ctime = fileInfo.getCreationTimeNanoseconds();
         st_ctimensec = ctime % CommonFileInformation.NANOSECONDS;
-        st_ctime =  (int) (ctime / CommonFileInformation.NANOSECONDS);
+        st_ctime = (int) (ctime / CommonFileInformation.NANOSECONDS);
         st_size = isDirectory() ? 0 : fileInfo.getFileSize();
         st_nlink = 1;
         st_mode &= ~(S_IWGRP | S_IWOTH);
@@ -50,12 +50,9 @@ public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileSt
         return st_mode;
     }
 
-    public int gid() {
-        return 0;
-    }
-
-    public int uid() {
-        return 0;
+    @Override
+    public long mtime() {
+        return st_mtime;
     }
 
     public long atime() {
@@ -90,21 +87,13 @@ public class WindowsRawFileStat extends JavaFileStat implements NanosecondFileSt
     }
 
     @Override
-    public long blocks() {
-        return -1;
+    public long st_size() {
+        return st_size;
     }
 
     @Override
-    public long blockSize() {
-        return -1;
-    }
-
-    public boolean isBlockDev() {
-        return (mode() & S_IFMT) == S_IFBLK;
-    }
-
-    public boolean isCharDev() {
-        return (mode() & S_IFMT) == S_IFCHR;
+    public long ctime() {
+        return st_ctime;
     }
 
     public boolean isDirectory() {

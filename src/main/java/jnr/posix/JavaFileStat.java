@@ -2,42 +2,122 @@ package jnr.posix;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.DosFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
 
-import jnr.posix.POSIXHandler.WARNING_ID;
-
-public class JavaFileStat implements FileStat {
-    private final POSIXHandler handler;
-    private final POSIX posix;
-
+public class JavaFileStat extends AbstractJavaFileStat {
     short st_mode;
-    int st_blksize;
-    long st_size;
-    int st_ctime;
-    int st_mtime;
-    
+
+    BasicFileAttributes attrs;
+    PosixFileAttributes posixAttrs;
+    DosFileAttributes dosAttrs;
     
     public JavaFileStat(POSIX posix, POSIXHandler handler) {
-        this.handler = handler;
-        this.posix = posix;
+        super(posix, handler);
     }
     
-    public void setup(String path) {
-        // ENEBO: This was originally JRubyFile, but I believe we use JRuby file for normalization
-        // of paths.  So we should be safe.
-        File file = new JavaSecuredFile(path);
-        // Limitation: We cannot determine, so always return 4096 (better than blowing up)
-        st_blksize = 4096;
-        st_mode = calculateMode(file, st_mode);
-        st_size = file.length();
+    public void setup(String filePath) {
+        File file = new JavaSecuredFile(filePath);
+        Path path = file.toPath();
 
-        // Parent file last modified will only represent when something was added or removed.
-        // This is not correct, but it is better than nothing and does work in one common use
-        // case.
-        st_mtime = (int) (file.lastModified() / 1000);
-        if (file.getParentFile() != null) {
-            st_ctime = (int) (file.getParentFile().lastModified() / 1000);
-        } else {
-            st_ctime = st_mtime;
+        try {
+            try {
+                // try POSIX
+                posixAttrs = Files.readAttributes(path, PosixFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+                attrs = posixAttrs;
+            } catch (UnsupportedOperationException uoe) {
+                try {
+                    // try DOS
+                    dosAttrs = Files.readAttributes(path, DosFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+                    attrs = dosAttrs;
+                } catch (UnsupportedOperationException uoe2) {
+                    attrs = Files.readAttributes(path, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
+                }
+            }
+        } catch (IOException ioe) {
+            // fall back on pre-NIO2 logic
+            attrs = new PreNIO2FileAttributes(file);
+        }
+
+        // Simulated mode value
+        st_mode = calculateMode(file, (short) 0);
+    }
+
+    private class PreNIO2FileAttributes implements BasicFileAttributes {
+        final long st_size;
+        final int st_ctime;
+        final int st_mtime;
+        final boolean regularFile;
+        final boolean directory;
+
+        PreNIO2FileAttributes(File file) {
+            st_size = file.length();
+
+            st_mtime = (int) (file.lastModified() / 1000);
+
+            // Parent file last modified will only represent when something was added or removed.
+            // This is not correct, but it is better than nothing and does work in one common use
+            // case.
+            if (file.getParentFile() != null) {
+                st_ctime = (int) (file.getParentFile().lastModified() / 1000);
+            } else {
+                st_ctime = st_mtime;
+            }
+
+            regularFile = file.isFile();
+            directory = file.isDirectory();
+        }
+
+        @Override
+        public FileTime lastModifiedTime() {
+            return FileTime.fromMillis(st_mtime);
+        }
+
+        @Override
+        public FileTime lastAccessTime() {
+            return lastModifiedTime();
+        }
+
+        @Override
+        public FileTime creationTime() {
+            return FileTime.fromMillis(st_mtime);
+        }
+
+        @Override
+        public boolean isRegularFile() {
+            return (st_mode & S_IFREG) != 0;
+        }
+
+        @Override
+        public boolean isDirectory() {
+            return (st_mode & S_IFDIR) != 0;
+        }
+
+        @Override
+        public boolean isSymbolicLink() {
+            return (st_mode & S_IFLNK) != 0;
+        }
+
+        @Override
+        public boolean isOther() {
+            return !(isRegularFile() || isDirectory() || isSymbolicLink());
+        }
+
+        @Override
+        public long size() {
+            return st_size;
+        }
+
+        @Override
+        public Object fileKey() {
+            return null;
         }
     }
 
@@ -59,24 +139,28 @@ public class JavaFileStat implements FileStat {
         } else if (file.isFile()) {
             st_mode |= S_IFREG;
         }
-        
-        try {
-            st_mode = calculateSymlink(file, st_mode);
-        } catch (IOException e) {
-            // Not sure we can do much in this case...
+
+        if (posixAttrs != null && posixAttrs.isSymbolicLink()) {
+            st_mode |= S_IFLNK;
+        } else {
+            try {
+                st_mode = calculateSymlink(file, st_mode);
+            } catch (IOException e) {
+                // Not sure we can do much in this case...
+            }
         }
-        
+
         return st_mode;
     }
-    
-    private short calculateSymlink(File file, short st_mode) throws IOException {
+
+    private static short calculateSymlink(File file, short st_mode) throws IOException {
         if (file.getAbsoluteFile().getParentFile() == null) {
             return st_mode;
         }
 
         File absoluteParent = file.getAbsoluteFile().getParentFile();
         File canonicalParent = absoluteParent.getCanonicalFile();
-        
+
         if (canonicalParent.getAbsolutePath().equals(absoluteParent.getAbsolutePath())) {
             // parent doesn't change when canonicalized, compare absolute and canonical file directly
             if (!file.getAbsolutePath().equalsIgnoreCase(file.getCanonicalPath())) {
@@ -84,13 +168,13 @@ public class JavaFileStat implements FileStat {
                 return st_mode;
             }
         }
-        
+
         // directory itself has symlinks (canonical != absolute), so build new path with canonical parent and compare
         file = new JavaSecuredFile(canonicalParent.getAbsolutePath() + "/" + file.getName());
         if (!file.getAbsolutePath().equalsIgnoreCase(file.getCanonicalPath())) {
             st_mode |= S_IFLNK;
         }
-        
+
         return st_mode;
     }
 
@@ -98,99 +182,40 @@ public class JavaFileStat implements FileStat {
      * Limitation: Java has no access time support, so we return mtime as the next best thing.
      */
     public long atime() {
-        return st_mtime;
-    }
-
-    public long blocks() {
-        handler.unimplementedError("stat.st_blocks");
-        
-        return -1;
-    }
-
-    public long blockSize() {
-        return st_blksize;
+        return (int) (attrs.lastAccessTime().toMillis() / 1000);
     }
 
     public long ctime() {
-        return st_ctime;
-    }
-    
-    public long dev() {
-        handler.unimplementedError("stat.st_dev");
-        
-        return -1;
+        return (int) (attrs.creationTime().toMillis() / 1000);
     }
 
-    public String ftype() {
-        if (isFile()) {
-            return "file";
-        } else if (isDirectory()) {
-            return "directory";
-        }
-        
-        return "unknown";
-    }
-
-    public int gid() {
-        handler.unimplementedError("stat.st_gid");
-        
-        return -1;
-    }
-    
-    public boolean groupMember(int gid) {
-        return posix.getgid() == gid || posix.getegid() == gid;
-    }
-
-    /**
-     *  Limitation: We have no pure-java way of getting inode.  webrick needs this defined to work.
-     */
-    public long ino() {
-        return 0;
-    }
-
-    public boolean isBlockDev() {
-        handler.unimplementedError("block device detection");
-        
-        return false;
-    }
-    
-    /**
-     * Limitation: [see JRUBY-1516] We just pick more likely value.  This is a little scary.
-     */
-    public boolean isCharDev() {
-        return false;
-    }
-    
     public boolean isDirectory() {
-        return (mode() & S_IFDIR) != 0;
+        return attrs.isDirectory();
     }
 
     public boolean isEmpty() {
-        return st_size() == 0;
+        return attrs.size() == 0;
     }
 
-    // At least one major library depends on this method existing.
     public boolean isExecutable() {
-        handler.warn(WARNING_ID.DUMMY_VALUE_USED, "executable? does not in this environment and will return a dummy value", "executable");
-        
-        return true;
-    }
+        if (posixAttrs != null) {
+            Set<PosixFilePermission> permissions = posixAttrs.permissions();
 
-    // At least one major library depends on this method existing.
-    public boolean isExecutableReal() {
-        handler.warn(WARNING_ID.DUMMY_VALUE_USED, "executable_real? does not work in this environmnt and will return a dummy value", "executable_real");
-        
-        return true;
-    }
+            return permissions.contains(PosixFilePermission.OWNER_EXECUTE) ||
+                    permissions.contains(PosixFilePermission.GROUP_EXECUTE) ||
+                    permissions.contains(PosixFilePermission.OTHERS_EXECUTE);
+        }
 
-    public boolean isFifo() {
-        handler.unimplementedError("fifo file detection");
-        
+        // silently return false, since it's likely an unusual filesystem
         return false;
     }
-    
+
+    public boolean isExecutableReal() {
+        return isExecutable();
+    }
+
     public boolean isFile() {
-        return (mode() & S_IFREG) != 0;
+        return attrs.isRegularFile();
     }
     
     public boolean isGroupOwned() {
@@ -198,13 +223,16 @@ public class JavaFileStat implements FileStat {
     }
 
     public boolean isIdentical(FileStat other) {
-        handler.unimplementedError("identical file detection");
-        
-        return false;
-    }
+        // if attrs supports file keys, we can compare them
+        Object key = attrs.fileKey();
 
-    public boolean isNamedPipe() {
-        handler.unimplementedError("piped file detection");
+        if (key != null && other instanceof JavaFileStat) {
+            JavaFileStat otherStat = (JavaFileStat) other;
+
+            return key.equals(otherStat.attrs.fileKey());
+        }
+
+        handler.unimplementedError("identical file detection");
         
         return false;
     }
@@ -218,6 +246,14 @@ public class JavaFileStat implements FileStat {
     }
 
     public boolean isReadable() {
+        if (posixAttrs != null) {
+            Set<PosixFilePermission> permissions = posixAttrs.permissions();
+
+            return permissions.contains(PosixFilePermission.OWNER_READ) ||
+                    permissions.contains(PosixFilePermission.GROUP_READ) ||
+                    permissions.contains(PosixFilePermission.OTHERS_READ);
+        }
+
         int mode = mode();
         
         if ((mode & S_IRUSR) != 0) return true;
@@ -233,10 +269,24 @@ public class JavaFileStat implements FileStat {
     }
 
     public boolean isSymlink() {
+        if (posixAttrs != null) {
+            return posixAttrs.isSymbolicLink();
+        }
+
         return (mode() & S_IFLNK) == S_IFLNK;
     }
     
     public boolean isWritable() {
+        if (posixAttrs != null) {
+            Set<PosixFilePermission> permissions = posixAttrs.permissions();
+
+            return permissions.contains(PosixFilePermission.OWNER_WRITE) ||
+                    permissions.contains(PosixFilePermission.GROUP_WRITE) ||
+                    permissions.contains(PosixFilePermission.OTHERS_WRITE);
+        } else if (dosAttrs != null) {
+            return !dosAttrs.isReadOnly();
+        }
+
         int mode = mode();
         
         if ((mode & S_IWUSR) != 0) return true;
@@ -252,68 +302,16 @@ public class JavaFileStat implements FileStat {
         return isWritable();
     }
 
-    public boolean isSetgid() {
-        handler.unimplementedError("setgid detection");
-        
-        return false;
-    }
-
-    public boolean isSetuid() {
-        handler.unimplementedError("setuid detection");
-        
-        return false;
-    }
-
-    public boolean isSocket() {
-        handler.unimplementedError("socket file type detection");
-        
-        return false;
-    }
-    
-    public boolean isSticky() {
-        handler.unimplementedError("sticky bit detection");
-        
-        return false;
-    }
-
-    public int major(long dev) {
-        handler.unimplementedError("major device");
-        
-        return -1;
-    }
-
-    public int minor(long dev) {
-        handler.unimplementedError("minor device");
-        
-        return -1;
-    }
-
     public int mode() {
         return st_mode & 0xffff;
     }
 
     public long mtime() {
-        return st_mtime;
+        return (int) (attrs.lastModifiedTime().toMillis() / 1000);
     }
 
-    public int nlink() {
-        handler.unimplementedError("stat.nlink");
-        
-        return -1;
-    }
-
-    public long rdev() {
-        handler.unimplementedError("stat.rdev");
-        
-        return -1;
-    }
-    
     public long st_size() {
-        return st_size;
+        return attrs.size();
     }
 
-    // Limitation: We have no pure-java way of getting uid. RubyZip needs this defined to work.
-    public int uid() {
-        return -1;
-    }
 }
