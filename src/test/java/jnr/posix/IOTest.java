@@ -71,6 +71,23 @@ public class IOTest {
     }
 
     @Test
+    public void testPathconf() {
+        if (!Platform.IS_WINDOWS) {
+            int res = posix.fpathconf(-1, Pathconf._PC_PIPE_BUF);
+            Assert.assertEquals(-1, res);
+            
+            int[] fds = {0, 0};
+            posix.pipe(fds);
+            res = posix.fpathconf(fds[1], Pathconf._PC_PIPE_BUF);
+            if (Platform.IS_LINUX) {
+                Assert.assertEquals(4096, res);
+            } else {
+                Assert.assertTrue(res > 0);
+            }
+        }
+    }
+
+    @Test
     public void testSocketPair() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};

@@ -10,6 +10,9 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
+import jnr.ffi.annotations.Out;
 
 public interface POSIX {
     CharSequence crypt(CharSequence key, CharSequence salt);
@@ -143,6 +146,11 @@ public interface POSIX {
     ProcessMaker newProcessMaker();
 
     public long sysconf(Sysconf name);
+
+    public int confstr(Confstr name, @Out ByteBuffer buf, int len);
+
+    public int fpathconf(int fd, Pathconf name);
+
     public Times times();
 
     public long posix_spawnp(String path, Collection<? extends SpawnFileAction> fileActions,

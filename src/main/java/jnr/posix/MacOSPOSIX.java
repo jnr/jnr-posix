@@ -1,5 +1,8 @@
 package jnr.posix;
 
+import java.nio.ByteBuffer;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.*;
 import jnr.ffi.mapper.FromNativeContext;
@@ -41,6 +44,14 @@ final class MacOSPOSIX extends BaseNativePOSIX {
 
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        return libc().confstr(name, buf, len);
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        return libc().fpathconf(fd, name);
     }
 
     public Times times() {

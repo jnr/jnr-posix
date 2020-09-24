@@ -36,6 +36,8 @@ import jnr.ffi.annotations.*;
 import jnr.ffi.types.*;
 
 import java.nio.ByteBuffer;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
 import jnr.ffi.byref.IntByReference;
 
 public interface LibC {
@@ -153,6 +155,11 @@ public interface LibC {
     int chdir(CharSequence path);
 
     public long sysconf(Sysconf name);
+
+    public int confstr(Confstr name, @Out ByteBuffer buf, int len);
+
+    public int fpathconf(int fd, Pathconf name);
+
     public @clock_t long times(@Out @Transient NativeTimes tms);
     
     int flock(int fd, int mode);

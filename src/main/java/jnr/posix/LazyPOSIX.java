@@ -10,6 +10,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
 import jnr.constants.platform.Signal;
 
 final class LazyPOSIX implements POSIX {
@@ -434,6 +436,14 @@ final class LazyPOSIX implements POSIX {
 
     public long sysconf(Sysconf name) {
         return posix().sysconf(name);
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        return libc().confstr(name, buf, len);
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        return libc().fpathconf(fd, name);
     }
 
     public Times times() {
