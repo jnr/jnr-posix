@@ -72,7 +72,11 @@ public class IOTest {
 
     @Test
     public void testPathconf() {
-        if (!Platform.IS_WINDOWS) {
+        if (Platform.IS_WINDOWS) {
+            int res = posix.fpathconf(-1, Pathconf._PC_PIPE_BUF);
+            Assert.assertEquals(-1, res);
+            Assert.assertEquals(Errno.EOPNOTSUPP.intValue(), posix.errno());
+        } else {
             int res = posix.fpathconf(-1, Pathconf._PC_PIPE_BUF);
             Assert.assertEquals(-1, res);
             
