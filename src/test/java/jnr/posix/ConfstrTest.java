@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import java.nio.ByteBuffer;
 import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Errno;
 import jnr.posix.util.Platform;
 
 public class ConfstrTest {
@@ -16,7 +17,11 @@ public class ConfstrTest {
 
     @Test
     public void confstr() {
-        if (!Platform.IS_WINDOWS) {
+        if (Platform.IS_WINDOWS) {
+            int len = posix.confstr(Confstr._CS_PATH, null, 0);
+            assertEquals(-1, len);
+            assertEquals(Errno.EOPNOTSUPP.intValue(), posix.errno());
+        } else {
             int len = posix.confstr(Confstr._CS_PATH, null, 0);
             assertTrue("bad strlen", len > 0);
 
