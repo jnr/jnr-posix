@@ -23,6 +23,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
+import jnr.ffi.annotations.Out;
 
 public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -665,6 +668,16 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
                 errno(Errno.EOPNOTSUPP.intValue());
                 return -1;
         }
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
     }
 
     public Times times() {

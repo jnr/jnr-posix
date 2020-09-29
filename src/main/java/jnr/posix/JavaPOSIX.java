@@ -16,9 +16,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
+import jnr.constants.platform.Confstr;
 
 import static jnr.constants.platform.Errno.EINVAL;
 import static jnr.constants.platform.Errno.ENOENT;
+import jnr.constants.platform.Pathconf;
 
 final class JavaPOSIX implements POSIX {
     private final POSIXHandler handler;
@@ -538,6 +540,16 @@ final class JavaPOSIX implements POSIX {
                 errno(Errno.EOPNOTSUPP.intValue());
                 return -1;
         }
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
     }
 
     public Times times() {

@@ -11,6 +11,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
 
 final class CheckedPOSIX implements POSIX {
     private final POSIX posix;
@@ -440,6 +442,14 @@ final class CheckedPOSIX implements POSIX {
 
     public long sysconf(Sysconf name) {
         try { return posix.sysconf(name); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        try { return posix.confstr(name, buf, len); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        try { return posix.fpathconf(fd, name); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
     public Times times() {

@@ -40,8 +40,11 @@ import jnr.posix.util.MethodName;
 import java.lang.Runtime;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.nio.ByteBuffer;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
+import jnr.constants.platform.Confstr;
+import jnr.constants.platform.Pathconf;
 
 final class FreeBSDPOSIX extends BaseNativePOSIX {
     private final int freebsdVersion;
@@ -87,6 +90,14 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
 
     public long sysconf(Sysconf name) {
         return libc().sysconf(name);
+    }
+
+    public int confstr(Confstr name, ByteBuffer buf, int len) {
+        return libc().confstr(name, buf, len);
+    }
+
+    public int fpathconf(int fd, Pathconf name) {
+        return libc().fpathconf(fd, name);
     }
 
     public Times times() {
