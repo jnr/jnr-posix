@@ -439,11 +439,11 @@ final class LazyPOSIX implements POSIX {
     }
 
     public int confstr(Confstr name, ByteBuffer buf, int len) {
-        return libc().confstr(name, buf, len);
+        return posix().confstr(name, buf, len);
     }
 
     public int fpathconf(int fd, Pathconf name) {
-        return libc().fpathconf(fd, name);
+        return posix().fpathconf(fd, name);
     }
 
     public Times times() {
