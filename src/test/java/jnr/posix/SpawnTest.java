@@ -127,7 +127,6 @@ public class SpawnTest {
         }
     }
 
-    /* FIXME: Does not pass on seemingly only travis
     @Test public void inputFile() throws IOException {
         if (Platform.getNativePlatform().isUnix()) {
             File inputFile = File.createTempFile("foo", null);
@@ -161,7 +160,7 @@ public class SpawnTest {
                 killChild(pid);
             }
         }
-    } */
+    }
 
     @Test public void closeInput() throws IOException {
         if (Platform.getNativePlatform().isUnix()) {
