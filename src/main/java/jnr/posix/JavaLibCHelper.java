@@ -259,9 +259,8 @@ public class JavaLibCHelper {
             // Java 9+ provide ProcessHandle.current
             try {
                 Class processHandle = Class.forName("java.lang.ProcessHandle");
-                Method current = processHandle.getMethod("current");
-                Method pid = current.getClass().getMethod("pid");
-                return (int) (long) (Long) pid.invoke(current.invoke(null));
+                Object current = processHandle.getMethod("current").invoke(null); // static
+                return (int) (long) (Long) processHandle.getMethod("pid").invoke(current);
             } catch (Exception e) {
                 // ignore, try Java 8 logic below
             }
