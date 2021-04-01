@@ -23,7 +23,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         super(libcProvider, handler);
 
 
-        if (Platform.IS_32_BIT || "sparcv9".equals(Platform.ARCH)) {
+        if (Platform.IS_32_BIT || "sparcv9".equals(Platform.ARCH) || Platform.ARCH.contains("mips64")) {
             statVersion = 3;
         } else {
             FileStat stat = allocateStat();
@@ -47,6 +47,9 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 if ("sparcv9".equals(Platform.ARCH)) {
                     return new LinuxFileStatSPARCV9(this);
                 } else{
+		    if (Platform.ARCH.contains("mips64")) {
+		    	return new LinuxFileStatMIPS64(this);
+		    }
                     return new LinuxFileStat64(this);
                 }
             }
@@ -215,6 +218,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         static final ABI _ABI_AARCH64 = new ABI_AARCH64();
         static final ABI _ABI_SPARCV9 = new ABI_SPARCV9();
         static final ABI _ABI_PPC64 = new ABI_PPC64();
+        static final ABI _ABI_MIPS64 = new ABI_MIPS64();
 
         public static ABI abi() {
             if ("x86_64".equals(Platform.ARCH)) {
@@ -229,7 +233,9 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 return _ABI_SPARCV9;
             } else if (Platform.ARCH.contains("ppc64")) {
                 return _ABI_PPC64;
-            }
+            } else if (Platform.ARCH.contains("mips64")) {
+	    	return _ABI_MIPS64;
+	    }
             return null;
         }
 
@@ -295,6 +301,18 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             @Override
             public int __NR_ioprio_get() {
                 return 274 ;
+            }
+        }
+
+        /** @see /usr/include/asm/unistd.h */
+        final static class ABI_MIPS64 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 5273;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 5274;
             }
         }
     }
