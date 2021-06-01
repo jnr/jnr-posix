@@ -17,8 +17,10 @@ public final class LinuxFileStatAARCH64 extends BaseFileStat implements Nanoseco
         public final uid_t st_uid = new uid_t();
         public final gid_t st_gid = new gid_t();
         public final dev_t st_rdev = new dev_t();
+        public final dev_t __pad1 = new dev_t();
         public final off_t st_size = new off_t();
         public final blksize_t st_blksize = new blksize_t();
+        public final Signed32 __pad2 = new Signed32();
         public final blkcnt_t st_blocks = new blkcnt_t();
         public final time_t st_atime = new time_t();             // Time of last access
         public final SignedLong st_atimensec = new SignedLong(); // Time of last access (nanoseconds)
@@ -26,7 +28,8 @@ public final class LinuxFileStatAARCH64 extends BaseFileStat implements Nanoseco
         public final SignedLong st_mtimensec = new SignedLong(); // Last data modification time (nanoseconds)
         public final time_t st_ctime = new time_t();             // Time of last status change
         public final SignedLong st_ctimensec = new SignedLong(); // Time of last status change (nanoseconds)
-        public final Signed64 __unused4 = new Signed64();
+        public final Signed32 __unused4 = new Signed32();
+        public final Signed32 __unused5 = new Signed32();
     }
 
     private static final Layout layout = new Layout(jnr.ffi.Runtime.getSystemRuntime());

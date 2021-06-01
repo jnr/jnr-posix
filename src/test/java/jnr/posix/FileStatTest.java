@@ -61,6 +61,7 @@ public class FileStatTest {
             FileStat stat = posix.stat(f.getAbsolutePath());
             assertNotNull("posix.stat failed", stat);
             assertEquals(size, stat.st_size());
+            assertEquals(1, stat.nlink());
             //assertNotEquals(stat.mtime(), stat.ctime());
 
             stat = posix.allocateStat();
