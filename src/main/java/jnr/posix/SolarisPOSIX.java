@@ -18,7 +18,11 @@ final class SolarisPOSIX extends BaseNativePOSIX {
     }
     
     public FileStat allocateStat() {
-        return Platform.IS_32_BIT ? new SolarisFileStat32(this) : new SolarisFileStat64(this);
+        if ("sparcv9".equals(Platform.ARCH)) {
+            return new SolarisFileStatSPARCV9(this);
+        } else {
+            return Platform.IS_32_BIT ? new SolarisFileStat32(this) : new SolarisFileStat64(this);
+        }
     }
 
     public MsgHdr allocateMsgHdr() {
