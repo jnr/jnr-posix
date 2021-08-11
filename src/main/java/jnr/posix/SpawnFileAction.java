@@ -2,6 +2,11 @@ package jnr.posix;
 
 import jnr.ffi.Pointer;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+
 public abstract class SpawnFileAction {
     abstract boolean act(POSIX posix, Pointer nativeFileActions);
 
@@ -38,6 +43,7 @@ public abstract class SpawnFileAction {
         final String path;
         final int fd;
         final int flags, mode;
+        ByteBuffer nativePath;
 
         public Open(String path, int fd, int flags, int mode) {
             this.path = path;
@@ -47,7 +53,29 @@ public abstract class SpawnFileAction {
         }
 
         final boolean act(POSIX posix, Pointer nativeFileActions) {
-            return ((UnixLibC) posix.libc()).posix_spawn_file_actions_addopen(nativeFileActions, fd, path, flags, mode) == 0;
+            /*
+            This logic allocates a direct ByteBuffer to use for the path in order to work around systems that have not
+            patched CVE-2014-4043, in which older glibc versions do not make a defensive copy of the file path passed to
+            posix_spawn_file_actions_addopen. The buffer may be freed by the caller before it can be used in an
+            eventual posix_spawn call.
+
+            See https://bugzilla.redhat.com/show_bug.cgi?id=1983750 for a RHEL version of this issue.
+             */
+
+            // determine encoded byte array length
+            CharsetEncoder encoder = Charset.defaultCharset().newEncoder();
+            int bpc = (int) encoder.maxBytesPerChar();
+            int size = (path.length() + 1) * bpc;
+
+            // transcode to native buffer
+            nativePath = ByteBuffer.allocateDirect(size);
+            encoder.encode(CharBuffer.wrap(path), nativePath, true);
+            nativePath.flip();
+
+            // null terminate
+            nativePath.limit(nativePath.limit() + bpc);
+
+            return ((UnixLibC) posix.libc()).posix_spawn_file_actions_addopen(nativeFileActions, fd, nativePath, flags, mode) == 0;
         }
 
         public String toString() {
