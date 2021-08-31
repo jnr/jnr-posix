@@ -43,16 +43,17 @@ public abstract class SpawnFileAction {
         final String path;
         final int fd;
         final int flags, mode;
-        ByteBuffer nativePath;
+        final ByteBuffer nativePath;
 
         public Open(String path, int fd, int flags, int mode) {
             this.path = path;
             this.fd = fd;
             this.flags = flags;
             this.mode = mode;
+            this.nativePath = defensiveCopy(path);
         }
 
-        final boolean act(POSIX posix, Pointer nativeFileActions) {
+        private ByteBuffer defensiveCopy(String path) {
             /*
             This logic allocates a direct ByteBuffer to use for the path in order to work around systems that have not
             patched CVE-2014-4043, in which older glibc versions do not make a defensive copy of the file path passed to
@@ -60,7 +61,7 @@ public abstract class SpawnFileAction {
             eventual posix_spawn call.
 
             See https://bugzilla.redhat.com/show_bug.cgi?id=1983750 for a RHEL version of this issue.
-             */
+            */
 
             // determine encoded byte array length
             CharsetEncoder encoder = Charset.defaultCharset().newEncoder();
@@ -68,13 +69,17 @@ public abstract class SpawnFileAction {
             int size = (path.length() + 1) * bpc;
 
             // transcode to native buffer
-            nativePath = ByteBuffer.allocateDirect(size);
+            ByteBuffer nativePath = ByteBuffer.allocateDirect(size);
             encoder.encode(CharBuffer.wrap(path), nativePath, true);
             nativePath.flip();
 
             // null terminate
             nativePath.limit(nativePath.limit() + bpc);
 
+            return nativePath;
+        }
+
+        final boolean act(POSIX posix, Pointer nativeFileActions) {
             return ((UnixLibC) posix.libc()).posix_spawn_file_actions_addopen(nativeFileActions, fd, nativePath, flags, mode) == 0;
         }
 
