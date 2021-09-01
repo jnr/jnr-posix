@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.ffi.Pointer;
+import jnr.ffi.annotations.Direct;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.byref.ByReference;
@@ -8,6 +9,8 @@ import jnr.ffi.byref.IntByReference;
 import jnr.ffi.byref.NumberByReference;
 import jnr.ffi.byref.ShortByReference;
 import jnr.ffi.types.pid_t;
+
+import java.nio.ByteBuffer;
 
 public interface UnixLibC extends LibC {
     public int posix_spawn(@Out ByReference pid, @In CharSequence path, @In Pointer fileActions,
@@ -19,7 +22,14 @@ public interface UnixLibC extends LibC {
     public int posix_spawn_file_actions_init(Pointer fileActions);
     public int posix_spawn_file_actions_destroy(Pointer fileActions);
     public int posix_spawn_file_actions_addclose(Pointer fileActions, int filedes);
+
+    /**
+     * @deprecated due to CVE-2014-4043 (https://bugzilla.redhat.com/show_bug.cgi?id=1983750)
+     */
+    @Deprecated
     public int posix_spawn_file_actions_addopen(Pointer fileActions, int filedes, CharSequence path,
+                                                int oflag, int mode);
+    public int posix_spawn_file_actions_addopen(Pointer fileActions, int filedes, @Direct ByteBuffer path,
                                                 int oflag, int mode);
     public int posix_spawn_file_actions_adddup2(Pointer fileActions, int filedes, int newfiledes);
     public int posix_spawnattr_init(Pointer attr);
