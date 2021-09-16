@@ -178,7 +178,6 @@
           <configuration>
             <forkCount>2</forkCount>
             <reuseForks>false</reuseForks>
-            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
             <includes>
               <include>**/*Test.java</include>
             </includes>
@@ -202,7 +201,6 @@
             <configuration>
               <forkCount>2</forkCount>
               <reuseForks>false</reuseForks>
-              <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
             </configuration>
           </plugin>
         </plugins>
