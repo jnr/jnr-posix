@@ -21,6 +21,10 @@ final class MacOSPOSIX extends BaseNativePOSIX {
     }
 
     public FileStat allocateStat() {
+        if (Platform.getNativePlatform().getCPU() == Platform.CPU.AARCH64) {
+            return new MacOSFileStat64(this);
+        }
+
         return new MacOSFileStat(this);
     }
 
