@@ -33,7 +33,10 @@ package jnr.posix;
 
 import jnr.ffi.StructLayout;
 
-public final class MacOSFileStat64 extends BaseFileStat implements NanosecondFileStat {
+/**
+ * An alternate stat layout when running with _DARWIN_FEATURE_64_BIT_INODE, which appears to be the default on M1.
+ */
+public final class MacOSFileStat64Inode extends BaseFileStat implements NanosecondFileStat {
     public static class Layout64Inode extends StructLayout {
 
         public Layout64Inode(jnr.ffi.Runtime runtime) {
@@ -68,7 +71,7 @@ public final class MacOSFileStat64 extends BaseFileStat implements NanosecondFil
     }
     private static final Layout64Inode layout = new Layout64Inode(jnr.ffi.Runtime.getSystemRuntime());
 
-    public MacOSFileStat64(MacOSPOSIX posix) {
+    public MacOSFileStat64Inode(MacOSPOSIX posix) {
         super(posix, layout);
     }
 
