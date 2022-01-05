@@ -169,7 +169,7 @@ public interface LibC {
     int flock(int fd, int mode);
     int unlink(CharSequence path);
     @Variadic(fixedCount = 2)
-    int open(CharSequence path, int flags, int perm);
+    int open(CharSequence path, int flags, @u_int32_t int perm);
     int pipe(@Out int[] fds);
     int truncate(CharSequence path, long length);
     int ftruncate(int fd, long offset);
