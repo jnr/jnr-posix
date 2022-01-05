@@ -85,10 +85,14 @@ public interface LibC {
     int dup(int fd);
     int dup2(int oldFd, int newFd);
 
+    @Variadic(fixedCount = 2)
     int fcntl(int fd, int fnctl, Flock arg);
+    @Variadic(fixedCount = 2)
     int fcntl(int fd, int fnctl, Pointer arg);
+    @Variadic(fixedCount = 2)
     int fcntl(int fd, int fnctl);
-    int fcntl(int fd, int fnctl, int arg);
+    @Variadic(fixedCount = 2)
+    int fcntl(int fd, int fnctl, @u_int64_t int arg);
     @Deprecated
     int fcntl(int fd, int fnctl, int... arg);
     int access(CharSequence path, int amode);
@@ -164,6 +168,7 @@ public interface LibC {
     
     int flock(int fd, int mode);
     int unlink(CharSequence path);
+    @Variadic(fixedCount = 2)
     int open(CharSequence path, int flags, int perm);
     int pipe(@Out int[] fds);
     int truncate(CharSequence path, long length);
