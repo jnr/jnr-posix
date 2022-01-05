@@ -381,9 +381,9 @@ public class FileTest {
         result = posix.close(fd);
         assertEquals(-1, result);
 
-        fd = posix.open("jnr-posix-filetest.txt", OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0666);
+        fd = posix.open("jnr-posix-filetest.txt", OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0600);
 
-        assertEquals(0666, posix.stat("jnr-posix-filetest.txt").mode() & 0777);
+        assertEquals(0600, posix.stat("jnr-posix-filetest.txt").mode() & 0777);
 
         result = posix.close(fd);
         assertEquals(0, result);
