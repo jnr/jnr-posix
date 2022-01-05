@@ -380,6 +380,15 @@ public class FileTest {
 
         result = posix.close(fd);
         assertEquals(-1, result);
+
+        fd = posix.open("jnr-posix-filetest.txt", OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0666);
+
+        assertEquals(0666, posix.stat("jnr-posix-filetest.txt").mode() & 0777);
+
+        result = posix.close(fd);
+        assertEquals(0, result);
+
+        new File("jnr-posix-filetest.txt").delete();
     }
 
     @Test
