@@ -3,6 +3,7 @@ package jnr.posix.windows;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.text.NumberFormat;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
@@ -52,9 +53,7 @@ public class WindowsFileTest {
     // FIXME: This is a broken method since it does not delete any of the generated dirs.
     private static final String DIR_NAME = "0123456789";
     private Pair makeLongPath() throws IOException {
-        File tmp = File.createTempFile("temp", Long.toHexString(System.nanoTime()));
-
-        if (!(tmp.delete() && tmp.mkdir())) throw new IOException("Could not make a long path");
+        File tmp = Files.createTempDirectory("temp" + Long.toHexString(System.nanoTime())).toFile();
 
         StringBuilder buf = new StringBuilder(DIR_NAME);
         for (int i = 0; i < 30; i++) {
