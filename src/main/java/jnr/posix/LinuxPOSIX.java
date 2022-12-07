@@ -43,17 +43,17 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         } else {
             if ("aarch64".equals(Platform.ARCH)) {
                 return new LinuxFileStatAARCH64(this);
-            } else {
-                if ("sparcv9".equals(Platform.ARCH)) {
-                    return new LinuxFileStatSPARCV9(this);
-                } else{
-		    if (Platform.ARCH.contains("mips64")) {
-		    	return new LinuxFileStatMIPS64(this);
-		    }
-                    return new LinuxFileStat64(this);
-                }
-            }
-        }
+            } else if ("sparcv9".equals(Platform.ARCH)) {
+		return new LinuxFileStatSPARCV9(this);
+	    } else if ("loongarch64".equals(Platform.ARCH)) {
+		return new LinuxFileStatLOONGARCH64(this);
+	    } else {
+		if (Platform.ARCH.contains("mips64")) {
+		    return new LinuxFileStatMIPS64(this);
+		}
+                return new LinuxFileStat64(this);
+	    }
+	}
     }
 
     public MsgHdr allocateMsgHdr() {
@@ -219,6 +219,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         static final ABI _ABI_SPARCV9 = new ABI_SPARCV9();
         static final ABI _ABI_PPC64 = new ABI_PPC64();
         static final ABI _ABI_MIPS64 = new ABI_MIPS64();
+        static final ABI _ABI_LOONGARCH64 = new ABI_LOONGARCH64();
 
         public static ABI abi() {
             if ("x86_64".equals(Platform.ARCH)) {
@@ -235,6 +236,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 return _ABI_PPC64;
             } else if (Platform.ARCH.contains("mips64")) {
 	    	return _ABI_MIPS64;
+	    } else if (Platform.ARCH.contains("loongarch64")) {
+		return _ABI_LOONGARCH64;
 	    }
             return null;
         }
@@ -313,6 +316,18 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             @Override
             public int __NR_ioprio_get() {
                 return 5274;
+            }
+        }
+
+        /** @see /usr/include/asm-generic/unistd.h */
+        final static class ABI_LOONGARCH64 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 30;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 31;
             }
         }
     }
