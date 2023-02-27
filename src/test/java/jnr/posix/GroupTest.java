@@ -89,7 +89,7 @@ public class GroupTest {
     @Test
     public void getgroups() throws Throwable {
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            String[] groupIdsAsStrings = exec("id -G").split(" ");
+            String[] groupIdsAsStrings = exec("id", "-G").split(" ");
             long[] expectedGroupIds = new long[groupIdsAsStrings.length];
 
             for (int i = 0; i < groupIdsAsStrings.length; i++) {
@@ -103,7 +103,7 @@ public class GroupTest {
             // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
             // effective group ID before comparing the two arrays.
             if (actualGroupIds.length == expectedGroupIds.length - 1) {
-                long effectiveGroupId = Long.parseLong(exec("id -g"));
+                long effectiveGroupId = Long.parseLong(exec("id", "-g"));
                 expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
             }
 
@@ -114,7 +114,7 @@ public class GroupTest {
         }
     }
 
-    private String exec(String command) throws IOException {
+    private String exec(String... command) throws IOException {
         InputStreamReader isr = null;
         BufferedReader reader = null;
 
