@@ -39,6 +39,7 @@ public class EnvTest {
 
             assertEquals(0, result);
             assertNotEquals(path, posix.getenv("PATH"));
+            posix.setenv("PATH", path, 1);
         }
     }
 
