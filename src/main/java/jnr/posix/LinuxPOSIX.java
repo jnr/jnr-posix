@@ -14,24 +14,28 @@ import jnr.constants.platform.Confstr;
 import jnr.constants.platform.Pathconf;
 
 final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
-    private volatile boolean use_fxstat64 = true;
-    private volatile boolean use_lxstat64 = true;
-    private volatile boolean use_xstat64 = true;
+    private final boolean use_stat64;
     private final int statVersion;
 
     LinuxPOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         super(libcProvider, handler);
 
+        statVersion = getStatVersion();
+        use_stat64 = statVersion >= 0;
+    }
 
+    private int getStatVersion() {
         if (Platform.IS_32_BIT || "sparcv9".equals(Platform.ARCH) || Platform.ARCH.contains("mips64")) {
-            statVersion = 3;
+            return 3;
         } else {
             FileStat stat = allocateStat();
-
-            if (((LinuxLibC) libc()).__xstat64(0, "/dev/null", stat) < 0) {
-                statVersion = 1;
-            } else {
-                statVersion = 0;
+            try {
+                if (((LinuxLibC) libc()).__xstat64(0, "/dev/null", stat) < 0) {
+                    return 1;
+                }
+                return 0;
+            } catch (UnsatisfiedLinkError ex) {
+                return -1;
             }
         }
     }
@@ -85,20 +89,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
 
     @Override
     public int fstat(int fd, FileStat stat) {
-        if (use_fxstat64) {
-            int ret;
-            try {
-                if ((ret = ((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat)) < 0) {
-                    handler.error(Errno.valueOf(errno()), "fstat", Integer.toString(fd));
-                }
-
-                return ret;
-
-            } catch (UnsatisfiedLinkError ex) {
-                use_fxstat64 = false;
-                return old_fstat(fd, stat);
-            }
-
+        if (use_stat64) {
+            return ((LinuxLibC) libc()).__fxstat64(statVersion, fd, stat);
         } else {
             return old_fstat(fd, stat);
         }
@@ -137,13 +129,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
 
     @Override
     public int lstat(String path, FileStat stat) {
-        if (use_lxstat64) {
-            try {
-                return ((LinuxLibC) libc()).__lxstat64(statVersion, path, stat);
-            } catch (UnsatisfiedLinkError ex) {
-                use_lxstat64 = false;
-                return old_lstat(path, stat);
-            }
+        if (use_stat64) {
+            return ((LinuxLibC) libc()).__lxstat64(statVersion, path, stat);
         } else {
             return old_lstat(path, stat);
         }
@@ -169,14 +156,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
     @Override
     public int stat(String path, FileStat stat) {
 
-        if (use_xstat64) {
-            try {
-                return ((LinuxLibC) libc()).__xstat64(statVersion, path, stat);
-            } catch (UnsatisfiedLinkError ex) {
-                use_xstat64 = false;
-                return old_stat(path, stat);
-            }
-
+        if (use_stat64) {
+            return ((LinuxLibC) libc()).__xstat64(statVersion, path, stat);
         } else {
             return old_stat(path, stat);
         }
