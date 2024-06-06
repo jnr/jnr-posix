@@ -78,6 +78,27 @@ public class JavaLibCHelper {
         private static final Field FILE_DESCRIPTOR_HANDLE;
 
         static {
+            try {
+                Method getModule = Class.class.getMethod("getModule");
+                Class<?> Module = Class.forName("java.lang.Module");
+                Method isOpen = Module.getMethod("isOpen", String.class, Module);
+                Method isNamed = Module.getMethod("isNamed");
+                Method addOpens = Module.getMethod("addOpens", String.class, Module);
+                Object JNRPosixModule = getModule.invoke(ReflectiveAccess.class);
+                Object JavaBaseModule = getModule.invoke(FileDescriptor.class);
+
+                if (!((Boolean) isOpen.invoke(JavaBaseModule, "java.io", JNRPosixModule))) {
+                    // warn that many APIs will be broken without module access
+                    System.err.println("Some JDK modules may not be open to jnr-posix, which will break file descriptor and process APIs. See https://github.com/jnr/jnr-posix/wiki/Using-POSIX-with-Java-Modules");
+                } else if (!((Boolean) isNamed.invoke(JNRPosixModule))) {
+                    // explicitly open them to avoid the implicitly open warning
+                    addOpens.invoke(JavaBaseModule, "java.io", JNRPosixModule);
+                    addOpens.invoke(JavaBaseModule, "sun.nio.ch", JNRPosixModule);
+                }
+            } catch (Exception e) {
+                // ignore, we're not on Java 9+
+            }
+
             Method getFD;
             Class selChImpl;
             try {
