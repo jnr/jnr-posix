@@ -10,10 +10,8 @@ public class SunMiscSignal {
         sun.misc.SignalHandler oldHandler = Signal.handle(s, new SunMiscSignalHandler(handler));
 
         if (oldHandler instanceof SunMiscSignalHandler) {
-            // previous custom handler
             return ((SunMiscSignalHandler)oldHandler).handler;
         } else if (oldHandler != null) {
-            // default handler
             return any -> oldHandler.handle(s);
         } else {
             return null;
