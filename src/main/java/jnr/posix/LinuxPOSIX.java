@@ -316,7 +316,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 return 31;
             }
         }
-    }
+	    
 	/** @see /usr/include/asm-generic/unistd.h */
         final static class ABI_RISCV64 implements ABI {
             @Override
@@ -328,6 +328,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
                 return 31 ;
             }
         }
+    }
 
 
     public int ioprio_get(int which, int who) {
