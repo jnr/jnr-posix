@@ -47,6 +47,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         } else {
             if ("aarch64".equals(Platform.ARCH)) {
                 return new LinuxFileStatAARCH64(this);
+            } else if ("riscv64".equals(Platform.ARCH)) {
+                return new LinuxFileStatRISCV64(this);
             } else if ("sparcv9".equals(Platform.ARCH)) {
 		return new LinuxFileStatSPARCV9(this);
 	    } else if ("loongarch64".equals(Platform.ARCH)) {
@@ -201,6 +203,7 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
         static final ABI _ABI_PPC64 = new ABI_PPC64();
         static final ABI _ABI_MIPS64 = new ABI_MIPS64();
         static final ABI _ABI_LOONGARCH64 = new ABI_LOONGARCH64();
+	static final ABI _ABI_RISCV64 = new ABI_RISCV64();
 
         public static ABI abi() {
             if ("x86_64".equals(Platform.ARCH)) {
@@ -219,6 +222,8 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
 	    	return _ABI_MIPS64;
 	    } else if (Platform.ARCH.contains("loongarch64")) {
 		return _ABI_LOONGARCH64;
+	    } else if (Platform.ARCH.contains("riscv64")) {
+                return _ABI_RISCV64;
 	    }
             return null;
         }
@@ -312,6 +317,18 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
             }
         }
     }
+	/** @see /usr/include/asm-generic/unistd.h */
+        final static class ABI_RISCV64 implements ABI {
+            @Override
+            public int __NR_ioprio_set() {
+                return 30;
+            }
+            @Override
+            public int __NR_ioprio_get() {
+                return 31 ;
+            }
+        }
+
 
     public int ioprio_get(int which, int who) {
         Syscall.ABI abi = Syscall.abi();
