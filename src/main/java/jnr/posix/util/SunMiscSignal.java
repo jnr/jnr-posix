@@ -11,6 +11,13 @@ public class SunMiscSignal {
 
         if (oldHandler instanceof SunMiscSignalHandler) {
             return ((SunMiscSignalHandler)oldHandler).handler;
+        } else if (oldHandler != null) {
+            return new SignalHandler() {
+                @Override
+                public void handle(int signal) {
+                    oldHandler.handle(s);
+                }
+            };
         } else {
             return null;
         }

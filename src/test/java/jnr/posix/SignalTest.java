@@ -51,11 +51,13 @@ public class SignalTest {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
             final AtomicBoolean fired = new AtomicBoolean(false);
-            javaPosix.signal(s, new SignalHandler() {
+            SignalHandler previousHandler = javaPosix.signal(s, new SignalHandler() {
                 public void handle(int signal) {
                     fired.set(true);
                 }
             });
+
+            Assert.assertNotNull(previousHandler);
 
             // have to use native here; no abstraction for kill in pure Java
             // TODO: sun.misc.Signal.raise can be used to kill current pid
