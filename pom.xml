@@ -9,10 +9,11 @@
   <description>
     Common cross-project/cross-platform POSIX APIs
   </description>
+  <url>http://github.com/jnr/jnr-posix</url>
 
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/JRUBY</url>
+    <url>http://github.com/jnr/jnr-posix/issues</url>
   </issueManagement>
 
   <scm>
