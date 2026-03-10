@@ -64,6 +64,20 @@
     <maven.compiler.target>8</maven.compiler.target>
   </properties>
 
+  <repositories>
+    <repository>
+      <name>Central Portal Snapshots</name>
+      <id>central-portal-snapshots</id>
+      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -167,26 +181,6 @@
           <publishingServerId>central</publishingServerId>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <gpgArguments>
-            <gpgArgument>--pinentry-mode</gpgArgument>
-            <gpgArgument>loopback</gpgArgument>
-          </gpgArguments>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -267,6 +261,32 @@
       <activation>
         <jdk>[9,)</jdk>
       </activation>
+    </profile>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <gpgArguments>
+                <gpgArgument>--pinentry-mode</gpgArgument>
+                <gpgArgument>loopback</gpgArgument>
+              </gpgArguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
