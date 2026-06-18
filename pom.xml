@@ -80,8 +80,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -151,9 +149,6 @@
             <excludes>
               <exclude>**/windows/*Test.java</exclude>
             </excludes>
-            <environmentVariables>
-              <JDK_JAVA_OPTIONS>--add-modules java.scripting --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</JDK_JAVA_OPTIONS>
-            </environmentVariables>
           </configuration>
         </plugin>
       </plugins>
@@ -200,7 +195,7 @@
                 <goals><goal>compile</goal></goals>
                 <configuration>
                   <!-- Use -release compiler option rather than source/target if 9+ -->
-                  <release>${maven.compiler.target}</release>
+                  <release>8</release>
                   <excludes>
                     <exclude>jnr/posix/util/SunMiscSignal.java</exclude>
                   </excludes>
@@ -213,6 +208,9 @@
       <activation>
         <jdk>[9,)</jdk>
       </activation>
+      <properties>
+        <maven.compiler.release>9</maven.compiler.release>
+      </properties>
     </profile>
     <profile>
       <id>java17</id>
