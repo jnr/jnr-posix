@@ -6,7 +6,6 @@
     <groupId>com.github.jnr</groupId>
     <artifactId>jnr-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>jnr-posix</artifactId>
@@ -112,41 +111,10 @@
         <groupId>org.sonatype.central</groupId>
         <artifactId>central-publishing-maven-plugin</artifactId>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.3.7</version>
-        <configuration>
-          <instructions>
-            <Implementation-Title>JNA-POSIX</Implementation-Title>
-            <Implementation-Version>0.5</Implementation-Version>
-            <_nouses>true</_nouses>
-            <Import-Package>!sun.misc,*</Import-Package>
-          </instructions>
-        </configuration>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
-        <configuration>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-            <manifestEntries>
-              <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -228,6 +196,50 @@
       <activation>
         <jdk>[9,)</jdk>
       </activation>
+    </profile>
+    <profile>
+      <id>java17</id>
+      <activation>
+        <jdk>[17,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <configuration>
+              <instructions>
+                <Implementation-Title>JNA-POSIX</Implementation-Title>
+                <Implementation-Version>0.5</Implementation-Version>
+                <_nouses>true</_nouses>
+                <Import-Package>!sun.misc,*</Import-Package>
+              </instructions>
+            </configuration>
+            <executions>
+              <execution>
+                <id>bundle-manifest</id>
+                <phase>process-classes</phase>
+                <goals>
+                  <goal>manifest</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.1</version>
+            <configuration>
+              <archive>
+                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                <manifestEntries>
+                  <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
+                </manifestEntries>
+              </archive>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
     <profile>
       <id>release</id>
