@@ -151,6 +151,9 @@
             <excludes>
               <exclude>**/windows/*Test.java</exclude>
             </excludes>
+            <environmentVariables>
+              <JDK_JAVA_OPTIONS>--add-modules java.scripting --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</JDK_JAVA_OPTIONS>
+            </environmentVariables>
           </configuration>
         </plugin>
       </plugins>
