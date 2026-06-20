@@ -115,9 +115,41 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <!-- Javadoc barfs if running in JDK 9+ and documenting SunMiscSignal when unable to access sun.misc.
+               We already require toolchain version 8 for other things so we use it here as well (for now). -->
+          <jdkToolchain>
+            <version>8</version>
+          </jdkToolchain>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <!-- This is a bit gross; we can't access sun.misc without jdk.supported, but we can't add jdk.unsupported
+             while also setting release 8. For now we require a JDK 8 toolchain to compile this one class. -->
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <configuration>
+              <jdkToolchain>
+                <version>8</version>
+              </jdkToolchain>
+              <includes>
+                <include>jnr/posix/util/SunMiscSignal.java</include>
+              </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>java9-compile</id>
+            <phase>compile</phase>
+            <goals><goal>compile</goal></goals>
+            <configuration>
+              <excludes>
+                <exclude>jnr/posix/util/SunMiscSignal.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.sonatype.central</groupId>
@@ -127,6 +159,35 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <Implementation-Title>JNA-POSIX</Implementation-Title>
+            <Implementation-Version>0.5</Implementation-Version>
+            <_nouses>true</_nouses>
+            <Import-Package>!sun.misc,*</Import-Package>
+          </instructions>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -139,7 +200,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.18.1</version>
           <configuration>
             <forkCount>2</forkCount>
             <reuseForks>false</reuseForks>
@@ -162,95 +222,9 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
             <configuration>
               <forkCount>2</forkCount>
               <reuseForks>false</reuseForks>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>java9</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <phase>compile</phase>
-                <goals><goal>compile</goal></goals>
-                <configuration>
-                  <includes>
-                    <include>jnr/posix/util/SunMiscSignal.java</include>
-                  </includes>
-                </configuration>
-              </execution>
-              <execution>
-                <id>java9-compile</id>
-                <phase>compile</phase>
-                <goals><goal>compile</goal></goals>
-                <configuration>
-                  <!-- Use -release compiler option rather than source/target if 9+ -->
-                  <release>8</release>
-                  <excludes>
-                    <exclude>jnr/posix/util/SunMiscSignal.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-      <properties>
-        <maven.compiler.release>9</maven.compiler.release>
-      </properties>
-    </profile>
-    <profile>
-      <id>java17</id>
-      <activation>
-        <jdk>[17,)</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>maven-bundle-plugin</artifactId>
-            <configuration>
-              <instructions>
-                <Implementation-Title>JNA-POSIX</Implementation-Title>
-                <Implementation-Version>0.5</Implementation-Version>
-                <_nouses>true</_nouses>
-                <Import-Package>!sun.misc,*</Import-Package>
-              </instructions>
-            </configuration>
-            <executions>
-              <execution>
-                <id>bundle-manifest</id>
-                <phase>process-classes</phase>
-                <goals>
-                  <goal>manifest</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>2.3.1</version>
-            <configuration>
-              <archive>
-                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                <manifestEntries>
-                  <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
-                </manifestEntries>
-              </archive>
             </configuration>
           </plugin>
         </plugins>
