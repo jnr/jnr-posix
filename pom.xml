@@ -111,9 +111,6 @@
     </extensions>
     <plugins>
       <plugin>
-        <artifactId>maven-source-plugin</artifactId>
-      </plugin>
-      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
           <!-- Javadoc barfs if running in JDK 9+ and documenting SunMiscSignal when unable to access sun.misc.
