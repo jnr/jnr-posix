@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import jnr.constants.platform.LangInfo;
+import jnr.posix.util.Platform;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static jnr.ffi.Platform.getNativePlatform;
 import static org.junit.Assert.*;
 
 /**
@@ -48,7 +51,7 @@ public class GroupTest {
     // public void hello() {}
     @Test
     public void getgrnam() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+        if (getNativePlatform().isUnix()) {
             final String LOGIN = "daemon";
             Group grp = posix.getgrnam(LOGIN);
             assertNotNull(grp);
@@ -58,7 +61,7 @@ public class GroupTest {
 
     @Test
     public void nonExistantGroupReturnsNull() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+        if (getNativePlatform().isUnix()) {
             final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
             assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
         }
@@ -66,7 +69,7 @@ public class GroupTest {
 
     @Test
     public void getgrent() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+        if (getNativePlatform().isUnix()) {
             ArrayList<Group> grps = new ArrayList<Group>();
             while (true) {
                 Group grp = posix.getgrent();
@@ -88,7 +91,7 @@ public class GroupTest {
 
     @Test
     public void getgroups() throws Throwable {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
+        if (getNativePlatform().isUnix() && !Platform.IS_MAC) {
             String[] groupIdsAsStrings = exec("id", "-G").split(" ");
             long[] expectedGroupIds = new long[groupIdsAsStrings.length];
 

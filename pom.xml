@@ -1,7 +1,13 @@
 <?xml version="1.0" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.github.jnr</groupId>
+
+  <parent>
+    <groupId>com.github.jnr</groupId>
+    <artifactId>jnr-parent</artifactId>
+    <version>0.0.1</version>
+  </parent>
+
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
   <version>3.1.23-SNAPSHOT</version>
@@ -58,26 +64,6 @@
     </developer>
   </developers>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
-
-  <repositories>
-    <repository>
-      <name>Central Portal Snapshots</name>
-      <id>central-portal-snapshots</id>
-      <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -107,9 +93,63 @@
     </extensions>
     <plugins>
       <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <!-- Javadoc barfs if running in JDK 9+ and documenting SunMiscSignal when unable to access sun.misc.
+               We already require toolchain version 8 for other things so we use it here as well (for now). -->
+          <jdkToolchain>
+            <version>8</version>
+          </jdkToolchain>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!-- This is a bit gross; we can't access sun.misc without jdk.supported, but we can't add jdk.unsupported
+             while also setting release 8. For now we require a JDK 8 toolchain to compile this one class. -->
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <configuration>
+              <jdkToolchain>
+                <version>8</version>
+              </jdkToolchain>
+              <includes>
+                <include>jnr/posix/util/SunMiscSignal.java</include>
+              </includes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>java9-compile</id>
+            <phase>compile</phase>
+            <goals><goal>compile</goal></goals>
+            <configuration>
+              <excludes>
+                <exclude>jnr/posix/util/SunMiscSignal.java</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.3.7</version>
         <configuration>
           <instructions>
             <Implementation-Title>JNA-POSIX</Implementation-Title>
@@ -128,59 +168,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-        <configuration>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-            <manifestEntries>
-              <Automatic-Module-Name>org.jnrproject.posix</Automatic-Module-Name>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-        <version>0.7.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <publishingServerId>central</publishingServerId>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -192,7 +179,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.18.1</version>
           <configuration>
             <forkCount>2</forkCount>
             <reuseForks>false</reuseForks>
@@ -215,7 +201,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-            <version>2.18.1</version>
             <configuration>
               <forkCount>2</forkCount>
               <reuseForks>false</reuseForks>
@@ -225,65 +210,11 @@
       </build>
     </profile>
     <profile>
-      <id>java9</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <phase>compile</phase>
-                <goals><goal>compile</goal></goals>
-                <configuration>
-                  <includes>
-                    <include>jnr/posix/util/SunMiscSignal.java</include>
-                  </includes>
-                </configuration>
-              </execution>
-              <execution>
-                <id>java9-compile</id>
-                <phase>compile</phase>
-                <goals><goal>compile</goal></goals>
-                <configuration>
-                  <!-- Use -release compiler option rather than source/target if 9+ -->
-                  <release>${maven.compiler.target}</release>
-                  <excludes>
-                    <exclude>jnr/posix/util/SunMiscSignal.java</exclude>
-                  </excludes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-      <activation>
-        <jdk>[9,)</jdk>
-      </activation>
-    </profile>
-    <profile>
       <id>release</id>
       <build>
         <plugins>
           <plugin>
             <artifactId>maven-gpg-plugin</artifactId>
-            <version>3.2.4</version>
-            <executions>
-              <execution>
-                <id>sign-artifacts</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>sign</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <gpgArguments>
-                <gpgArgument>--pinentry-mode</gpgArgument>
-                <gpgArgument>loopback</gpgArgument>
-              </gpgArguments>
-            </configuration>
           </plugin>
         </plugins>
       </build>
