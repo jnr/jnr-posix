@@ -10,7 +10,7 @@
 
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
-  <version>3.1.23-SNAPSHOT</version>
+  <version>3.1.23</version>
   <name>jnr-posix</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
@@ -68,18 +68,18 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>2.2.19</version>
+      <version>2.2.20</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-constants</artifactId>
-      <version>0.10.4</version>
+      <version>0.10.5</version>
     </dependency>
   </dependencies>
 
