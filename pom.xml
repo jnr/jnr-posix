@@ -156,7 +156,7 @@
             <Implementation-Title>JNA-POSIX</Implementation-Title>
             <Implementation-Version>0.5</Implementation-Version>
             <_nouses>true</_nouses>
-            <Import-Package>!sun.misc,*</Import-Package>
+            <Import-Package>!sun.*,*</Import-Package>
           </instructions>
         </configuration>
         <executions>
