@@ -199,7 +199,7 @@ public class FileTest {
 
     @Test
     public void mkdirRelativeTest() throws Throwable {
-        File dir = new File("tmp");
+        File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getPath(), 0);
         assertEquals("mkdir did not return 0", 0, rval);
         assertTrue("Directory was not created", dir.exists());
@@ -208,7 +208,7 @@ public class FileTest {
 
     @Test
     public void mkdirAbsoluteTest() throws Throwable {
-        File dir = new File("tmp");
+        File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getAbsolutePath(), 0);
         assertEquals("mkdir did not return 0", 0, rval);
         assertTrue("Directory was not created", dir.exists());
