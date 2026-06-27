@@ -11,7 +11,7 @@
 
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
-  <version>3.2.1</version>
+  <version>3.2.2-SNAPSHOT</version>
   <name>jnr-posix</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
