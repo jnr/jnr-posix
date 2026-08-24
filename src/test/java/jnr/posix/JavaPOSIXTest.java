@@ -9,9 +9,6 @@ import java.io.File;
 import java.io.IOException;
 
 import jnr.constants.platform.Errno;
-import jnr.posix.JavaPOSIX;
-import jnr.posix.POSIX;
-import jnr.posix.Passwd;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -48,12 +47,9 @@ public class LinuxPOSIXTest {
     public void ioprioThreadedTest() throws InterruptedException, ExecutionException {
         linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 4));
 
-        Future<Integer> threadPriorityFuture = Executors.newFixedThreadPool(1).submit(new Callable<Integer>() {
-            @Override
-            public Integer call() {
-                linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 7));
-                return linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0);
-            }
+        Future<Integer> threadPriorityFuture = Executors.newFixedThreadPool(1).submit(() -> {
+            linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 7));
+            return linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0);
         });
 
         int threadPriority = threadPriorityFuture.get();

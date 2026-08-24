@@ -34,11 +34,7 @@ public class SignalTest {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
             final AtomicBoolean fired = new AtomicBoolean(false);
-            posix.signal(s, new SignalHandler() {
-                public void handle(int signal) {
-                    fired.set(true);
-                }
-            });
+            posix.signal(s, signal -> fired.set(true));
 
             posix.kill(posix.getpid(), s.intValue());
             waitUntilTrue(fired, 200);
@@ -51,11 +47,7 @@ public class SignalTest {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
             final AtomicBoolean fired = new AtomicBoolean(false);
-            SignalHandler previousHandler = javaPosix.signal(s, new SignalHandler() {
-                public void handle(int signal) {
-                    fired.set(true);
-                }
-            });
+            SignalHandler previousHandler = javaPosix.signal(s, signal -> fired.set(true));
 
             Assertions.assertNotNull(previousHandler);
 

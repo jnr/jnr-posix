@@ -1,10 +1,5 @@
 package jnr.posix;
 
-import jnr.posix.DefaultNativeRLimit;
-import jnr.posix.DummyPOSIXHandler;
-import jnr.posix.POSIX;
-import jnr.posix.POSIXFactory;
-import jnr.posix.RLimit;
 import jnr.posix.util.Platform;
 import jnr.constants.platform.RLIMIT;
 import jnr.constants.platform.Sysconf;

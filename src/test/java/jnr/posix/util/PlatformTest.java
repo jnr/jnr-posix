@@ -30,7 +30,6 @@
  */
 package jnr.posix.util;
 
-import jnr.posix.util.Platform;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
