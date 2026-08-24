@@ -381,14 +381,19 @@ public class FileTest {
         result = posix.close(fd);
         assertEquals(-1, result);
 
-        fd = posix.open("jnr-posix-filetest.txt", OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0600);
+        File file = new File("jnr-posix-filetest.txt");
+        file.delete();
 
-        assertEquals(0600, posix.stat("jnr-posix-filetest.txt").mode() & 0777);
+        try {
+            fd = posix.open(file.getPath(), OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0600);
 
-        result = posix.close(fd);
-        assertEquals(0, result);
+            assertEquals(0600, posix.stat(file.getPath()).mode() & 0777);
 
-        new File("jnr-posix-filetest.txt").delete();
+            result = posix.close(fd);
+            assertEquals(0, result);
+        } finally {
+            file.delete();
+        }
     }
 
     @Test
