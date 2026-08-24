@@ -1,11 +1,10 @@
 package jnr.posix;
 
 import jnr.posix.util.Platform;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class DTableSizeTest {
     @Test
@@ -13,10 +12,10 @@ public class DTableSizeTest {
     {
         if (!Platform.IS_WINDOWS) { // FIXME: I have seen window's impl so this can be impld
             POSIX posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-            assumeTrue("getdtablesize only supported on native posix", posix.isNative());
+            assumeTrue(posix.isNative(), "getdtablesize only supported on native posix");
 
             int dtablesize = posix.getdtablesize();
-            assertThat(dtablesize, not(-1));
+            assertNotEquals(-1, dtablesize);
         }
     }
 }

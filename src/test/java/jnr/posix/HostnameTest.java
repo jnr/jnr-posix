@@ -1,12 +1,11 @@
 package jnr.posix;
 
-import org.hamcrest.Matcher;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -15,7 +14,7 @@ public class HostnameTest {
     private static POSIX posix;
     private static POSIX jPosix;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         jPosix = POSIXFactory.getJavaPOSIX();
@@ -25,11 +24,10 @@ public class HostnameTest {
     public void testHostnameWorks() {
         assertNotNull(posix.gethostname());
     }
-    
+
     @Test
     public void jPosixIsReasonable() {
-        // cast here works around a generic resolution problem in Java 11+
-        assumeThat(System.getenv().keySet(), (Matcher) anyOf(hasItem("HOSTNAME"), hasItem("COMPUTERNAME")));
+        assumeTrue(System.getenv().containsKey("HOSTNAME") || System.getenv().containsKey("COMPUTERNAME"));
         assertNotNull(jPosix.gethostname());
     }
 
@@ -39,9 +37,9 @@ public class HostnameTest {
         try {
             hostname = new Scanner(Runtime.getRuntime().exec("hostname").getInputStream()).next();
         } catch (IOException e) {
-            assumeNoException(e);
+            assumeTrue(false, "hostname command failed: " + e);
         }
-        assumeThat(hostname, is(not(equalTo(""))));
-        assertThat(posix.gethostname().toLowerCase(), equalTo(hostname.toLowerCase()));
+        assumeTrue(!hostname.isEmpty());
+        assertEquals(hostname.toLowerCase(), posix.gethostname().toLowerCase());
     }
 }

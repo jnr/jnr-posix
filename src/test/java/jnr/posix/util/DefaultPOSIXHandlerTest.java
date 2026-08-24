@@ -2,14 +2,13 @@ package jnr.posix.util;
 
 import jnr.posix.POSIX;
 import jnr.posix.POSIXFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.management.ManagementFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultPOSIXHandlerTest
 {
@@ -20,6 +19,6 @@ public class DefaultPOSIXHandlerTest
 
         POSIX posix = POSIXFactory.getPOSIX(new DefaultPOSIXHandler(), true);
         int pid = posix.getpid();
-        assertThat(pid, equalTo(pid_from_jmx));
+        assertEquals(pid_from_jmx, pid);
     }
 }
