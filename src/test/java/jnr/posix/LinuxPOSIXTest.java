@@ -9,7 +9,6 @@ import jnr.constants.platform.SocketOption;
 import jnr.ffi.Platform;
 import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +22,7 @@ import java.util.concurrent.Future;
 import static jnr.posix.LinuxIoPrio.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @EnabledOnJnrOs(Platform.OS.LINUX)
 public class LinuxPOSIXTest {
@@ -115,7 +115,7 @@ public class LinuxPOSIXTest {
         int sendStatus = linuxPOSIX.sendmsg(fds[0], outMessage, 0);
         if (sendStatus == -1) {
             String sendmsgError = "Error with sendmsg: " + linuxPOSIX.strerror(linuxPOSIX.errno());
-            Assertions.fail(sendmsgError);
+            fail(sendmsgError);
             return;
         }
 
@@ -165,7 +165,7 @@ public class LinuxPOSIXTest {
             assertEquals(linuxPOSIX.getuid(), got_uid);
             assertEquals(linuxPOSIX.getgid(), got_gid);
         } else {
-            Assertions.fail("Unable to determine cmsghdr type");
+            fail("Unable to determine cmsghdr type");
         }
     }
 

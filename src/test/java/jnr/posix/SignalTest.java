@@ -2,11 +2,13 @@ package jnr.posix;
 
 import jnr.constants.platform.Signal;
 import jnr.posix.util.Platform;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SignalTest {
     private static POSIX posix;
@@ -38,7 +40,7 @@ public class SignalTest {
 
             posix.kill(posix.getpid(), s.intValue());
             waitUntilTrue(fired, 200);
-            Assertions.assertTrue(fired.get());
+            assertTrue(fired.get());
         }
     }
 
@@ -49,14 +51,14 @@ public class SignalTest {
             final AtomicBoolean fired = new AtomicBoolean(false);
             SignalHandler previousHandler = javaPosix.signal(s, signal -> fired.set(true));
 
-            Assertions.assertNotNull(previousHandler);
+            assertNotNull(previousHandler);
 
             // have to use native here; no abstraction for kill in pure Java
             // TODO: sun.misc.Signal.raise can be used to kill current pid
             posix.kill(posix.getpid(), s.intValue());
 
             waitUntilTrue(fired, 200);
-            Assertions.assertTrue(fired.get());
+            assertTrue(fired.get());
         }
     }
 }
