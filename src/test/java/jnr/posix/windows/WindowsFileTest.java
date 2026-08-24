@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
+import jnr.ffi.Platform;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
 import jnr.posix.POSIXFactory;
 import jnr.posix.WindowsPOSIX;
+import jnr.posix.junit.EnabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EnabledOnJnrOs(Platform.OS.WINDOWS)
 public class WindowsFileTest {
     private static POSIX posix;
 

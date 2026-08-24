@@ -7,6 +7,7 @@ import jnr.constants.platform.Sock;
 import jnr.constants.platform.SocketLevel;
 import jnr.constants.platform.SocketOption;
 import jnr.ffi.Platform;
+import jnr.posix.junit.EnabledOnJnrOs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,16 +23,14 @@ import java.util.concurrent.Future;
 import static jnr.posix.LinuxIoPrio.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+@EnabledOnJnrOs(Platform.OS.LINUX)
 public class LinuxPOSIXTest {
 
     private static Linux linuxPOSIX = null;
 
     @BeforeAll
     public static void setUpClass() {
-        assumeTrue(jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX));
-
         POSIX posix = POSIXFactory.getNativePOSIX();
 
         if (posix instanceof Linux) {
