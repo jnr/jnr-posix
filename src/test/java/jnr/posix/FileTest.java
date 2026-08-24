@@ -10,6 +10,7 @@ import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,146 +38,182 @@ class FileTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void utimesTest() throws Throwable {
-        // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
-        File f = File.createTempFile("utimes", null, tempDir);
+    @Nested
+    class Utimes {
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void utimesTest() throws Throwable {
+            // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
+            File f = File.createTempFile("utimes", null, tempDir);
 
-        int rval = posix.utimes(f.getAbsolutePath(), new long[]{800, 200}, new long[]{900, 300});
-        assertEquals(0, rval, "utimes did not return 0");
+            int rval = posix.utimes(f.getAbsolutePath(), new long[]{800, 200}, new long[]{900, 300});
+            assertEquals(0, rval, "utimes did not return 0");
 
-        FileStat stat = posix.stat(f.getAbsolutePath());
+            FileStat stat = posix.stat(f.getAbsolutePath());
 
-        assertEquals(800, stat.atime(), "atime seconds failed");
-        assertEquals(900, stat.mtime(), "mtime seconds failed");
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
 
-        // The nano secs part is available in other stat implementations. We really just want to verify that the
-        // nsec portion of the timeval is passed through to the POSIX call.
-        // Mac seems to fail this test sporadically.
-        if (stat instanceof NanosecondFileStat && !Platform.IS_MAC) {
-            NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
+            // The nano secs part is available in other stat implementations. We really just want to verify that the
+            // nsec portion of the timeval is passed through to the POSIX call.
+            // Mac seems to fail this test sporadically.
+            if (stat instanceof NanosecondFileStat && !Platform.IS_MAC) {
+                NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
-            assertEquals(200000, linuxStat.aTimeNanoSecs(), "atime useconds failed");
-            assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
+                assertEquals(200000, linuxStat.aTimeNanoSecs(), "atime useconds failed");
+                assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
+            }
         }
-    }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void utimesDefaultValuesTest() throws Throwable {
-        File f = File.createTempFile("utimes", null, tempDir);
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void utimesDefaultValuesTest() throws Throwable {
+            File f = File.createTempFile("utimes", null, tempDir);
 
-        long oldTime = posix.stat(f.getAbsolutePath()).mtime();
-        Thread.sleep(2000);
+            long oldTime = posix.stat(f.getAbsolutePath()).mtime();
+            Thread.sleep(2000);
 
-        int rval = posix.utimes(f.getAbsolutePath(), null, null);
-        assertEquals(0, rval, "utimes did not return 0");
+            int rval = posix.utimes(f.getAbsolutePath(), null, null);
+            assertEquals(0, rval, "utimes did not return 0");
 
-        FileStat stat = posix.stat(f.getAbsolutePath());
+            FileStat stat = posix.stat(f.getAbsolutePath());
 
-        assertTrue(stat.atime() > oldTime, "atime failed");
-        assertTrue(stat.mtime() > oldTime, "mtime failed");
-    }
+            assertTrue(stat.atime() > oldTime, "atime failed");
+            assertTrue(stat.mtime() > oldTime, "mtime failed");
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void utimesPointerTest() throws Throwable {
-        File f = File.createTempFile("utimes", null, tempDir);
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void utimesPointerTest() throws Throwable {
+            File f = File.createTempFile("utimes", null, tempDir);
 
-        Pointer times = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 4); // long[2][2] == 4 longs.
-        times.putLong(0, 800);
-        times.putLong(8, 200);
-        times.putLong(16, 900);
-        times.putLong(24, 300);
+            Pointer times = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 4); // long[2][2] == 4 longs.
+            times.putLong(0, 800);
+            times.putLong(8, 200);
+            times.putLong(16, 900);
+            times.putLong(24, 300);
 
-        int rval = posix.utimes(f.getAbsolutePath(), times);
-        assertEquals(0, rval, "utimes did not return 0");
+            int rval = posix.utimes(f.getAbsolutePath(), times);
+            assertEquals(0, rval, "utimes did not return 0");
 
-        FileStat stat = posix.stat(f.getAbsolutePath());
+            FileStat stat = posix.stat(f.getAbsolutePath());
 
-        assertEquals(800, stat.atime(), "atime seconds failed");
-        assertEquals(900, stat.mtime(), "mtime seconds failed");
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
 
-        // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
-        // representative.  We really just want to verify that the usec portion of the timeval is passed throug
-        // to the POSIX call.
-        if (hasNanosecondPrecision(stat)) {
-            NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
+            // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
+            // representative.  We really just want to verify that the usec portion of the timeval is passed throug
+            // to the POSIX call.
+            if (hasNanosecondPrecision(stat)) {
+                NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
 //                assertEquals(200000, linuxStat.aTimeNanoSecs(), "atime useconds failed");
-            assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
-        }
-    }
-
-    @Test
-    void utimensatAbsolutePath() throws Throwable {
-        File file = File.createTempFile("utimensat", null, tempDir);
-        utimensat(file, 0);
-    }
-
-    @Test
-    void utimensatRelativePath() throws Throwable {
-        String path = "utimensat";
-        File file = new File(path);
-        file.createNewFile();
-        int parentFd = posix.open(".", OpenFlags.O_DIRECTORY.intValue(), Modes.RA);
-        utimensat(file, parentFd);
-    }
-
-    @Test
-    void futimens() throws Throwable {
-        File file = File.createTempFile("futimens", null, tempDir);
-        FileStat fileStat = posix.stat(file.getPath());
-        if (!hasNanosecondPrecision(fileStat)) {
-            return;
+                assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
+            }
         }
 
-        long atimeSeconds = fileStat.atime()+1;
-        long mtimeSeconds = fileStat.mtime()-1;
-        long atimeNanoSeconds = 123456789;
-        long mtimeNanoSeconds = 135;
-        int fd = posix.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
-        posix.futimens(fd,
-                new long[] {atimeSeconds, atimeNanoSeconds},
-                new long[] {mtimeSeconds, mtimeNanoSeconds});
-        assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
-    }
+        @Test
+        void utimensatAbsolutePath() throws Throwable {
+            File file = File.createTempFile("utimensat", null, tempDir);
+            utimensat(file, 0);
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void lutimesTest() throws IOException {
-        // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
-        File f1 = File.createTempFile("lutimes", null, tempDir);
-        File f2 = new File(f1.getParentFile(), "lutimes-link");
-        posix.symlink(f1.getAbsolutePath(), f2.getAbsolutePath());
+        @Test
+        void utimensatRelativePath() throws Throwable {
+            String path = "utimensat";
+            File file = new File(path);
+            file.createNewFile();
+            int parentFd = posix.open(".", OpenFlags.O_DIRECTORY.intValue(), Modes.RA);
+            utimensat(file, parentFd);
+        }
 
-        int rval = posix.utimes(f1.getAbsolutePath(), new long[]{800, 0}, new long[]{900, 0});
-        assertEquals(0, rval, "utimes did not return 0");
+        @Test
+        void futimens() throws Throwable {
+            File file = File.createTempFile("futimens", null, tempDir);
+            FileStat fileStat = posix.stat(file.getPath());
+            if (!hasNanosecondPrecision(fileStat)) {
+                return;
+            }
 
-        rval = posix.lutimes(f2.getAbsolutePath(), new long[]{1800, 0}, new long[]{1900, 0});
-        assertEquals(0, rval, "lutimes did not return 0");
+            long atimeSeconds = fileStat.atime()+1;
+            long mtimeSeconds = fileStat.mtime()-1;
+            long atimeNanoSeconds = 123456789;
+            long mtimeNanoSeconds = 135;
+            int fd = posix.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
+            posix.futimens(fd,
+                    new long[] {atimeSeconds, atimeNanoSeconds},
+                    new long[] {mtimeSeconds, mtimeNanoSeconds});
+            assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
+        }
 
-        FileStat stat = posix.stat(f1.getAbsolutePath());
-        assertEquals(800, stat.atime(), "atime seconds failed");
-        assertEquals(900, stat.mtime(), "mtime seconds failed");
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void lutimesTest() throws IOException {
+            // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
+            File f1 = File.createTempFile("lutimes", null, tempDir);
+            File f2 = new File(f1.getParentFile(), "lutimes-link");
+            posix.symlink(f1.getAbsolutePath(), f2.getAbsolutePath());
 
-        stat = posix.lstat(f2.getAbsolutePath());
-        assertEquals(1800, stat.atime(), "atime seconds failed");
-        assertEquals(1900, stat.mtime(), "mtime seconds failed");
-    }
+            int rval = posix.utimes(f1.getAbsolutePath(), new long[]{800, 0}, new long[]{900, 0});
+            assertEquals(0, rval, "utimes did not return 0");
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void futimeTest() throws Throwable {
-        File f = File.createTempFile("jnr-posix-futime", "tmp", tempDir);
-        long oldTime = posix.stat(f.getAbsolutePath()).mtime();
-        Thread.sleep(2000);
-        int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
-        int rval = posix.futimes(fd, null, null);
-        assertEquals(0, rval, "futime did not return 0");
-        long newTime = posix.stat(f.getAbsolutePath()).mtime();
-        assertTrue(newTime > oldTime, "mtime failed");
+            rval = posix.lutimes(f2.getAbsolutePath(), new long[]{1800, 0}, new long[]{1900, 0});
+            assertEquals(0, rval, "lutimes did not return 0");
+
+            FileStat stat = posix.stat(f1.getAbsolutePath());
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
+
+            stat = posix.lstat(f2.getAbsolutePath());
+            assertEquals(1800, stat.atime(), "atime seconds failed");
+            assertEquals(1900, stat.mtime(), "mtime seconds failed");
+        }
+
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void futimeTest() throws Throwable {
+            File f = File.createTempFile("jnr-posix-futime", "tmp", tempDir);
+            long oldTime = posix.stat(f.getAbsolutePath()).mtime();
+            Thread.sleep(2000);
+            int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
+            int rval = posix.futimes(fd, null, null);
+            assertEquals(0, rval, "futime did not return 0");
+            long newTime = posix.stat(f.getAbsolutePath()).mtime();
+            assertTrue(newTime > oldTime, "mtime failed");
+        }
+
+        private boolean hasNanosecondPrecision(FileStat fileStat) {
+            return fileStat instanceof NanosecondFileStat && !Platform.IS_MAC;
+        }
+
+        private void utimensat(File file, int parentFd) {
+            String path = file.getAbsolutePath();
+            FileStat fileStat = posix.stat(path);
+            if (!hasNanosecondPrecision(fileStat)) {
+                file.delete();
+                return;
+            }
+
+            long atimeSeconds = fileStat.atime()+2;
+            long mtimeSeconds = fileStat.mtime()-2;
+            long atimeNanoSeconds = 123456789;
+            long mtimeNanoSeconds = 135;
+            posix.utimensat(parentFd,
+                    path,
+                    new long[] {atimeSeconds, atimeNanoSeconds},
+                    new long[] {mtimeSeconds, mtimeNanoSeconds},
+                    0);
+            assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
+        }
+
+        private void assertStatNanoSecond(File file, long atimeSeconds, long atimeNanoSeconds, long mtimeSeconds, long mtimeNanoSeconds) {
+            NanosecondFileStat nanosecondFileStat = (NanosecondFileStat) posix.stat(file.getPath());
+            assertEquals(atimeSeconds, nanosecondFileStat.atime(), "Access timestamp should be updated");
+            assertEquals(mtimeSeconds, nanosecondFileStat.mtime(), "Modification timestamp should be updated");
+            assertEquals(atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs(), "Access time precision should be in ns");
+            assertEquals(mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs(), "Modification time precision should be in ns");
+            file.delete();
+        }
     }
 
     @Test
@@ -198,7 +235,7 @@ class FileTest {
         assertTrue(dir.exists(), "Directory was not created");
         dir.delete();
     }
-    
+
     @Test
     @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
     void flockTest() throws Throwable {
@@ -219,93 +256,96 @@ class FileTest {
         assertEquals(0, posix.flock(fd, 8)); // LOCK_UN
     }
 
-    @Test
-    void dupTest() throws Throwable {
-        File tmp = File.createTempFile("dupTest", "tmp", tempDir);
-        RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
-        FileChannel fileChannel = raf.getChannel();
-        int fileDescriptor = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(fileChannel));
+    @Nested
+    class Dup {
+        static final int SEEK_SET = 0;
 
-        byte[] outContent = "foo".getBytes();
+        @Test
+        void dupTest() throws Throwable {
+            File tmp = File.createTempFile("dupTest", "tmp", tempDir);
+            RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
+            FileChannel fileChannel = raf.getChannel();
+            int fileDescriptor = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(fileChannel));
 
-        FileDescriptor newFileDescriptor = toDescriptor(posix.dup(fileDescriptor));
+            byte[] outContent = "foo".getBytes();
 
-        new FileOutputStream(toDescriptor(fileDescriptor)).write(outContent);
-        raf.seek(0);
+            FileDescriptor newFileDescriptor = toDescriptor(posix.dup(fileDescriptor));
 
-        byte[] inContent = new byte[outContent.length];
-        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+            new FileOutputStream(toDescriptor(fileDescriptor)).write(outContent);
+            raf.seek(0);
 
-        assertArrayEquals(inContent, outContent);
-    }
+            byte[] inContent = new byte[outContent.length];
+            new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
 
-    static final int SEEK_SET = 0;
+            assertArrayEquals(inContent, outContent);
+        }
 
-    @Test
-    void dup2Test() throws Throwable {
-        File tmp = File.createTempFile("dupTest", "tmp", tempDir);
-        int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
-        int newFd = 1000;
+        @Test
+        void dup2Test() throws Throwable {
+            File tmp = File.createTempFile("dupTest", "tmp", tempDir);
+            int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
+            int newFd = 1000;
 
-        byte[] outContent = "foo".getBytes();
+            byte[] outContent = "foo".getBytes();
 
-        // NB: Windows differs a bit from POSIX's return value.  Both will return -1 on failure, but Windows will return
-        // 0 upon success, while POSIX will return the new FD.  Since we already know what the FD will be if the call
-        // is successful, it's easy to make code that works with both forms.  But it is something to watch out for.
-        assertNotEquals(-1, posix.dup2(oldFd, newFd));
-        FileDescriptor newFileDescriptor = toDescriptor(newFd);
+            // NB: Windows differs a bit from POSIX's return value.  Both will return -1 on failure, but Windows will return
+            // 0 upon success, while POSIX will return the new FD.  Since we already know what the FD will be if the call
+            // is successful, it's easy to make code that works with both forms.  But it is something to watch out for.
+            assertNotEquals(-1, posix.dup2(oldFd, newFd));
+            FileDescriptor newFileDescriptor = toDescriptor(newFd);
 
-        new FileOutputStream(toDescriptor(oldFd)).write(outContent);
-        posix.lseek(newFd, SEEK_SET, 0);
+            new FileOutputStream(toDescriptor(oldFd)).write(outContent);
+            posix.lseek(newFd, SEEK_SET, 0);
 
-        byte[] inContent = new byte[outContent.length];
-        new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
+            byte[] inContent = new byte[outContent.length];
+            new FileInputStream(newFileDescriptor).read(inContent, 0, 3);
 
-        assertArrayEquals(inContent, outContent);
-    }
+            assertArrayEquals(inContent, outContent);
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void fcntlDupfdTest() throws Throwable {
-        File tmp = File.createTempFile("fcntlTest", "tmp", tempDir);
-        int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void fcntlDupfdTest() throws Throwable {
+            File tmp = File.createTempFile("fcntlTest", "tmp", tempDir);
+            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
 
-        byte[] outContent = "foo".getBytes();
+            byte[] outContent = "foo".getBytes();
 
-        // NOTE: This test used to call without the third argument, but this leads to undefined behavior.
-        // See https://github.com/jnr/jnr-posix/issues/144
-        int newFd = posix.fcntl(fd, Fcntl.F_DUPFD, 0);
+            // NOTE: This test used to call without the third argument, but this leads to undefined behavior.
+            // See https://github.com/jnr/jnr-posix/issues/144
+            int newFd = posix.fcntl(fd, Fcntl.F_DUPFD, 0);
 
-        new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
-        posix.lseek(fd, SEEK_SET, 0);
+            new FileOutputStream(JavaLibCHelper.toFileDescriptor(fd)).write(outContent);
+            posix.lseek(fd, SEEK_SET, 0);
 
-        byte[] inContent = new byte[outContent.length];
-        new FileInputStream(JavaLibCHelper.toFileDescriptor(newFd)).read(inContent, 0, 3);
+            byte[] inContent = new byte[outContent.length];
+            new FileInputStream(JavaLibCHelper.toFileDescriptor(newFd)).read(inContent, 0, 3);
 
-        assertArrayEquals(inContent, outContent);
-    }
+            assertArrayEquals(inContent, outContent);
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void fcntlDupfdWithArgTest() throws Throwable {
-        File tmp = File.createTempFile("dupTest", "tmp", tempDir);
-        int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
-                new RandomAccessFile(tmp, "rw").getChannel()));
-        int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
-                new RandomAccessFile(tmp, "rw").getChannel()));
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void fcntlDupfdWithArgTest() throws Throwable {
+            File tmp = File.createTempFile("dupTest", "tmp", tempDir);
+            int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                    new RandomAccessFile(tmp, "rw").getChannel()));
+            int newFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
+                    new RandomAccessFile(tmp, "rw").getChannel()));
 
-        byte[] outContent = "foo".getBytes();
+            byte[] outContent = "foo".getBytes();
 
-        int expectedFd = 100;
-        int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, expectedFd);
+            int expectedFd = 100;
+            int dupFd = posix.fcntl(oldFd, Fcntl.F_DUPFD, expectedFd);
 
-        new FileOutputStream(JavaLibCHelper.toFileDescriptor(newFd)).write(outContent);
+            new FileOutputStream(JavaLibCHelper.toFileDescriptor(newFd)).write(outContent);
 
-        byte[] inContent = new byte[outContent.length];
-        new FileInputStream(JavaLibCHelper.toFileDescriptor(dupFd)).read(inContent, 0, 3);
+            byte[] inContent = new byte[outContent.length];
+            new FileInputStream(JavaLibCHelper.toFileDescriptor(dupFd)).read(inContent, 0, 3);
 
-        assertTrue(dupFd >= expectedFd);
-        assertArrayEquals(inContent, outContent);
+            assertTrue(dupFd >= expectedFd);
+            assertArrayEquals(inContent, outContent);
+        }
     }
 
     @Test
@@ -506,59 +546,62 @@ class FileTest {
         assertEquals(0, posix.access(canonicalPath, Access.F_OK.intValue()), "access " + canonicalPath + " exists: ");
     }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void readlinkTest() throws IOException {
-        File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
-        File link = new File(file.getAbsolutePath() + "link");
+    @Nested
+    class Readlink {
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void readlinkTest() throws IOException {
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
+            File link = new File(file.getAbsolutePath() + "link");
 
-        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+            posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
 
-        byte[] fileBytes = file.getAbsolutePath().getBytes();
-        int fileLength = fileBytes.length;
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
 
-        byte[] buffer = new byte[fileLength];
+            byte[] buffer = new byte[fileLength];
 
-        assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.length));
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.length));
 
-        assertArrayEquals(fileBytes, buffer);
-    }
+            assertArrayEquals(fileBytes, buffer);
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void readlinkByteBufferTest() throws IOException {
-        File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
-        File link = new File(file.getAbsolutePath() + "link");
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void readlinkByteBufferTest() throws IOException {
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
+            File link = new File(file.getAbsolutePath() + "link");
 
-        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+            posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
 
-        byte[] fileBytes = file.getAbsolutePath().getBytes();
-        int fileLength = fileBytes.length;
-        ByteBuffer buffer = ByteBuffer.allocate(fileLength);
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
+            ByteBuffer buffer = ByteBuffer.allocate(fileLength);
 
-        assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, buffer.capacity()));
 
-        assertArrayEquals(buffer.array(), file.getAbsolutePath().getBytes());
-    }
+            assertArrayEquals(buffer.array(), file.getAbsolutePath().getBytes());
+        }
 
-    @Test
-    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
-    void readlinkPointerTest() throws IOException {
-        File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
-        File link = new File(file.getAbsolutePath() + "link");
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void readlinkPointerTest() throws IOException {
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
+            File link = new File(file.getAbsolutePath() + "link");
 
-        int bufSize = 1024;
+            int bufSize = 1024;
 
-        Pointer buffer = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(bufSize);
+            Pointer buffer = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(bufSize);
 
-        posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
-        
-        byte[] fileBytes = file.getAbsolutePath().getBytes();
-        int fileLength = fileBytes.length;
+            posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
 
-        assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, bufSize));
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            int fileLength = fileBytes.length;
 
-        assertEquals(file.getAbsolutePath(), buffer.getString(0, fileLength, Charset.defaultCharset()));
+            assertEquals(fileLength, posix.readlink(link.getAbsolutePath(), buffer, bufSize));
+
+            assertEquals(file.getAbsolutePath(), buffer.getString(0, fileLength, Charset.defaultCharset()));
+        }
     }
 
     @Test
@@ -607,38 +650,5 @@ class FileTest {
         } else {
             return JavaLibCHelper.toFileDescriptor(fd);
         }
-    }
-
-    private boolean hasNanosecondPrecision(FileStat fileStat) {
-        return fileStat instanceof NanosecondFileStat && !Platform.IS_MAC;
-    }
-
-    private void utimensat(File file, int parentFd) {
-        String path = file.getAbsolutePath();
-        FileStat fileStat = posix.stat(path);
-        if (!hasNanosecondPrecision(fileStat)) {
-            file.delete();
-            return;
-        }
-
-        long atimeSeconds = fileStat.atime()+2;
-        long mtimeSeconds = fileStat.mtime()-2;
-        long atimeNanoSeconds = 123456789;
-        long mtimeNanoSeconds = 135;
-        posix.utimensat(parentFd,
-                path,
-                new long[] {atimeSeconds, atimeNanoSeconds},
-                new long[] {mtimeSeconds, mtimeNanoSeconds},
-                0);
-        assertStatNanoSecond(file, atimeSeconds, atimeNanoSeconds, mtimeSeconds, mtimeNanoSeconds);
-    }
-
-    private void assertStatNanoSecond(File file, long atimeSeconds, long atimeNanoSeconds, long mtimeSeconds, long mtimeNanoSeconds) {
-        NanosecondFileStat nanosecondFileStat = (NanosecondFileStat) posix.stat(file.getPath());
-        assertEquals(atimeSeconds, nanosecondFileStat.atime(), "Access timestamp should be updated");
-        assertEquals(mtimeSeconds, nanosecondFileStat.mtime(), "Modification timestamp should be updated");
-        assertEquals(atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs(), "Access time precision should be in ns");
-        assertEquals(mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs(), "Modification time precision should be in ns");
-        file.delete();
     }
 }
