@@ -1,6 +1,7 @@
 
 package jnr.posix;
 
+import jnr.posix.junit.DisabledOnJnrOs;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,20 +34,21 @@ class PasswdTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    @Test void getpwnam() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            final String LOGIN = "root";
-            Passwd pwd = posix.getpwnam(LOGIN);
-            assertNotNull(pwd);
-            assertEquals(LOGIN, pwd.getLoginName(), "Login name not equal");
+    @Test
+    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+    void getpwnam() {
+        final String LOGIN = "root";
+        Passwd pwd = posix.getpwnam(LOGIN);
+        assertNotNull(pwd);
+        assertEquals(LOGIN, pwd.getLoginName(), "Login name not equal");
 
-            assertEquals(pwd.getClass(), passwdClass);
-        }
+        assertEquals(pwd.getClass(), passwdClass);
     }
-    @Test void nonExistantUserReturnsNull() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull(posix.getpwnam(LOGIN), "getpwnam for non-existant user should return null");
-        }
+
+    @Test
+    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+    void nonExistantUserReturnsNull() {
+        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+        assertNull(posix.getpwnam(LOGIN), "getpwnam for non-existant user should return null");
     }
 }
