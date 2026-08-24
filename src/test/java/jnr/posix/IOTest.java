@@ -1,6 +1,7 @@
 package jnr.posix;
 
 import jnr.constants.platform.*;
+import jnr.posix.junit.Modes;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,7 +26,7 @@ public class IOTest {
     public void testOpenReadWrite() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("IOTest", "testOpen");
-            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), 0666);
+            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
             Assertions.assertTrue(fd > 0);
 
             byte[] hello = "hello".getBytes();

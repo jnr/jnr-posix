@@ -5,6 +5,7 @@ import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Errno;
 import jnr.constants.platform.OpenFlags;
 import jnr.ffi.Pointer;
+import jnr.posix.junit.Modes;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -120,7 +121,7 @@ public class FileTest {
         String path = "utimensat";
         File file = new File(path);
         file.createNewFile();
-        int parentFd = posix.open(".", OpenFlags.O_DIRECTORY.intValue(), 0444);
+        int parentFd = posix.open(".", OpenFlags.O_DIRECTORY.intValue(), Modes.RA);
         utimensat(file, parentFd);
     }
 
@@ -137,7 +138,7 @@ public class FileTest {
         long mtimeSeconds = fileStat.mtime()-1;
         long atimeNanoSeconds = 123456789;
         long mtimeNanoSeconds = 135;
-        int fd = posix.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
+        int fd = posix.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
         posix.futimens(fd,
                 new long[] {atimeSeconds, atimeNanoSeconds},
                 new long[] {mtimeSeconds, mtimeNanoSeconds});
@@ -177,7 +178,7 @@ public class FileTest {
             File f = File.createTempFile("jnr-posix-futime", "tmp");
             long oldTime = posix.stat(f.getAbsolutePath()).mtime();
             Thread.sleep(2000);
-            int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+            int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
             int rval = posix.futimes(fd, null, null);
             assertEquals(0, rval, "futime did not return 0");
             long newTime = posix.stat(f.getAbsolutePath()).mtime();
@@ -261,7 +262,7 @@ public class FileTest {
     @Test
     public void dup2Test() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
-        int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
         int newFd = 1000;
 
         byte[] outContent = "foo".getBytes();
@@ -285,7 +286,7 @@ public class FileTest {
     public void fcntlDupfdTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("fcntlTest", "tmp");
-            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), 0444);
+            int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
 
             byte[] outContent = "foo".getBytes();
 
@@ -371,7 +372,7 @@ public class FileTest {
 
     @Test
     public void openTest() {
-        int fd = posix.open("pom.xml", 0, 0666);
+        int fd = posix.open("pom.xml", 0, Modes.RWA);
 
         assertNotEquals(-1, fd);
 
@@ -385,9 +386,9 @@ public class FileTest {
         file.delete();
 
         try {
-            fd = posix.open(file.getPath(), OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), 0600);
+            fd = posix.open(file.getPath(), OpenFlags.O_CREAT.intValue() | OpenFlags.O_RDWR.intValue(), Modes.RW);
 
-            assertEquals(0600, posix.stat(file.getPath()).mode() & 0777);
+            assertEquals(Modes.RW, posix.stat(file.getPath()).mode() & Modes.RWXA);
 
             result = posix.close(fd);
             assertEquals(0, result);
@@ -402,7 +403,7 @@ public class FileTest {
         File tmp = File.createTempFile("writeTest", "tmp");
         ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
 
-        int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
+        int fd = posix.open(tmp.getAbsolutePath(), 1, Modes.RWGO);
         posix.write(fd, buffer, str.length());
         posix.close(fd);
 
@@ -423,7 +424,7 @@ public class FileTest {
             String str2 = "summer";
             ByteBuffer buffer = ByteBuffer.wrap(str2.getBytes());
 
-            int fd = posix.open(tmp.getAbsolutePath(), 1, 066);
+            int fd = posix.open(tmp.getAbsolutePath(), 1, Modes.RWGO);
             posix.pwrite(fd, buffer, str2.length(), 11);
             posix.close(fd);
 
@@ -461,7 +462,7 @@ public class FileTest {
         raf.write(str.getBytes());
         raf.close();
 
-        int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
+        int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
         posix.ftruncate(fd, 21);
         posix.lseekLong(fd, 0, 0);
         byte[] buf = new byte[21];
@@ -486,10 +487,10 @@ public class FileTest {
     public void fchmodTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("jnr-posix-chmod-test", "tmp");
-            int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0600);
+            int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RW);
 
             assertEquals(0, posix.fchmod(fd, 0), "chmod: ");
-            assertEquals(0, posix.fchmod(fd, 0777), "chmod: ");
+            assertEquals(0, posix.fchmod(fd, Modes.RWXA), "chmod: ");
             tmp.delete();
         }
     }
@@ -519,12 +520,12 @@ public class FileTest {
 
         // Set permissions to read-only and verify we don't have permissions to write.
         String canonicalPath = tmp.getCanonicalPath();
-        assertEquals(0, posix.chmod(canonicalPath, 0400), "chmod 0400: ");
+        assertEquals(0, posix.chmod(canonicalPath, Modes.RO), "chmod 0400: ");
         assertEquals(-1, posix.access(canonicalPath, Access.W_OK.intValue()), "access " + canonicalPath + " for write: ");
         assertEquals(0, posix.access(canonicalPath, Access.R_OK.intValue()), "access " + canonicalPath + " for read: ");
 
         // Reset the permissions to read-write and verify we now have permissions to write.
-        assertEquals(0, posix.chmod(canonicalPath, 0600), "chmod 0600: ");
+        assertEquals(0, posix.chmod(canonicalPath, Modes.RW), "chmod 0600: ");
         assertEquals(0, posix.access(canonicalPath, Access.W_OK.intValue()), "access " + canonicalPath + " for write: ");
         assertEquals(0, posix.access(canonicalPath, Access.R_OK.intValue()), "access " + canonicalPath + " for read: ");
 
@@ -605,7 +606,7 @@ public class FileTest {
             File tmp = File.createTempFile("mkfifoTest", "tmp");
             tmp.deleteOnExit();
 
-            posix.mkfifo(tmp.getAbsolutePath(), 0666);
+            posix.mkfifo(tmp.getAbsolutePath(), Modes.RWA);
 
             FileInputStream fis = new FileInputStream(tmp);
             FileOutputStream fos = new FileOutputStream(tmp);

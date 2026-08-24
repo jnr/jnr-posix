@@ -5,6 +5,7 @@ import jnr.constants.platform.windows.OpenFlags;
 import jnr.ffi.Library;
 import jnr.ffi.Platform;
 import jnr.ffi.annotations.Out;
+import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -141,7 +142,7 @@ public class SpawnTest {
                 assertNotSame(-1, outputPipe[0]);
                 assertNotSame(-1, outputPipe[1]);
 
-                List<SpawnFileAction> actions = Arrays.asList(open(inputFile.getAbsolutePath(), 0, OpenFlags.O_RDONLY.intValue(), 0444),
+                List<SpawnFileAction> actions = Arrays.asList(open(inputFile.getAbsolutePath(), 0, OpenFlags.O_RDONLY.intValue(), Modes.RA),
                         dup(outputPipe[1], 1), close(outputPipe[0]));
                 pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "-"), emptyEnv);
                 assertTrue(pid != -1);
@@ -177,7 +178,7 @@ public class SpawnTest {
                 assertNotSame(-1, inputPipe[1]);
 
                 List<SpawnFileAction> actions = Arrays.asList(dup(outputPipe[1], 1),
-                        open("/dev/null", 2, OpenFlags.O_WRONLY.intValue(), 0444),
+                        open("/dev/null", 2, OpenFlags.O_WRONLY.intValue(), Modes.RA),
                         close(inputPipe[0]), close(inputPipe[1]));
                 pid = posix.posix_spawnp("cat", actions, Arrays.asList("cat", "/dev/fd/" + inputPipe[0]), emptyEnv);
                 assertTrue(pid != -1);

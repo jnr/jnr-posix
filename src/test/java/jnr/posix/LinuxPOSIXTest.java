@@ -8,6 +8,7 @@ import jnr.constants.platform.SocketLevel;
 import jnr.constants.platform.SocketOption;
 import jnr.ffi.Platform;
 import jnr.posix.junit.EnabledOnJnrOs;
+import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -171,7 +172,7 @@ public class LinuxPOSIXTest {
     @Test
     public void testPosixFadvise() throws Throwable {
         File file = File.createTempFile("posix_fadvise", null);
-        int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
+        int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
 
         assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
         assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));

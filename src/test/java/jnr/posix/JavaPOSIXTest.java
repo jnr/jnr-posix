@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import jnr.constants.platform.Errno;
+import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,7 +88,7 @@ public class JavaPOSIXTest {
         File file = createTestFile();
 
 		assertEquals(0, posix.chmod(file.getName(), 0), "chmod: ");
-		assertEquals(0, posix.chmod(file.getName(), 0777), "chmod: ");
+		assertEquals(0, posix.chmod(file.getName(), Modes.RWXA), "chmod: ");
 
 		file.delete();
 	}
