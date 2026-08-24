@@ -35,19 +35,6 @@ class FileStatTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-
-    @AfterAll
-    static void tearDownClass() {
-    }
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
@@ -93,13 +80,8 @@ class FileStatTest {
             File f = File.createTempFile("stat", null);
             try (FileInputStream fis = new FileInputStream(f)) {
                 FileDescriptor desc = fis.getFD();
-                int fd = -1;
-                try {
-                    Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
-                    fd = fdField.getInt(desc);
-                } catch (SecurityException | IllegalArgumentException |
-                         IllegalAccessException ignored) {
-                }
+                Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
+                int fd = assertDoesNotThrow(() -> fdField.getInt(desc));
                 FileStat stat = posix.allocateStat();
                 int result = posix.fstat(fd, stat);
                 assertTrue(fd > 2); // should not be stdin, stdout, stderr
@@ -117,15 +99,9 @@ class FileStatTest {
     private static final String NON_EXISTENT_FILENAME = "skdjlfklfsdjk";
     @Test
     void filestatFailed() {
-        FileStat stat = null;
-
         // A little wonky without adding a new posixhandler but we are using dummy so this is ok for now
         // the default handler raises on a problem in stat so we are only verifying this at the moment.
-        try {
-            stat = posix.stat(NON_EXISTENT_FILENAME);
-        } catch (UnsupportedOperationException ignored) {}
-
-        assertNull(stat);
+        assertThrows(UnsupportedOperationException.class, () -> posix.stat(NON_EXISTENT_FILENAME));
     }
 
     
