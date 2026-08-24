@@ -5,16 +5,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class HANDLETest {
+class HANDLETest {
 
     private static POSIX posix;
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void invalidHandleIsInValid() {
+    void invalidHandleIsInValid() {
         assertFalse(HANDLE.valueOf(-1L).isValid());
     }
 
@@ -32,7 +32,7 @@ public class HANDLETest {
     }
 
     @Test
-    public void stdinHandle() {
+    void stdinHandle() {
         if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE).isValid());
             assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE)));
@@ -40,7 +40,7 @@ public class HANDLETest {
     }
 
     @Test
-    public void stdoutHandle() {
+    void stdoutHandle() {
         if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE).isValid());
             assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE)));
@@ -48,7 +48,7 @@ public class HANDLETest {
     }
 
     @Test
-    public void stderrHandle() {
+    void stderrHandle() {
         if (Platform.IS_WINDOWS) {
             assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE).isValid());
             assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE)));

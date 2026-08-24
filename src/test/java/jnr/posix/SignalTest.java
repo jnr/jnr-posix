@@ -10,12 +10,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SignalTest {
+class SignalTest {
     private static POSIX posix;
     private static POSIX javaPosix;
     
     @BeforeAll
-    public static void setupClass() {
+    static void setupClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = new JavaPOSIX(new DummyPOSIXHandler());
     }
@@ -32,7 +32,7 @@ public class SignalTest {
     }
     
     @Test
-    public void testBasicSignal() {
+    void testBasicSignal() {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
             final AtomicBoolean fired = new AtomicBoolean(false);
@@ -45,7 +45,7 @@ public class SignalTest {
     }
 
     @Test
-    public void testJavaSignal() {
+    void testJavaSignal() {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
             final AtomicBoolean fired = new AtomicBoolean(false);

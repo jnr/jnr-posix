@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import static org.junit.platform.commons.support.AnnotationSupport.findAnnotation;
 
-public class EnabledOnJnrOsCondition implements ExecutionCondition {
+class EnabledOnJnrOsCondition implements ExecutionCondition {
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext context) {
         return findAnnotation(context.getElement(), EnabledOnJnrOs.class)

@@ -11,9 +11,7 @@ import java.io.IOException;
 import jnr.constants.platform.Errno;
 import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,26 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author wayne
  */
-public class JavaPOSIXTest {
+class JavaPOSIXTest {
     POSIX posix;
-    public JavaPOSIXTest() {
-    }
-
-    @BeforeAll
-    public static void setUpClass() {
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         posix = new JavaPOSIX(new DummyPOSIXHandler());
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         posix = null;
     }
 
@@ -49,11 +37,11 @@ public class JavaPOSIXTest {
     //
     // @Test
     // public void hello() {}
-    @Test public void uid() {
+    @Test void uid() {
         
     }
 
-    @Test public void lstatTest() throws IOException {
+    @Test void lstatTest() throws IOException {
         File file = createTestFile();
 
         FileStat stat = posix.lstat(file.getName());
@@ -74,7 +62,7 @@ public class JavaPOSIXTest {
         assertTrue(ret < 0);
     }
 
-    @Test public void statMissingFileTest() {
+    @Test void statMissingFileTest() {
         FileStat stat = posix.allocateStat();
 
         int ret = posix.stat("does not exist", stat);
@@ -84,7 +72,7 @@ public class JavaPOSIXTest {
     }
 
 	@Test
-	public void chmodTest() throws IOException {
+	void chmodTest() throws IOException {
         File file = createTestFile();
 
 		assertEquals(0, posix.chmod(file.getName(), 0), "chmod: ");
@@ -93,12 +81,12 @@ public class JavaPOSIXTest {
 		file.delete();
 	}
 
-    @Test public void getpwuid() {
+    @Test void getpwuid() {
         Passwd pwd = posix.getpwuid(posix.getuid());
         assertNotNull(pwd, "getpwuid failed");
         
     }
-    @Test public void isNative() {
+    @Test void isNative() {
         assertFalse(posix.isNative(), "JavaPOSIX isNative should be false");
     }
 
@@ -111,7 +99,7 @@ public class JavaPOSIXTest {
         return file;
     }
 
-    @Test public void getpid() {
+    @Test void getpid() {
         assertEquals(POSIXFactory.getNativePOSIX().getpid(), posix.getpid());
     }
 }

@@ -9,17 +9,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProcessTest {
+class ProcessTest {
 
 
     private static POSIX posix;
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void times() {
+    void times() {
         long hz = posix.sysconf(Sysconf._SC_CLK_TCK);
         if (Platform.IS_MAC) {
             assertEquals(100L, hz, "incorrect HZ value");
@@ -27,13 +27,13 @@ public class ProcessTest {
     }
 
     @Test
-    public void getcwd() {
+    void getcwd() {
         String propCwd = System.getProperty("user.dir");
         assertEquals(propCwd, posix.getcwd());
     }
 
     @Test
-    public void testGetRLimit() {
+    void testGetRLimit() {
         if (Platform.IS_LINUX) {
             RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
@@ -47,7 +47,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void testGetRLimitPreallocatedRlimit() {
+    void testGetRLimitPreallocatedRlimit() {
         if (Platform.IS_LINUX) {
             RLimit rlim = new DefaultNativeRLimit(jnr.ffi.Runtime.getSystemRuntime());
 
@@ -64,7 +64,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void testGetRLimitPointer() {
+    void testGetRLimitPointer() {
         if (Platform.IS_LINUX) {
             Pointer rlim = jnr.ffi.Runtime.getSystemRuntime().getMemoryManager().allocateDirect(8 * 2); // 2 longs.
 
@@ -81,7 +81,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void testSetRlimitLinux() {
+    void testSetRlimitLinux() {
         if (Platform.IS_LINUX) {
             RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
@@ -95,7 +95,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void testSetRlimitPreallocatedLinux() {
+    void testSetRlimitPreallocatedLinux() {
         if (Platform.IS_LINUX) {
             RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
@@ -112,7 +112,7 @@ public class ProcessTest {
     }
 
     @Test
-    public void testSetRlimitPointerLinux() {
+    void testSetRlimitPointerLinux() {
         if (Platform.IS_LINUX) {
             RLimit originalRlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 

@@ -31,40 +31,33 @@
 
 package jnr.posix;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-public class IDTest {
-
-    public IDTest() {
-    }
+class IDTest {
     private static POSIX nativePosix, javaPosix;
+
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         nativePosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), false);
     }
 
-    @AfterAll
-    public static void tearDownClass() {
+    @Test
+    void getuid() {
+        assertEquals(
+            nativePosix.getuid(), javaPosix.getuid(),
+            "Java posix did not return same value as native posix"
+        );
     }
 
-    @BeforeEach
-    public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
-    }
-
-    @Test public void getuid() {
-        assertEquals(nativePosix.getuid(), javaPosix.getuid(), "Java posix did not return same value as native posix");
-    }
-    @Test public void getgid() {
-        assertEquals(nativePosix.getgid(), javaPosix.getgid(), "Java posix did not return same value as native posix");
+    @Test
+    void getgid() {
+        assertEquals(
+            nativePosix.getgid(), javaPosix.getgid(),
+            "Java posix did not return same value as native posix"
+        );
     }
 }

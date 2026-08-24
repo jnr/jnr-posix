@@ -17,16 +17,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Created by headius on 5/31/14.
  */
-public class IOTest {
+class IOTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void testOpenReadWrite() throws Throwable {
+    void testOpenReadWrite() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("IOTest", "testOpen");
             int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
@@ -56,7 +56,7 @@ public class IOTest {
     }
 
     @Test
-    public void testPipe() {
+    void testPipe() {
         int[] fds = {0, 0};
         int ret = posix.pipe(fds);
         assertTrue(ret >= 0);
@@ -74,7 +74,7 @@ public class IOTest {
     }
 
     @Test
-    public void testPathconf() {
+    void testPathconf() {
         if (Platform.IS_WINDOWS) {
             int res = posix.fpathconf(-1, Pathconf._PC_PIPE_BUF);
             assertEquals(-1, res);
@@ -95,7 +95,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSocketPair() {
+    void testSocketPair() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 
@@ -126,7 +126,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSendRecvMsg_NoControl() {
+    void testSendRecvMsg_NoControl() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 
@@ -170,7 +170,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSendRecvMsg_WithControl() {
+    void testSendRecvMsg_WithControl() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 

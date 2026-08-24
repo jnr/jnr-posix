@@ -8,10 +8,10 @@ import java.lang.management.ManagementFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultPOSIXHandlerTest
+class DefaultPOSIXHandlerTest
 {
     @Test
-    public void testGetPid() {
+    void testGetPid() {
         int pid_from_jmx = Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 
         POSIX posix = POSIXFactory.getPOSIX(new DefaultPOSIXHandler(), true);

@@ -20,27 +20,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @EnabledOnJnrOs(Platform.OS.WINDOWS)
-public class WindowsFileTest {
+class WindowsFileTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     private static class Pair {
-        public final File base;
-        public final File leaf;
-        public Pair(File base, File leaf) {
+        final File base;
+        final File leaf;
+        Pair(File base, File leaf) {
             this.base = base;
             this.leaf = leaf;
         }
 
-        public void cleanup() {
+        void cleanup() {
             cleanup(base);
         }
 
-        public void cleanup(File node) {
+        void cleanup(File node) {
             if (node.isDirectory()) {
                 File[] files = node.listFiles();
                 if (files != null) {
@@ -68,7 +68,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testLowercaseDriveLetter() {
+    void testLowercaseDriveLetter() {
         // FIXME: Not all systems have a C drive but nearly all do
         FileStat st = posix.stat("c:/");
         assertEquals(2, st.dev());
@@ -76,7 +76,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testFakeUIDGUID() throws Throwable {
+    void testFakeUIDGUID() throws Throwable {
         File f = File.createTempFile("stat", null);
 
         try {
@@ -89,7 +89,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testExecutableSuffixesAreExecutable() throws Throwable {
+    void testExecutableSuffixesAreExecutable() throws Throwable {
         File f = File.createTempFile("stat", ".exe");
 
         try {
@@ -113,7 +113,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testBlocksAndBlockSizeReturn() throws Throwable {
+    void testBlocksAndBlockSizeReturn() throws Throwable {
         File f = File.createTempFile("stat", null);
 
         try {
@@ -126,7 +126,7 @@ public class WindowsFileTest {
     }
 
     @Test
-        public void testLongFileRegular() throws Throwable {
+        void testLongFileRegular() throws Throwable {
         Pair pair = makeLongPath();
         String path = pair.leaf.getAbsolutePath();
         try {
@@ -143,7 +143,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testLongFileUNC() throws Throwable {
+    void testLongFileUNC() throws Throwable {
         Pair pair = makeLongPath();
         String absolutePath = pair.leaf.getAbsolutePath();
         char letter = absolutePath.charAt(0);
@@ -162,7 +162,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void statUNCFile() throws Throwable {
+    void statUNCFile() throws Throwable {
         File f = File.createTempFile("stat", null);
         String absolutePath = f.getAbsolutePath();
         char letter = absolutePath.charAt(0);
@@ -181,7 +181,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void unlinkTestWindows() throws Throwable {
+    void unlinkTestWindows() throws Throwable {
         File tmp = File.createTempFile("unlinkTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
 
@@ -200,7 +200,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testFindFirstFile() throws Throwable {
+    void testFindFirstFile() throws Throwable {
         File f = File.createTempFile("stat", null);
         try {
 
@@ -216,7 +216,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testFindFirstFileBogusFile() {
+    void testFindFirstFileBogusFile() {
         POSIX posix = POSIXFactory.getNativePOSIX();
         FileStat stat = posix.allocateStat();
         int result = ((WindowsPOSIX) posix).findFirstFile("sdjfhjfsdfhdsdfhsdj", stat);
@@ -224,7 +224,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void utimensatWindows() throws IOException {
+    void utimensatWindows() throws IOException {
         File file = File.createTempFile("utimensat", null);
         try {
             FileStat fileStat = posix.stat(file.getPath());
@@ -253,7 +253,7 @@ public class WindowsFileTest {
     }
     
     @Test
-    public void utimensatWindowsCurrentTime() throws Throwable {
+    void utimensatWindowsCurrentTime() throws Throwable {
         File file = File.createTempFile("file", null);
         try {
             FileStat fileStat = posix.stat(file.getPath());
@@ -281,7 +281,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void utimenWindowsCurrentTime() throws Throwable {
+    void utimenWindowsCurrentTime() throws Throwable {
         File file = File.createTempFile("file", null);
         try {
             FileStat fileStat = posix.stat(file.getPath());

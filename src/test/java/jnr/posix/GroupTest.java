@@ -8,39 +8,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import jnr.posix.util.Platform;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static jnr.ffi.Platform.getNativePlatform;
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
-public class GroupTest {
-
-    public GroupTest() {
-    }
+class GroupTest {
 
     private static POSIX posix;
+
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-    }
-
-    @AfterAll
-    public static void tearDownClass() {
-    }
-
-    @BeforeEach
-    public void setUp() {
-    }
-
-    @AfterEach
-    public void tearDown() {
     }
 
     // TODO add test methods here.
@@ -49,7 +29,7 @@ public class GroupTest {
     // @Test
     // public void hello() {}
     @Test
-    public void getgrnam() {
+    void getgrnam() {
         if (getNativePlatform().isUnix()) {
             final String LOGIN = "daemon";
             Group grp = posix.getgrnam(LOGIN);
@@ -59,7 +39,7 @@ public class GroupTest {
     }
 
     @Test
-    public void nonExistantGroupReturnsNull() {
+    void nonExistantGroupReturnsNull() {
         if (getNativePlatform().isUnix()) {
             final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
             assertNull(posix.getgrnam(LOGIN), "getpwnam for non-existant group should return null");
@@ -67,7 +47,7 @@ public class GroupTest {
     }
 
     @Test
-    public void getgrent() {
+    void getgrent() {
         if (getNativePlatform().isUnix()) {
             ArrayList<Group> grps = new ArrayList<>();
             while (true) {
@@ -88,7 +68,7 @@ public class GroupTest {
     }
 
     @Test
-    public void getgroups() throws Throwable {
+    void getgroups() throws Throwable {
         if (getNativePlatform().isUnix() && !Platform.IS_MAC) {
             String[] groupIdsAsStrings = exec("id", "-G").split(" ");
             long[] expectedGroupIds = new long[groupIdsAsStrings.length];

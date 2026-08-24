@@ -40,15 +40,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * testing going on here.  At least it's in one place.
  */
 
-public class PlatformTest {
+class PlatformTest {
 
     @Test
-    public void testBitLengths()  {
+    void testBitLengths()  {
         assertTrue(Platform.IS_32_BIT ^ Platform.IS_64_BIT, "Not 32 or 64-bit platform?");
     }
 
     @Test
-    public void testEnvCommand()  {
+    void testEnvCommand()  {
         String command =Platform.envCommand();
         if (Platform.IS_WINDOWS_9X)  {
             assertEquals("command.com /c set", command, "Fails on Windows 95/98");

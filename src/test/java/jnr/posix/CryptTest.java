@@ -12,13 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * Created by headius on 3/24/15.
  */
-public class CryptTest {
+class CryptTest {
     @BeforeEach
-    public void before() {
+    void before() {
         posix = POSIXFactory.getPOSIX();
     }
     @Test
-    public void testCrypt() {
+    void testCrypt() {
         if (!Platform.IS_WINDOWS) {
             String str1 = "blahblahblah";
             String salt1 = "saltysalty";

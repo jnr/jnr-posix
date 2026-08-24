@@ -36,10 +36,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class WindowsHelpersTest {
+class WindowsHelpersTest {
 
     @Test
-    public void testIsBatch() {
+    void testIsBatch() {
         assertTrue(WindowsHelpers.isBatch("file.bat"));
         assertTrue(WindowsHelpers.isBatch("FILE.BAT"));
         assertTrue(WindowsHelpers.isBatch("file.cmd"));

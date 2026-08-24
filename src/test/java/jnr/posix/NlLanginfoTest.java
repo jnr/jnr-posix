@@ -10,16 +10,16 @@ import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NlLanginfoTest {
+class NlLanginfoTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void testNlLanginfo() throws Throwable {
+    void testNlLanginfo() throws Throwable {
         if (!Platform.IS_WINDOWS) {
 
             try (InputStreamReader isr = new InputStreamReader(

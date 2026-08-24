@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @EnabledOnJnrOs(Platform.OS.LINUX)
-public class LinuxPOSIXTest {
+class LinuxPOSIXTest {
 
     private static Linux linuxPOSIX = null;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         POSIX posix = POSIXFactory.getNativePOSIX();
 
         if (posix instanceof Linux) {
@@ -45,7 +45,7 @@ public class LinuxPOSIXTest {
      * @throws ExecutionException
      */
     @Test
-    public void ioprioThreadedTest() throws InterruptedException, ExecutionException {
+    void ioprioThreadedTest() throws InterruptedException, ExecutionException {
         linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 4));
 
         Future<Integer> threadPriorityFuture = Executors.newFixedThreadPool(1).submit(() -> {
@@ -62,7 +62,7 @@ public class LinuxPOSIXTest {
     }
 
     @Test
-    public void testMessageHdrMultipleControl() {
+    void testMessageHdrMultipleControl() {
         if (jnr.posix.util.Platform.IS_WINDOWS) {
             return;
         }
@@ -170,7 +170,7 @@ public class LinuxPOSIXTest {
     }
 
     @Test
-    public void testPosixFadvise() throws Throwable {
+    void testPosixFadvise() throws Throwable {
         File file = File.createTempFile("posix_fadvise", null);
         int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
 

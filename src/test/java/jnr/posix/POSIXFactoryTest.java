@@ -4,15 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class POSIXFactoryTest {
+class POSIXFactoryTest {
     @Test
-    public void testGetNativePOSIX() {
+    void testGetNativePOSIX() {
         POSIX posix = POSIXFactory.getNativePOSIX();
         assertTrue(posix.isNative());
     }
 
     @Test
-    public void testGetJavaPOSIX() {
+    void testGetJavaPOSIX() {
         POSIX posix = POSIXFactory.getJavaPOSIX();
         assertFalse(posix.isNative());
     }

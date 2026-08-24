@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DTableSizeTest {
+class DTableSizeTest {
     @Test
-    public void testGetDtableSize() {
+    void testGetDtableSize() {
         if (!Platform.IS_WINDOWS) { // FIXME: I have seen window's impl so this can be impld
             POSIX posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
             assumeTrue(posix.isNative(), "getdtablesize only supported on native posix");

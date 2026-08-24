@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FileTest {
+class FileTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void utimesTest() throws Throwable {
+    void utimesTest() throws Throwable {
         // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("utimes", null);
@@ -58,7 +58,7 @@ public class FileTest {
     }
 
     @Test
-    public void utimesDefaultValuesTest() throws Throwable {
+    void utimesDefaultValuesTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("utimes", null);
 
@@ -78,7 +78,7 @@ public class FileTest {
     }
 
     @Test
-    public void utimesPointerTest() throws Throwable {
+    void utimesPointerTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("utimes", null);
 
@@ -111,13 +111,13 @@ public class FileTest {
     }
 
     @Test
-    public void utimensatAbsolutePath() throws Throwable {
+    void utimensatAbsolutePath() throws Throwable {
         File file = File.createTempFile("utimensat", null);
         utimensat(file, 0);
     }
 
     @Test
-    public void utimensatRelativePath() throws Throwable {
+    void utimensatRelativePath() throws Throwable {
         String path = "utimensat";
         File file = new File(path);
         file.createNewFile();
@@ -126,7 +126,7 @@ public class FileTest {
     }
 
     @Test
-    public void futimens() throws Throwable {
+    void futimens() throws Throwable {
         File file = File.createTempFile("futimens", null);
         FileStat fileStat = posix.stat(file.getPath());
         if (!hasNanosecondPrecision(fileStat)) {
@@ -146,7 +146,7 @@ public class FileTest {
     }
 
     @Test
-    public void lutimesTest() throws IOException {
+    void lutimesTest() throws IOException {
         // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
         if (!Platform.IS_WINDOWS) {
             File f1 = File.createTempFile("lutimes", null);
@@ -173,7 +173,7 @@ public class FileTest {
     }
 
     @Test
-    public void futimeTest() throws Throwable {
+    void futimeTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File f = File.createTempFile("jnr-posix-futime", "tmp");
             long oldTime = posix.stat(f.getAbsolutePath()).mtime();
@@ -188,7 +188,7 @@ public class FileTest {
     }
 
     @Test
-    public void linkTest() throws Throwable {
+    void linkTest() throws Throwable {
         File f1 = File.createTempFile("utime", null);
         File f2 = new File(f1.getAbsolutePath() + "link");
         int rval = posix.link(f1.getAbsolutePath(), f2.getAbsolutePath());
@@ -199,7 +199,7 @@ public class FileTest {
     }
 
     @Test
-    public void mkdirRelativeTest() {
+    void mkdirRelativeTest() {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getPath(), 0);
         assertEquals(0, rval, "mkdir did not return 0");
@@ -208,7 +208,7 @@ public class FileTest {
     }
 
     @Test
-    public void mkdirAbsoluteTest() {
+    void mkdirAbsoluteTest() {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getAbsolutePath(), 0);
         assertEquals(0, rval, "mkdir did not return 0");
@@ -217,7 +217,7 @@ public class FileTest {
     }
     
     @Test
-    public void flockTest() throws Throwable {
+    void flockTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("flockTest", "tmp");
             RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
@@ -238,7 +238,7 @@ public class FileTest {
     }
 
     @Test
-    public void dupTest() throws Throwable {
+    void dupTest() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
         FileChannel fileChannel = raf.getChannel();
@@ -257,10 +257,10 @@ public class FileTest {
         assertArrayEquals(inContent, outContent);
     }
 
-    public static final int SEEK_SET = 0;
+    static final int SEEK_SET = 0;
 
     @Test
-    public void dup2Test() throws Throwable {
+    void dup2Test() throws Throwable {
         File tmp = File.createTempFile("dupTest", "tmp");
         int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
         int newFd = 1000;
@@ -283,7 +283,7 @@ public class FileTest {
     }
 
     @Test
-    public void fcntlDupfdTest() throws Throwable {
+    void fcntlDupfdTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("fcntlTest", "tmp");
             int fd = posix.open(tmp.getPath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
@@ -305,7 +305,7 @@ public class FileTest {
     }
 
     @Test
-    public void fcntlDupfdWithArgTest() throws Throwable {
+    void fcntlDupfdWithArgTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("dupTest", "tmp");
             int oldFd = JavaLibCHelper.getfdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(
@@ -329,7 +329,7 @@ public class FileTest {
     }
 
     @Test
-    public void closeTest() throws Throwable {
+    void closeTest() throws Throwable {
         File tmp = File.createTempFile("closeTest", "tmp");
         int fd = getFdFromDescriptor(JavaLibCHelper.getDescriptorFromChannel(new RandomAccessFile(tmp, "rw").getChannel()));
 
@@ -348,7 +348,7 @@ public class FileTest {
     }
 
     @Test
-    public void unlinkTestNonWindows() throws Throwable {
+    void unlinkTestNonWindows() throws Throwable {
         if (! Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("unlinkTest", "tmp");
             RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
@@ -371,7 +371,7 @@ public class FileTest {
     }
 
     @Test
-    public void openTest() {
+    void openTest() {
         int fd = posix.open("pom.xml", 0, Modes.RWA);
 
         assertNotEquals(-1, fd);
@@ -398,7 +398,7 @@ public class FileTest {
     }
 
     @Test
-    public void writeTest() throws Throwable {
+    void writeTest() throws Throwable {
         String str = "To thine own self be true";
         File tmp = File.createTempFile("writeTest", "tmp");
         ByteBuffer buffer = ByteBuffer.wrap(str.getBytes());
@@ -413,7 +413,7 @@ public class FileTest {
     }
 
     @Test
-    public void pwriteTest() throws Throwable {
+    void pwriteTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             String str = "Now is the winter of our discontent";
             File tmp = File.createTempFile("pwriteTest", "tmp");
@@ -435,7 +435,7 @@ public class FileTest {
     }
 
     @Test
-    public void truncateTest() throws Throwable {
+    void truncateTest() throws Throwable {
         String str = "Beware the Jabberwock, my son!";
         File tmp = File.createTempFile("truncateTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
@@ -455,7 +455,7 @@ public class FileTest {
     }
 
     @Test
-    public void ftruncateTest() throws Throwable {
+    void ftruncateTest() throws Throwable {
         String str = "Beware the Jabberwock, my son!";
         File tmp = File.createTempFile("ftruncateTest", "tmp");
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
@@ -472,7 +472,7 @@ public class FileTest {
     }
 
     @Test
-    public void fcntlIntTest() {
+    void fcntlIntTest() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = new int[2];
             int ret = posix.pipe(fds);
@@ -484,7 +484,7 @@ public class FileTest {
     }
 
     @Test
-    public void fchmodTest() throws IOException {
+    void fchmodTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("jnr-posix-chmod-test", "tmp");
             int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RW);
@@ -497,7 +497,7 @@ public class FileTest {
 
 
     @Test
-    public void renameTest() throws IOException {
+    void renameTest() throws IOException {
         File oldFile = File.createTempFile("jnr-posix-rename-test", "tmp");
         File newFile = new File(oldFile.getParent() + File.separatorChar + "jnr-posix-rename-test-new");
 
@@ -513,7 +513,7 @@ public class FileTest {
     }
 
     @Test
-    public void accessTest() throws IOException {
+    void accessTest() throws IOException {
         File tmp = File.createTempFile("jnr-posix-access-test", "tmp");
 
         jnr.constants.platform.Access.F_OK.intValue();
@@ -534,7 +534,7 @@ public class FileTest {
     }
 
     @Test
-    public void readlinkTest() throws IOException {
+    void readlinkTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
             File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
@@ -556,7 +556,7 @@ public class FileTest {
     }
 
     @Test
-    public void readlinkByteBufferTest() throws IOException {
+    void readlinkByteBufferTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
             File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
@@ -577,7 +577,7 @@ public class FileTest {
     }
 
     @Test
-    public void readlinkPointerTest() throws IOException {
+    void readlinkPointerTest() throws IOException {
         if (!Platform.IS_WINDOWS) {
             File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp");
             File link = new File(file.getAbsolutePath() + "link");
@@ -601,7 +601,7 @@ public class FileTest {
     }
 
     @Test
-    public void mkfifoTest() throws Throwable {
+    void mkfifoTest() throws Throwable {
         if (!Platform.IS_WINDOWS) {
             File tmp = File.createTempFile("mkfifoTest", "tmp");
             tmp.deleteOnExit();
@@ -621,7 +621,7 @@ public class FileTest {
     }
 
     @Test
-    public void lseekTest() {
+    void lseekTest() {
         if (Platform.IS_MAC) {
             int fd = posix.open("/dev/zero", 0, 0);
 

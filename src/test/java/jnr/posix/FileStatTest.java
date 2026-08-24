@@ -14,10 +14,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FileStatTest {
-
-    public FileStatTest() {
-    }
+class FileStatTest {
 
     private void addNBytes(File file, int amount) {
         FileOutputStream fis = null;
@@ -34,25 +31,25 @@ public class FileStatTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
 
     @AfterAll
-    public static void tearDownClass() {
+    static void tearDownClass() {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
     }
 
     @Test
-    public void filestat() throws Throwable {
+    void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
         int size = 1567;
         //Thread.sleep(2000);
@@ -75,7 +72,7 @@ public class FileStatTest {
     }
 
     @Test
-    public void filestatDescriptor() throws Throwable {
+    void filestatDescriptor() throws Throwable {
         File f = File.createTempFile("stat", null);
 
         try (FileInputStream fis = new FileInputStream(f)) {
@@ -90,7 +87,7 @@ public class FileStatTest {
     }
 
     @Test
-    public void filestatInt() throws Throwable {
+    void filestatInt() throws Throwable {
         // Windows does not store fd in FileDescriptor so this test wll not work
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
             File f = File.createTempFile("stat", null);
@@ -119,7 +116,7 @@ public class FileStatTest {
     // FIXME: I could guarantee this does not exist but this was very very quick :)
     private static final String NON_EXISTENT_FILENAME = "skdjlfklfsdjk";
     @Test
-    public void filestatFailed() {
+    void filestatFailed() {
         FileStat stat = null;
 
         // A little wonky without adding a new posixhandler but we are using dummy so this is ok for now
@@ -133,7 +130,7 @@ public class FileStatTest {
 
     
     @Test
-    public void fileStatNanoTime() throws Throwable {
+    void fileStatNanoTime() throws Throwable {
         // Currently only linux file stat support nano time resolution
         jnr.ffi.Platform nativePlatform = jnr.ffi.Platform.getNativePlatform();
         if (nativePlatform.getOS() == jnr.ffi.Platform.OS.LINUX) {
@@ -159,7 +156,7 @@ public class FileStatTest {
     }
 
     @Test
-    public void structStatSize() throws Throwable {
+    void structStatSize() throws Throwable {
         if (Platform.IS_SOLARIS) {
             jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
             if (Platform.IS_32_BIT) {
@@ -186,7 +183,7 @@ public class FileStatTest {
     }
 
     @Test
-    public void filestatDirectory() throws Throwable {
+    void filestatDirectory() throws Throwable {
         File f = File.createTempFile("stat", null).getParentFile();
         try {
             FileStat stat = posix.stat(f.getAbsolutePath());

@@ -8,15 +8,15 @@ import jnr.constants.platform.Confstr;
 import jnr.constants.platform.Errno;
 import jnr.posix.util.Platform;
 
-public class ConfstrTest {
+class ConfstrTest {
     private static POSIX posix;
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void confstr() {
+    void confstr() {
         if (Platform.IS_WINDOWS) {
             int len = posix.confstr(Confstr._CS_PATH, null, 0);
             assertEquals(-1, len);

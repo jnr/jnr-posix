@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static jnr.posix.SpawnFileAction.*;
 
-public class SpawnTest {
+class SpawnTest {
     private static POSIX posix;
     private static LibC libc;
     private static final List<String> emptyEnv = Collections.emptyList();
@@ -30,14 +30,14 @@ public class SpawnTest {
     }
 
     @BeforeAll
-    public static void setUpClass() {
+    static void setUpClass() {
         if (Platform.getNativePlatform().isUnix()) {
             posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
             libc = Library.loadLibrary(LibC.class, jnr.ffi.Platform.getNativePlatform().getStandardCLibraryName());
         }
     }
 
-    @Test public void validPid() {
+    @Test void validPid() {
         if (Platform.getNativePlatform().isUnix()) {
             long pid = -1;
             try {
@@ -60,7 +60,7 @@ public class SpawnTest {
         }
     }
 
-    @Test public void outputPipe() {
+    @Test void outputPipe() {
         if (Platform.getNativePlatform().isUnix()) {
             int[] outputPipe = { -1, -1 };
             long pid = -1;
@@ -90,7 +90,7 @@ public class SpawnTest {
         }
     }
 
-    @Test public void inputPipe() {
+    @Test void inputPipe() {
         if (Platform.getNativePlatform().isUnix()) {
             int[] outputPipe = { -1, -1 };
             int[] inputPipe = { -1, -1 };
@@ -129,7 +129,7 @@ public class SpawnTest {
         }
     }
 
-    @Test public void inputFile() throws IOException {
+    @Test void inputFile() throws IOException {
         if (Platform.getNativePlatform().isUnix()) {
             File inputFile = File.createTempFile("foo", null);
             FileOutputStream inputStream = new FileOutputStream(inputFile);
@@ -164,7 +164,7 @@ public class SpawnTest {
         }
     }
 
-    @Test public void closeInput() {
+    @Test void closeInput() {
         if (Platform.getNativePlatform().isUnix()) {
             int[] outputPipe = { -1, -1 };
             int[] inputPipe = { -1, -1 };
