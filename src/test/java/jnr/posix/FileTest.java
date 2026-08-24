@@ -10,6 +10,7 @@ import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -261,6 +262,7 @@ class FileTest {
         static final int SEEK_SET = 0;
 
         @Test
+        @DisplayName("dup()")
         void dupTest() throws Throwable {
             File tmp = File.createTempFile("dupTest", "tmp", tempDir);
             RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
@@ -281,6 +283,7 @@ class FileTest {
         }
 
         @Test
+        @DisplayName("dup2()")
         void dup2Test() throws Throwable {
             File tmp = File.createTempFile("dupTest", "tmp", tempDir);
             int oldFd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RWA);
@@ -304,6 +307,7 @@ class FileTest {
         }
 
         @Test
+        @DisplayName("fcntl(F_DUPFD)")
         @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
         void fcntlDupfdTest() throws Throwable {
             File tmp = File.createTempFile("fcntlTest", "tmp", tempDir);
@@ -325,6 +329,7 @@ class FileTest {
         }
 
         @Test
+        @DisplayName("fcntl(F_DUPFD) with explicit min-fd arg")
         @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
         void fcntlDupfdWithArgTest() throws Throwable {
             File tmp = File.createTempFile("dupTest", "tmp", tempDir);

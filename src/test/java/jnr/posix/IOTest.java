@@ -6,6 +6,7 @@ import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -129,6 +130,7 @@ class IOTest {
     }
 
     @Test
+    @DisplayName("sendmsg/recvmsg without ancillary control data")
     @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
     void testSendRecvMsg_NoControl() {
         int[] fds = {0, 0};
@@ -172,6 +174,7 @@ class IOTest {
     }
 
     @Test
+    @DisplayName("sendmsg/recvmsg with ancillary control data")
     @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
     void testSendRecvMsg_WithControl() {
         int[] fds = {0, 0};

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import jnr.ffi.Platform;
 import jnr.posix.junit.DisabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +39,7 @@ class GroupTest {
     }
 
     @Test
+    @DisplayName("returns null for non-existent group")
     @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void nonExistantGroupReturnsNull() {
         final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";

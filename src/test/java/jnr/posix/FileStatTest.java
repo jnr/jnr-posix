@@ -36,6 +36,7 @@ class FileStatTest {
     }
 
     @Test
+    @DisplayName("stat by path")
     void filestat() throws Throwable {
         File f = File.createTempFile("stat", null);
         int size = 1567;
@@ -59,6 +60,7 @@ class FileStatTest {
     }
 
     @Test
+    @DisplayName("fstat by FileDescriptor")
     void filestatDescriptor() throws Throwable {
         File f = File.createTempFile("stat", null);
 
@@ -74,6 +76,7 @@ class FileStatTest {
     }
 
     @Test
+    @DisplayName("fstat by raw fd int")
     void filestatInt() throws Throwable {
         // Windows does not store fd in FileDescriptor so this test wll not work
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {

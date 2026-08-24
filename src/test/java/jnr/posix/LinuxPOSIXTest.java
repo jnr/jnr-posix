@@ -10,6 +10,7 @@ import jnr.ffi.Platform;
 import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,6 +50,7 @@ class LinuxPOSIXTest {
      * @throws ExecutionException
      */
     @Test
+    @DisplayName("ioprio_set on one thread doesn't affect another thread's priority")
     void ioprioThreadedTest() throws InterruptedException, ExecutionException {
         linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 4));
 

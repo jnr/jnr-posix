@@ -4,6 +4,7 @@ package jnr.posix;
 import jnr.posix.junit.DisabledOnJnrOs;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,6 +47,7 @@ class PasswdTest {
     }
 
     @Test
+    @DisplayName("returns null for non-existent user")
     @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
     void nonExistantUserReturnsNull() {
         final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
