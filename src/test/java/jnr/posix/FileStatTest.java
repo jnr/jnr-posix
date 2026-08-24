@@ -5,14 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import jnr.posix.util.FieldAccess;
 import jnr.posix.util.Platform;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FileStatTest {
 
@@ -33,21 +33,21 @@ public class FileStatTest {
 
     private static POSIX posix;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
     }
 
@@ -59,14 +59,14 @@ public class FileStatTest {
         addNBytes(f, size);
         try {
             FileStat stat = posix.stat(f.getAbsolutePath());
-            assertNotNull("posix.stat failed", stat);
+            assertNotNull(stat, "posix.stat failed");
             assertEquals(size, stat.st_size());
             assertEquals(1, stat.nlink());
             //assertNotEquals(stat.mtime(), stat.ctime());
 
             stat = posix.allocateStat();
             int result = posix.stat(f.getAbsolutePath(), stat);
-            assertNotNull("posix.stat failed", stat);
+            assertNotNull(stat, "posix.stat failed");
             assertEquals(0, result);
             assertEquals(size, stat.st_size());
         } finally {
@@ -143,11 +143,11 @@ public class FileStatTest {
             File f = File.createTempFile("stat", null);
             try {
                 FileStat st = posix.stat(f.getAbsolutePath());
-                assertNotNull("posix.stat failed", st);
+                assertNotNull(st, "posix.stat failed");
 
                 FileStat stat = posix.allocateStat();
                 int result = posix.stat(f.getAbsolutePath(), stat);
-                assertNotNull("posix.stat failed", st);
+                assertNotNull(st, "posix.stat failed");
                 assertEquals(0, result);
 
                 NanosecondFileStat fstat32 = (NanosecondFileStat) stat;
@@ -166,9 +166,9 @@ public class FileStatTest {
         if (Platform.IS_SOLARIS) {
             jnr.ffi.Runtime runtime = jnr.ffi.Runtime.getSystemRuntime();
             if (Platform.IS_32_BIT) {
-                assertEquals("struct size is wrong", 144, new SolarisFileStat32.Layout(runtime).size());
+                assertEquals(144, new SolarisFileStat32.Layout(runtime).size(), "struct size is wrong");
             } else {
-                assertEquals("struct size is wrong", 128, new SolarisFileStat64.Layout(runtime).size());
+                assertEquals(128, new SolarisFileStat64.Layout(runtime).size(), "struct size is wrong");
             }
         }
 
@@ -178,9 +178,9 @@ public class FileStatTest {
                 FileStat st = posix.stat(f.getAbsolutePath());
 
                 if (Platform.IS_32_BIT) {
-                    assertSame("incorrect stat instance returned", SolarisFileStat32.class, st.getClass());
+                    assertSame(SolarisFileStat32.class, st.getClass(), "incorrect stat instance returned");
                 } else {
-                    assertSame("incorrect stat instance returned", SolarisFileStat64.class, st.getClass());
+                    assertSame(SolarisFileStat64.class, st.getClass(), "incorrect stat instance returned");
                 }
             } finally {
                 f.delete();

@@ -3,15 +3,15 @@ package jnr.posix;
 import com.kenai.jffi.MemoryIO;
 import jnr.ffi.Pointer;
 import jnr.posix.util.Platform;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnvTest {
     private static POSIX posix;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }

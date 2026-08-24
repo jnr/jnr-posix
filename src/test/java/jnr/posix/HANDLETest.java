@@ -1,14 +1,14 @@
 package jnr.posix;
 
 import jnr.posix.util.Platform;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class HANDLETest {
 
     private static POSIX posix;
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }

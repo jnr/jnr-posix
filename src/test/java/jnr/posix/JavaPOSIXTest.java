@@ -12,12 +12,12 @@ import jnr.constants.platform.Errno;
 import jnr.posix.JavaPOSIX;
 import jnr.posix.POSIX;
 import jnr.posix.Passwd;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -28,20 +28,20 @@ public class JavaPOSIXTest {
     public JavaPOSIXTest() {
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         posix = new JavaPOSIX(new DummyPOSIXHandler());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         posix = null;
     }
@@ -89,19 +89,19 @@ public class JavaPOSIXTest {
 	public void chmodTest() throws IOException {
         File file = createTestFile();
 
-		assertEquals("chmod: ", 0, posix.chmod(file.getName(), 0));
-		assertEquals("chmod: ", 0, posix.chmod(file.getName(), 0777));
+		assertEquals(0, posix.chmod(file.getName(), 0), "chmod: ");
+		assertEquals(0, posix.chmod(file.getName(), 0777), "chmod: ");
 
 		file.delete();
 	}
 
     @Test public void getpwuid() {
         Passwd pwd = posix.getpwuid(posix.getuid());
-        assertNotNull("getpwuid failed", pwd);
+        assertNotNull(pwd, "getpwuid failed");
         
     }
     @Test public void isNative() {
-        assertFalse("JavaPOSIX isNative should be false", posix.isNative());
+        assertFalse(posix.isNative(), "JavaPOSIX isNative should be false");
     }
 
     private File createTestFile() throws IOException {

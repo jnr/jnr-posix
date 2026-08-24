@@ -2,12 +2,12 @@
 package jnr.posix;
 
 import jnr.posix.util.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -18,7 +18,7 @@ public class PasswdTest {
     }
     private static POSIX posix;
     private static Class passwdClass;
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         if (Platform.IS_MAC) {
             passwdClass = MacOSPasswd.class;
@@ -38,15 +38,15 @@ public class PasswdTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
     }
 
@@ -55,7 +55,7 @@ public class PasswdTest {
             final String LOGIN = "root";
             Passwd pwd = posix.getpwnam(LOGIN);
             assertNotNull(pwd);
-            assertEquals("Login name not equal", LOGIN, pwd.getLoginName());
+            assertEquals(LOGIN, pwd.getLoginName(), "Login name not equal");
 
             assertTrue(pwd.getClass().equals(passwdClass));
         }
@@ -63,7 +63,7 @@ public class PasswdTest {
     @Test public void nonExistantUserReturnsNull() {
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
             final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
+            assertNull(posix.getpwnam(LOGIN), "getpwnam for non-existant user should return null");
         }
     }
 }

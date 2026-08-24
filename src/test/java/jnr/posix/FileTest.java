@@ -6,24 +6,24 @@ import jnr.constants.platform.Errno;
 import jnr.constants.platform.OpenFlags;
 import jnr.ffi.Pointer;
 import jnr.posix.util.Platform;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileTest {
     private static POSIX posix;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
@@ -35,12 +35,12 @@ public class FileTest {
             File f = File.createTempFile("utimes", null);
 
             int rval = posix.utimes(f.getAbsolutePath(), new long[]{800, 200}, new long[]{900, 300});
-            assertEquals("utimes did not return 0", 0, rval);
+            assertEquals(0, rval, "utimes did not return 0");
 
             FileStat stat = posix.stat(f.getAbsolutePath());
 
-            assertEquals("atime seconds failed", 800, stat.atime());
-            assertEquals("mtime seconds failed", 900, stat.mtime());
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
 
             // The nano secs part is available in other stat implementations. We really just want to verify that the
             // nsec portion of the timeval is passed through to the POSIX call.
@@ -48,8 +48,8 @@ public class FileTest {
             if (stat instanceof NanosecondFileStat && !Platform.IS_MAC) {
                 NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
-                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
-                assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
+                assertEquals(200000, linuxStat.aTimeNanoSecs(), "atime useconds failed");
+                assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
             }
 
             f.delete();
@@ -65,12 +65,12 @@ public class FileTest {
             Thread.sleep(2000);
 
             int rval = posix.utimes(f.getAbsolutePath(), null, null);
-            assertEquals("utimes did not return 0", 0, rval);
+            assertEquals(0, rval, "utimes did not return 0");
 
             FileStat stat = posix.stat(f.getAbsolutePath());
 
-            assertTrue("atime failed", stat.atime() > oldTime);
-            assertTrue("mtime failed", stat.mtime() > oldTime);
+            assertTrue(stat.atime() > oldTime, "atime failed");
+            assertTrue(stat.mtime() > oldTime, "mtime failed");
 
             f.delete();
         }
@@ -88,12 +88,12 @@ public class FileTest {
             times.putLong(24, 300);
 
             int rval = posix.utimes(f.getAbsolutePath(), times);
-            assertEquals("utimes did not return 0", 0, rval);
+            assertEquals(0, rval, "utimes did not return 0");
 
             FileStat stat = posix.stat(f.getAbsolutePath());
 
-            assertEquals("atime seconds failed", 800, stat.atime());
-            assertEquals("mtime seconds failed", 900, stat.mtime());
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
 
             // The nano secs part is available in other stat implementations.  We use Linux x86_64 because it's
             // representative.  We really just want to verify that the usec portion of the timeval is passed throug
@@ -101,8 +101,8 @@ public class FileTest {
             if (hasNanosecondPrecision(stat)) {
                 NanosecondFileStat linuxStat = (NanosecondFileStat) stat;
 
-//                assertEquals("atime useconds failed", 200000, linuxStat.aTimeNanoSecs());
-                assertEquals("mtime useconds failed", 300000, linuxStat.mTimeNanoSecs());
+//                assertEquals(200000, linuxStat.aTimeNanoSecs(), "atime useconds failed");
+                assertEquals(300000, linuxStat.mTimeNanoSecs(), "mtime useconds failed");
             }
 
             f.delete();
@@ -153,18 +153,18 @@ public class FileTest {
             posix.symlink(f1.getAbsolutePath(), f2.getAbsolutePath());
 
             int rval = posix.utimes(f1.getAbsolutePath(), new long[]{800, 0}, new long[]{900, 0});
-            assertEquals("utimes did not return 0", 0, rval);
+            assertEquals(0, rval, "utimes did not return 0");
 
             rval = posix.lutimes(f2.getAbsolutePath(), new long[]{1800, 0}, new long[]{1900, 0});
-            assertEquals("lutimes did not return 0", 0, rval);
+            assertEquals(0, rval, "lutimes did not return 0");
 
             FileStat stat = posix.stat(f1.getAbsolutePath());
-            assertEquals("atime seconds failed", 800, stat.atime());
-            assertEquals("mtime seconds failed", 900, stat.mtime());
+            assertEquals(800, stat.atime(), "atime seconds failed");
+            assertEquals(900, stat.mtime(), "mtime seconds failed");
 
             stat = posix.lstat(f2.getAbsolutePath());
-            assertEquals("atime seconds failed", 1800, stat.atime());
-            assertEquals("mtime seconds failed", 1900, stat.mtime());
+            assertEquals(1800, stat.atime(), "atime seconds failed");
+            assertEquals(1900, stat.mtime(), "mtime seconds failed");
 
             f1.delete();
             f2.delete();
@@ -179,10 +179,10 @@ public class FileTest {
             Thread.sleep(2000);
             int fd = posix.open(f.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0666);
             int rval = posix.futimes(fd, null, null);
-            assertEquals("futime did not return 0", 0, rval);
+            assertEquals(0, rval, "futime did not return 0");
             long newTime = posix.stat(f.getAbsolutePath()).mtime();
             f.delete();
-            assertTrue("mtime failed", newTime > oldTime);
+            assertTrue(newTime > oldTime, "mtime failed");
         }
     }
 
@@ -191,8 +191,8 @@ public class FileTest {
         File f1 = File.createTempFile("utime", null);
         File f2 = new File(f1.getAbsolutePath() + "link");
         int rval = posix.link(f1.getAbsolutePath(), f2.getAbsolutePath());
-        assertEquals("link did not return 0", 0, rval);
-        assertTrue("Link was not created", f2.exists());
+        assertEquals(0, rval, "link did not return 0");
+        assertTrue(f2.exists(), "Link was not created");
         f1.delete();
         f2.delete();
     }
@@ -201,8 +201,8 @@ public class FileTest {
     public void mkdirRelativeTest() throws Throwable {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getPath(), 0);
-        assertEquals("mkdir did not return 0", 0, rval);
-        assertTrue("Directory was not created", dir.exists());
+        assertEquals(0, rval, "mkdir did not return 0");
+        assertTrue(dir.exists(), "Directory was not created");
         dir.delete();
     }
 
@@ -210,8 +210,8 @@ public class FileTest {
     public void mkdirAbsoluteTest() throws Throwable {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getAbsolutePath(), 0);
-        assertEquals("mkdir did not return 0", 0, rval);
-        assertTrue("Directory was not created", dir.exists());
+        assertEquals(0, rval, "mkdir did not return 0");
+        assertTrue(dir.exists(), "Directory was not created");
         dir.delete();
     }
     
@@ -483,8 +483,8 @@ public class FileTest {
             File tmp = File.createTempFile("jnr-posix-chmod-test", "tmp");
             int fd = posix.open(tmp.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0600);
 
-            assertEquals("chmod: ", 0, posix.fchmod(fd, 0));
-            assertEquals("chmod: ", 0, posix.fchmod(fd, 0777));
+            assertEquals(0, posix.fchmod(fd, 0), "chmod: ");
+            assertEquals(0, posix.fchmod(fd, 0777), "chmod: ");
             tmp.delete();
         }
     }
@@ -514,17 +514,17 @@ public class FileTest {
 
         // Set permissions to read-only and verify we don't have permissions to write.
         String canonicalPath = tmp.getCanonicalPath();
-        assertEquals("chmod 0400: ", 0, posix.chmod(canonicalPath, 0400));
-        assertEquals("access " + canonicalPath + " for write: ", -1, posix.access(canonicalPath, Access.W_OK.intValue()));
-        assertEquals("access " + canonicalPath + " for read: ", 0, posix.access(canonicalPath, Access.R_OK.intValue()));
+        assertEquals(0, posix.chmod(canonicalPath, 0400), "chmod 0400: ");
+        assertEquals(-1, posix.access(canonicalPath, Access.W_OK.intValue()), "access " + canonicalPath + " for write: ");
+        assertEquals(0, posix.access(canonicalPath, Access.R_OK.intValue()), "access " + canonicalPath + " for read: ");
 
         // Reset the permissions to read-write and verify we now have permissions to write.
-        assertEquals("chmod 0600: ", 0, posix.chmod(canonicalPath, 0600));
-        assertEquals("access " + canonicalPath + " for write: ", 0, posix.access(canonicalPath, Access.W_OK.intValue()));
-        assertEquals("access " + canonicalPath + " for read: ", 0, posix.access(canonicalPath, Access.R_OK.intValue()));
+        assertEquals(0, posix.chmod(canonicalPath, 0600), "chmod 0600: ");
+        assertEquals(0, posix.access(canonicalPath, Access.W_OK.intValue()), "access " + canonicalPath + " for write: ");
+        assertEquals(0, posix.access(canonicalPath, Access.R_OK.intValue()), "access " + canonicalPath + " for read: ");
 
         // F_OK just checks the file exists and should pass.
-        assertEquals("access " + canonicalPath + " exists: ", 0, posix.access(canonicalPath, Access.F_OK.intValue()));
+        assertEquals(0, posix.access(canonicalPath, Access.F_OK.intValue()), "access " + canonicalPath + " exists: ");
     }
 
     @Test
@@ -671,10 +671,10 @@ public class FileTest {
 
     private void assertStatNanoSecond(File file, long atimeSeconds, long atimeNanoSeconds, long mtimeSeconds, long mtimeNanoSeconds) {
         NanosecondFileStat nanosecondFileStat = (NanosecondFileStat) posix.stat(file.getPath());
-        assertEquals("Access timestamp should be updated", atimeSeconds, nanosecondFileStat.atime());
-        assertEquals("Modification timestamp should be updated", mtimeSeconds, nanosecondFileStat.mtime());
-        assertEquals("Access time precision should be in ns", atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs());
-        assertEquals("Modification time precision should be in ns", mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs());
+        assertEquals(atimeSeconds, nanosecondFileStat.atime(), "Access timestamp should be updated");
+        assertEquals(mtimeSeconds, nanosecondFileStat.mtime(), "Modification timestamp should be updated");
+        assertEquals(atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs(), "Access time precision should be in ns");
+        assertEquals(mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs(), "Modification time precision should be in ns");
         file.delete();
     }
 }

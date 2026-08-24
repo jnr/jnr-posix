@@ -4,7 +4,7 @@ import jnr.constants.platform.windows.OpenFlags;
 import jnr.ffi.Library;
 import jnr.ffi.Platform;
 import jnr.ffi.annotations.Out;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static jnr.posix.SpawnFileAction.*;
 
 public class SpawnTest {
@@ -28,7 +28,7 @@ public class SpawnTest {
         int pipe(@Out int[] fds);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         if (Platform.getNativePlatform().isUnix()) {
             posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);

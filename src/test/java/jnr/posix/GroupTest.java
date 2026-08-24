@@ -9,14 +9,14 @@ import java.util.Arrays;
 
 import jnr.constants.platform.LangInfo;
 import jnr.posix.util.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import static jnr.ffi.Platform.getNativePlatform;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -27,20 +27,20 @@ public class GroupTest {
     }
 
     private static POSIX posix;
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
     }
 
@@ -55,7 +55,7 @@ public class GroupTest {
             final String LOGIN = "daemon";
             Group grp = posix.getgrnam(LOGIN);
             assertNotNull(grp);
-            assertEquals("Login name not equal", LOGIN, grp.getName());
+            assertEquals(LOGIN, grp.getName(), "Login name not equal");
         }
     }
 
@@ -63,7 +63,7 @@ public class GroupTest {
     public void nonExistantGroupReturnsNull() {
         if (getNativePlatform().isUnix()) {
             final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
+            assertNull(posix.getgrnam(LOGIN), "getpwnam for non-existant group should return null");
         }
     }
 

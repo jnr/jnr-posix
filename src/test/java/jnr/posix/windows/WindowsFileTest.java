@@ -10,18 +10,18 @@ import jnr.posix.FileStat;
 import jnr.posix.POSIX;
 import jnr.posix.POSIXFactory;
 import jnr.posix.WindowsPOSIX;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WindowsFileTest {
     private static POSIX posix;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
@@ -129,11 +129,11 @@ public class WindowsFileTest {
         String path = pair.leaf.getAbsolutePath();
         try {
             FileStat st = posix.stat(path);
-            assertNotNull("posix.stat failed", st);
+            assertNotNull(st, "posix.stat failed");
 
             FileStat stat = posix.allocateStat();
             int result = posix.stat(path, stat);
-            assertNotNull("posix.stat failed", stat);
+            assertNotNull(stat, "posix.stat failed");
             assertEquals(0, result);
         } finally {
             pair.cleanup();
@@ -148,11 +148,11 @@ public class WindowsFileTest {
         String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
         try {
             FileStat st = posix.stat(path);
-            assertNotNull("posix.stat failed", st);
+            assertNotNull(st, "posix.stat failed");
 
             FileStat stat = posix.allocateStat();
             int result = posix.stat(path, stat);
-            assertNotNull("posix.stat failed", stat);
+            assertNotNull(stat, "posix.stat failed");
             assertEquals(0, result);
         } finally {
             pair.cleanup();
@@ -167,11 +167,11 @@ public class WindowsFileTest {
         String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
         try {
             FileStat st = posix.stat(path);
-            assertNotNull("posix.stat failed", st);
+            assertNotNull(st, "posix.stat failed");
 
             FileStat stat = posix.allocateStat();
             int result = posix.stat(path, stat);
-            assertNotNull("posix.stat failed", stat);
+            assertNotNull(stat, "posix.stat failed");
             assertEquals(0, result);
         } finally {
             f.delete();
@@ -243,8 +243,8 @@ public class WindowsFileTest {
                     0);
 
             fileStat = posix.stat(file.getPath());
-            assertEquals("access time should be updated", atimeSeconds, fileStat.atime());
-            assertEquals("modification time should be updated", mtimeSeconds, fileStat.mtime());
+            assertEquals(atimeSeconds, fileStat.atime(), "access time should be updated");
+            assertEquals(mtimeSeconds, fileStat.mtime(), "modification time should be updated");
         } finally {
             file.delete();
         }
@@ -265,16 +265,14 @@ public class WindowsFileTest {
                     new long[]{atimeSecondsInPast, 0},
                     new long[]{mtimeSecondsInPast, 0}, 0);
             fileStat = posix.stat(file.getPath());
-            assertEquals("access time should be updated", fileStat.atime(), atimeSecondsInPast);
-            assertEquals("modification time should be updated", fileStat.mtime(), mtimeSecondsInPast);
+            assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
+            assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
 
             posix.utimensat(0, file.getAbsolutePath(), null, null, 0);
 
             fileStat = posix.stat(file.getPath());
-            assertTrue("access time should be updated to current time",
-                    timeWithinRange(fileStat.atime(), atimeSeconds, 10));
-            assertTrue("modification time should be updated to current time",
-                    timeWithinRange(fileStat.mtime(), mtimeSeconds, 10));
+            assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
+            assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
         } finally {
             file.delete();
         }
@@ -294,18 +292,14 @@ public class WindowsFileTest {
                     new long[]{atimeSecondsInPast, 0},
                     new long[]{mtimeSecondsInPast, 0});
             fileStat = posix.stat(file.getPath());
-            assertEquals("access time should be updated",
-                    fileStat.atime(), atimeSecondsInPast);
-            assertEquals("modification time should be updated",
-                    fileStat.mtime(), mtimeSecondsInPast);
+            assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
+            assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
 
             posix.utimes(file.getAbsolutePath(), null, null);
 
             fileStat = posix.stat(file.getPath());
-            assertTrue("access time should be updated to current time",
-                    timeWithinRange(fileStat.atime(), atimeSeconds, 10));
-            assertTrue("modification time should be updated to current time",
-                    timeWithinRange(fileStat.mtime(), mtimeSeconds, 10));
+            assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
+            assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
         } finally {
             file.delete();
         }
