@@ -3,7 +3,6 @@ package jnr.posix.windows;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
 import jnr.ffi.Platform;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
@@ -13,6 +12,7 @@ import jnr.posix.WindowsPOSIX;
 import jnr.posix.junit.EnabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -23,48 +23,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WindowsFileTest {
     private static POSIX posix;
 
+    @TempDir
+    File tempDir;
+
     @BeforeAll
     static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    private static class Pair {
-        final File base;
-        final File leaf;
-        Pair(File base, File leaf) {
-            this.base = base;
-            this.leaf = leaf;
-        }
-
-        void cleanup() {
-            cleanup(base);
-        }
-
-        void cleanup(File node) {
-            if (node.isDirectory()) {
-                File[] files = node.listFiles();
-                if (files != null) {
-                    for(File file: files) {
-                        cleanup(file);
-                    }
-                }
-            }
-            node.delete();
-        }
-    }
-    // FIXME: This is a broken method since it does not delete any of the generated dirs.
     private static final String DIR_NAME = "0123456789";
-    private Pair makeLongPath() throws IOException {
-        File tmp = Files.createTempDirectory("temp" + Long.toHexString(System.nanoTime())).toFile();
-
+    private File makeLongPath() {
         StringBuilder buf = new StringBuilder(DIR_NAME);
         for (int i = 0; i < 30; i++) {
             buf.append(DIR_NAME).append('/');
         }
-        File tmp2 = new File(tmp, buf.toString());
-        tmp2.mkdirs();
+        File leaf = new File(tempDir, buf.toString());
+        leaf.mkdirs();
 
-        return new Pair(tmp, tmp2);
+        return leaf;
     }
 
     @Test
@@ -77,112 +53,86 @@ class WindowsFileTest {
 
     @Test
     void testFakeUIDGUID() throws Throwable {
-        File f = File.createTempFile("stat", null);
+        File f = File.createTempFile("stat", null, tempDir);
 
-        try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertEquals(0, st.uid());
-            assertEquals(0, st.gid());
-        } finally {
-            f.delete();
-        }
+        FileStat st = posix.stat(f.getAbsolutePath());
+        assertEquals(0, st.uid());
+        assertEquals(0, st.gid());
     }
 
     @Test
     void testExecutableSuffixesAreExecutable() throws Throwable {
-        File f = File.createTempFile("stat", ".exe");
+        File f = File.createTempFile("stat", ".exe", tempDir);
 
-        try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertEquals("100755", Integer.toOctalString(st.mode()));
-            assertTrue(st.isExecutable());
-        } finally {
-            f.delete();
-        }
+        FileStat st = posix.stat(f.getAbsolutePath());
+        assertEquals("100755", Integer.toOctalString(st.mode()));
+        assertTrue(st.isExecutable());
 
-        f = File.createTempFile("STAT", ".EXE");
+        f = File.createTempFile("STAT", ".EXE", tempDir);
 
-        try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertEquals("100755", Integer.toOctalString(st.mode()));
-            assertTrue(st.isExecutable());
-        } finally {
-            f.delete();
-        }
-
+        st = posix.stat(f.getAbsolutePath());
+        assertEquals("100755", Integer.toOctalString(st.mode()));
+        assertTrue(st.isExecutable());
     }
 
     @Test
     void testBlocksAndBlockSizeReturn() throws Throwable {
-        File f = File.createTempFile("stat", null);
+        File f = File.createTempFile("stat", null, tempDir);
 
-        try {
-            FileStat st = posix.stat(f.getAbsolutePath());
-            assertEquals(-1, st.blocks());
-            assertEquals(-1, st.blockSize());
-        } finally {
-            f.delete();
-        }
+        FileStat st = posix.stat(f.getAbsolutePath());
+        assertEquals(-1, st.blocks());
+        assertEquals(-1, st.blockSize());
     }
 
     @Test
-        void testLongFileRegular() throws Throwable {
-        Pair pair = makeLongPath();
-        String path = pair.leaf.getAbsolutePath();
-        try {
-            FileStat st = posix.stat(path);
-            assertNotNull(st, "posix.stat failed");
+    void testLongFileRegular() throws Throwable {
+        File leaf = makeLongPath();
+        String path = leaf.getAbsolutePath();
 
-            FileStat stat = posix.allocateStat();
-            int result = posix.stat(path, stat);
-            assertNotNull(stat, "posix.stat failed");
-            assertEquals(0, result);
-        } finally {
-            pair.cleanup();
-        }
+        FileStat st = posix.stat(path);
+        assertNotNull(st, "posix.stat failed");
+
+        FileStat stat = posix.allocateStat();
+        int result = posix.stat(path, stat);
+        assertNotNull(stat, "posix.stat failed");
+        assertEquals(0, result);
     }
 
     @Test
     void testLongFileUNC() throws Throwable {
-        Pair pair = makeLongPath();
-        String absolutePath = pair.leaf.getAbsolutePath();
+        File leaf = makeLongPath();
+        String absolutePath = leaf.getAbsolutePath();
         char letter = absolutePath.charAt(0);
         String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
-        try {
-            FileStat st = posix.stat(path);
-            assertNotNull(st, "posix.stat failed");
 
-            FileStat stat = posix.allocateStat();
-            int result = posix.stat(path, stat);
-            assertNotNull(stat, "posix.stat failed");
-            assertEquals(0, result);
-        } finally {
-            pair.cleanup();
-        }
+        FileStat st = posix.stat(path);
+        assertNotNull(st, "posix.stat failed");
+
+        FileStat stat = posix.allocateStat();
+        int result = posix.stat(path, stat);
+        assertNotNull(stat, "posix.stat failed");
+        assertEquals(0, result);
     }
 
     @Test
     void statUNCFile() throws Throwable {
-        File f = File.createTempFile("stat", null);
+        File f = File.createTempFile("stat", null, tempDir);
         String absolutePath = f.getAbsolutePath();
         char letter = absolutePath.charAt(0);
         String path = absolutePath.replace(absolutePath.substring(0,2), "\\\\localhost\\" + letter + "$");
-        try {
-            FileStat st = posix.stat(path);
-            assertNotNull(st, "posix.stat failed");
 
-            FileStat stat = posix.allocateStat();
-            int result = posix.stat(path, stat);
-            assertNotNull(stat, "posix.stat failed");
-            assertEquals(0, result);
-        } finally {
-            f.delete();
-        }
+        FileStat st = posix.stat(path);
+        assertNotNull(st, "posix.stat failed");
+
+        FileStat stat = posix.allocateStat();
+        int result = posix.stat(path, stat);
+        assertNotNull(stat, "posix.stat failed");
+        assertEquals(0, result);
     }
 
     @Test
     void unlinkTestWindows() throws Throwable {
-        File tmp = File.createTempFile("unlinkTest", "tmp");
+        File tmp = File.createTempFile("unlinkTest", "tmp", tempDir);
         RandomAccessFile raf = new RandomAccessFile(tmp, "rw");
 
         raf.write("hello".getBytes());
@@ -201,18 +151,14 @@ class WindowsFileTest {
 
     @Test
     void testFindFirstFile() throws Throwable {
-        File f = File.createTempFile("stat", null);
-        try {
+        File f = File.createTempFile("stat", null, tempDir);
 
-            POSIX posix = POSIXFactory.getNativePOSIX();
-            FileStat stat = posix.allocateStat();
-            int result = ((WindowsPOSIX) posix).findFirstFile(f.getAbsolutePath(), stat);
+        POSIX posix = POSIXFactory.getNativePOSIX();
+        FileStat stat = posix.allocateStat();
+        int result = ((WindowsPOSIX) posix).findFirstFile(f.getAbsolutePath(), stat);
 
-            assertEquals(0, result);
-            assertTrue(stat.isFile());
-        } finally {
-            f.delete();
-        }
+        assertEquals(0, result);
+        assertTrue(stat.isFile());
     }
 
     @Test
@@ -225,86 +171,74 @@ class WindowsFileTest {
 
     @Test
     void utimensatWindows() throws IOException {
-        File file = File.createTempFile("utimensat", null);
-        try {
-            FileStat fileStat = posix.stat(file.getPath());
+        File file = File.createTempFile("utimensat", null, tempDir);
+        FileStat fileStat = posix.stat(file.getPath());
 
-            long atimeSeconds = fileStat.atime() + 1;
-            long mtimeSeconds = fileStat.mtime() - 1;
+        long atimeSeconds = fileStat.atime() + 1;
+        long mtimeSeconds = fileStat.mtime() - 1;
 
-            // Windows precision is 100 ns
-            long atimeNanoSeconds = 123456700;
-            long mtimeNanoSeconds = 987654300;
+        // Windows precision is 100 ns
+        long atimeNanoSeconds = 123456700;
+        long mtimeNanoSeconds = 987654300;
 
-            // dirfd is ignored when passing an absolute path
-            // flag can be used to update symlinks
-            posix.utimensat(0,
-                    file.getAbsolutePath(),
-                    new long[]{atimeSeconds, atimeNanoSeconds},
-                    new long[]{mtimeSeconds, mtimeNanoSeconds},
-                    0);
+        // dirfd is ignored when passing an absolute path
+        // flag can be used to update symlinks
+        posix.utimensat(0,
+                file.getAbsolutePath(),
+                new long[]{atimeSeconds, atimeNanoSeconds},
+                new long[]{mtimeSeconds, mtimeNanoSeconds},
+                0);
 
-            fileStat = posix.stat(file.getPath());
-            assertEquals(atimeSeconds, fileStat.atime(), "access time should be updated");
-            assertEquals(mtimeSeconds, fileStat.mtime(), "modification time should be updated");
-        } finally {
-            file.delete();
-        }
+        fileStat = posix.stat(file.getPath());
+        assertEquals(atimeSeconds, fileStat.atime(), "access time should be updated");
+        assertEquals(mtimeSeconds, fileStat.mtime(), "modification time should be updated");
     }
-    
+
     @Test
     void utimensatWindowsCurrentTime() throws Throwable {
-        File file = File.createTempFile("file", null);
-        try {
-            FileStat fileStat = posix.stat(file.getPath());
-            long atimeSeconds = fileStat.atime();
-            long mtimeSeconds = fileStat.mtime();
-            long atimeSecondsInPast = atimeSeconds - 1000;
-            long mtimeSecondsInPast = mtimeSeconds - 1000;
+        File file = File.createTempFile("file", null, tempDir);
+        FileStat fileStat = posix.stat(file.getPath());
+        long atimeSeconds = fileStat.atime();
+        long mtimeSeconds = fileStat.mtime();
+        long atimeSecondsInPast = atimeSeconds - 1000;
+        long mtimeSecondsInPast = mtimeSeconds - 1000;
 
-            posix.utimensat(0,
-                    file.getAbsolutePath(),
-                    new long[]{atimeSecondsInPast, 0},
-                    new long[]{mtimeSecondsInPast, 0}, 0);
-            fileStat = posix.stat(file.getPath());
-            assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
-            assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
+        posix.utimensat(0,
+                file.getAbsolutePath(),
+                new long[]{atimeSecondsInPast, 0},
+                new long[]{mtimeSecondsInPast, 0}, 0);
+        fileStat = posix.stat(file.getPath());
+        assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
+        assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
 
-            posix.utimensat(0, file.getAbsolutePath(), null, null, 0);
+        posix.utimensat(0, file.getAbsolutePath(), null, null, 0);
 
-            fileStat = posix.stat(file.getPath());
-            assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
-            assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
-        } finally {
-            file.delete();
-        }
+        fileStat = posix.stat(file.getPath());
+        assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
+        assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
     }
 
     @Test
     void utimenWindowsCurrentTime() throws Throwable {
-        File file = File.createTempFile("file", null);
-        try {
-            FileStat fileStat = posix.stat(file.getPath());
-            long atimeSeconds = fileStat.atime();
-            long mtimeSeconds = fileStat.mtime();
-            long atimeSecondsInPast = atimeSeconds - 1000;
-            long mtimeSecondsInPast = mtimeSeconds - 1000;
+        File file = File.createTempFile("file", null, tempDir);
+        FileStat fileStat = posix.stat(file.getPath());
+        long atimeSeconds = fileStat.atime();
+        long mtimeSeconds = fileStat.mtime();
+        long atimeSecondsInPast = atimeSeconds - 1000;
+        long mtimeSecondsInPast = mtimeSeconds - 1000;
 
-            posix.utimes(file.getAbsolutePath(),
-                    new long[]{atimeSecondsInPast, 0},
-                    new long[]{mtimeSecondsInPast, 0});
-            fileStat = posix.stat(file.getPath());
-            assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
-            assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
+        posix.utimes(file.getAbsolutePath(),
+                new long[]{atimeSecondsInPast, 0},
+                new long[]{mtimeSecondsInPast, 0});
+        fileStat = posix.stat(file.getPath());
+        assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
+        assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
 
-            posix.utimes(file.getAbsolutePath(), null, null);
+        posix.utimes(file.getAbsolutePath(), null, null);
 
-            fileStat = posix.stat(file.getPath());
-            assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
-            assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
-        } finally {
-            file.delete();
-        }
+        fileStat = posix.stat(file.getPath());
+        assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
+        assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
     }
 
     private boolean timeWithinRange(long actual, long expected, long precision) {
