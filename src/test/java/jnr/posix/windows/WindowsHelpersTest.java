@@ -31,26 +31,25 @@
 package jnr.posix.windows;
 
 import jnr.posix.util.WindowsHelpers;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WindowsHelpersTest {
 
-    @Test
-    void testIsBatch() {
-        assertTrue(WindowsHelpers.isBatch("file.bat"));
-        assertTrue(WindowsHelpers.isBatch("FILE.BAT"));
-        assertTrue(WindowsHelpers.isBatch("file.cmd"));
-        assertTrue(WindowsHelpers.isBatch("FILE.CMD"));
+    @ParameterizedTest
+    @ValueSource(strings = {"file.bat", "FILE.BAT", "file.cmd", "FILE.CMD"})
+    void isBatchRecognizesBatchFiles(String path) {
+        assertTrue(WindowsHelpers.isBatch(path));
+    }
 
-        assertFalse(WindowsHelpers.isBatch("file.exe"));
-        assertFalse(WindowsHelpers.isBatch("file.txt"));
-        assertFalse(WindowsHelpers.isBatch("file"));
-        assertFalse(WindowsHelpers.isBatch("filebat"));
-        assertFalse(WindowsHelpers.isBatch("filecmd"));
-        assertFalse(WindowsHelpers.isBatch(""));
-        assertFalse(WindowsHelpers.isBatch(null));
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"file.exe", "file.txt", "file", "filebat", "filecmd", ""})
+    void isBatchRejectsNonBatchFiles(String path) {
+        assertFalse(WindowsHelpers.isBatch(path));
     }
 }

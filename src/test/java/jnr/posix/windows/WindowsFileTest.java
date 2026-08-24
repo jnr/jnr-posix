@@ -13,6 +13,8 @@ import jnr.posix.junit.EnabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,17 +62,12 @@ class WindowsFileTest {
         assertEquals(0, st.gid());
     }
 
-    @Test
-    void testExecutableSuffixesAreExecutable() throws Throwable {
-        File f = File.createTempFile("stat", ".exe", tempDir);
+    @ParameterizedTest
+    @CsvSource({"stat,.exe", "STAT,.EXE"})
+    void testExecutableSuffixesAreExecutable(String prefix, String suffix) throws Throwable {
+        File f = File.createTempFile(prefix, suffix, tempDir);
 
         FileStat st = posix.stat(f.getAbsolutePath());
-        assertEquals("100755", Integer.toOctalString(st.mode()));
-        assertTrue(st.isExecutable());
-
-        f = File.createTempFile("STAT", ".EXE", tempDir);
-
-        st = posix.stat(f.getAbsolutePath());
         assertEquals("100755", Integer.toOctalString(st.mode()));
         assertTrue(st.isExecutable());
     }

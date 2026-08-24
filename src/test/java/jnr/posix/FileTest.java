@@ -12,6 +12,8 @@ import jnr.posix.util.Platform;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -186,19 +188,12 @@ class FileTest {
         assertTrue(f2.exists(), "Link was not created");
     }
 
-    @Test
-    void mkdirRelativeTest() {
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void mkdirTest(boolean absolute) {
         File dir = new File("tmp" + System.identityHashCode(posix));
-        int rval = posix.mkdir(dir.getPath(), 0);
-        assertEquals(0, rval, "mkdir did not return 0");
-        assertTrue(dir.exists(), "Directory was not created");
-        dir.delete();
-    }
-
-    @Test
-    void mkdirAbsoluteTest() {
-        File dir = new File("tmp" + System.identityHashCode(posix));
-        int rval = posix.mkdir(dir.getAbsolutePath(), 0);
+        String path = absolute ? dir.getAbsolutePath() : dir.getPath();
+        int rval = posix.mkdir(path, 0);
         assertEquals(0, rval, "mkdir did not return 0");
         assertTrue(dir.exists(), "Directory was not created");
         dir.delete();

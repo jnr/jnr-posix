@@ -11,6 +11,9 @@ import jnr.posix.junit.EnabledOnJnrOs;
 import jnr.posix.junit.Modes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -18,6 +21,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Stream;
 
 import static jnr.posix.LinuxIoPrio.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -165,18 +169,27 @@ class LinuxPOSIXTest {
         }
     }
 
-    @Test
-    void testPosixFadvise() throws Throwable {
-        File file = File.createTempFile("posix_fadvise", null);
+    @ParameterizedTest
+    @MethodSource("posixFadviseAdvicesInOrder")
+    void testPosixFadvise(PosixFadvise advice, @TempDir File tempDir) throws Throwable {
+        File file = File.createTempFile("posix_fadvise", null, tempDir);
         int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), Modes.RA);
 
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
-        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
+        try {
+            assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, advice));
+        } finally {
+            linuxPOSIX.close(fd);
+        }
+    }
 
-        linuxPOSIX.close(fd);
+    // normal last to reset it
+    private static Stream<PosixFadvise> posixFadviseAdvicesInOrder() {
+        return Stream.of(
+                PosixFadvise.POSIX_FADV_SEQUENTIAL,
+                PosixFadvise.POSIX_FADV_RANDOM,
+                PosixFadvise.POSIX_FADV_NOREUSE,
+                PosixFadvise.POSIX_FADV_WILLNEED,
+                PosixFadvise.POSIX_FADV_DONTNEED,
+                PosixFadvise.POSIX_FADV_NORMAL);
     }
 }
