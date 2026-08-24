@@ -7,11 +7,9 @@ import jnr.constants.platform.Sock;
 import jnr.constants.platform.SocketLevel;
 import jnr.constants.platform.SocketOption;
 import jnr.ffi.Platform;
-import jnr.posix.util.ConditionalTestRule;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -25,16 +23,16 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 
 import static jnr.posix.LinuxIoPrio.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class LinuxPOSIXTest {
 
-    @ClassRule
-    public static RunningOnLinux rule = new RunningOnLinux();
-
     private static Linux linuxPOSIX = null;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws Exception {
+        assumeTrue(jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX));
+
         POSIX posix = POSIXFactory.getNativePOSIX();
 
         if (posix instanceof Linux) {
@@ -62,10 +60,10 @@ public class LinuxPOSIXTest {
 
         int threadPriority = threadPriorityFuture.get().intValue();
 
-        Assert.assertEquals(7, IOPRIO_PRIO_DATA(threadPriority));
-        Assert.assertEquals(IOPRIO_CLASS_IDLE, IOPRIO_PRIO_CLASS(threadPriority));
-        Assert.assertEquals(4, IOPRIO_PRIO_DATA(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
-        Assert.assertEquals(IOPRIO_CLASS_BE, IOPRIO_PRIO_CLASS(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
+        Assertions.assertEquals(7, IOPRIO_PRIO_DATA(threadPriority));
+        Assertions.assertEquals(IOPRIO_CLASS_IDLE, IOPRIO_PRIO_CLASS(threadPriority));
+        Assertions.assertEquals(4, IOPRIO_PRIO_DATA(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
+        Assertions.assertEquals(IOPRIO_CLASS_BE, IOPRIO_PRIO_CLASS(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
     }
 
     @Test
@@ -85,9 +83,9 @@ public class LinuxPOSIXTest {
         String data = "twoControlMessages";
         byte[] dataBytes = data.getBytes();
 
-        Assert.assertTrue(ret >= 0);
-        Assert.assertTrue(fds[0] > 0);
-        Assert.assertTrue(fds[1] > 0);
+        Assertions.assertTrue(ret >= 0);
+        Assertions.assertTrue(fds[0] > 0);
+        Assertions.assertTrue(fds[1] > 0);
 
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.order(ByteOrder.nativeOrder());
@@ -99,7 +97,7 @@ public class LinuxPOSIXTest {
                 buf,
                 buf.remaining());
 
-        Assert.assertTrue(ret >= 0);
+        Assertions.assertTrue(ret >= 0);
 
         MsgHdr outMessage = linuxPOSIX.allocateMsgHdr();
 
@@ -122,11 +120,11 @@ public class LinuxPOSIXTest {
         int sendStatus = linuxPOSIX.sendmsg(fds[0], outMessage, 0);
         if (sendStatus == -1) {
             String sendmsgError = "Error with sendmsg: " + linuxPOSIX.strerror(linuxPOSIX.errno());
-            Assert.fail(sendmsgError);
+            Assertions.fail(sendmsgError);
             return;
         }
 
-        Assert.assertEquals(dataBytes.length, sendStatus);
+        Assertions.assertEquals(dataBytes.length, sendStatus);
 
         // ----------------
 
@@ -138,9 +136,9 @@ public class LinuxPOSIXTest {
         inMessage.allocateControls(new int[]{4, 12});
         int recvStatus = linuxPOSIX.recvmsg(fds[1], inMessage, 0);
 
-        Assert.assertEquals(dataBytes.length, recvStatus);
+        Assertions.assertEquals(dataBytes.length, recvStatus);
 
-        Assert.assertEquals(2, inMessage.getControls().length);
+        Assertions.assertEquals(2, inMessage.getControls().length);
 
         CmsgHdr[] controls = inMessage.getControls();
         for (int x = 0; x < controls.length; x++) {
@@ -157,7 +155,7 @@ public class LinuxPOSIXTest {
 
             int fd = inFdBuf.getInt();
 
-            Assert.assertTrue(fd != 0);
+            Assertions.assertTrue(fd != 0);
         } else if (control.getLevel() == SocketLevel.SOL_SOCKET.intValue()
                 && control.getType() == 0x02) {
             //Credentials
@@ -168,11 +166,11 @@ public class LinuxPOSIXTest {
             int got_uid = data.getInt();
             int got_gid = data.getInt();
 
-            Assert.assertEquals(linuxPOSIX.getpid(), got_pid);
-            Assert.assertEquals(linuxPOSIX.getuid(), got_uid);
-            Assert.assertEquals(linuxPOSIX.getgid(), got_gid);
+            Assertions.assertEquals(linuxPOSIX.getpid(), got_pid);
+            Assertions.assertEquals(linuxPOSIX.getuid(), got_uid);
+            Assertions.assertEquals(linuxPOSIX.getgid(), got_gid);
         } else {
-            Assert.fail("Unable to determine cmsghdr type");
+            Assertions.fail("Unable to determine cmsghdr type");
         }
     }
 
@@ -181,19 +179,13 @@ public class LinuxPOSIXTest {
         File file = File.createTempFile("posix_fadvise", null);
         int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
 
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
-        Assert.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
+        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
 
         linuxPOSIX.close(fd);
-    }
-}
-
-class RunningOnLinux extends ConditionalTestRule {
-    public boolean isSatisfied() {
-        return jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX);
     }
 }
