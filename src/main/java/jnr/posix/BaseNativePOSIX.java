@@ -35,6 +35,10 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected final JavaLibCHelper helper;
     
     protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
+    // jnr-ffi only keeps a weak reference to closure implementations, so we must retain a
+    // strong reference to each LibCSignalHandler ourselves or it can be garbage collected,
+    // leaving the installed native signal handler pointing at a dead callback (see #137).
+    private final Map<Signal, LibC.LibCSignalHandler> nativeSignalHandlers = new HashMap();
     
     protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
@@ -322,14 +326,17 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         synchronized (signalHandlers) {
             SignalHandler old = signalHandlers.get(sig);
 
-            long result = libc().signal(sig.intValue(), new LibC.LibCSignalHandler() {
+            LibC.LibCSignalHandler nativeHandler = new LibC.LibCSignalHandler() {
                 public void signal(int sig) {
                     handler.handle(sig);
                 }
-            });
+            };
+
+            long result = libc().signal(sig.intValue(), nativeHandler);
 
             if (result != -1) {
                 signalHandlers.put(sig, handler);
+                nativeSignalHandlers.put(sig, nativeHandler);
             }
 
             return old;
