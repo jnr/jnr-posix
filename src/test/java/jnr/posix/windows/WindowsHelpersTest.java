@@ -31,10 +31,14 @@
 package jnr.posix.windows;
 
 import jnr.posix.util.WindowsHelpers;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class WindowsHelpersTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+public class WindowsHelpersTest {
+
+    @Test
     public void testIsBatch() {
         assertTrue(WindowsHelpers.isBatch("file.bat"));
         assertTrue(WindowsHelpers.isBatch("FILE.BAT"));

@@ -31,29 +31,34 @@
 package jnr.posix.util;
 
 import jnr.posix.util.Platform;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * Admittedly, there is a lot of cyclomatic complexity and system-dependent
  * testing going on here.  At least it's in one place.
  */
 
-public class PlatformTest extends TestCase {
+public class PlatformTest {
 
+    @Test
     public void testBitLengths()  {
-        assertTrue("Not 32 or 64-bit platform?", Platform.IS_32_BIT ^ Platform.IS_64_BIT);
+        assertTrue(Platform.IS_32_BIT ^ Platform.IS_64_BIT, "Not 32 or 64-bit platform?");
     }
 
+    @Test
     public void testEnvCommand()  {
         String command =Platform.envCommand();
         if (Platform.IS_WINDOWS_9X)  {
-            assertEquals("Fails on Windows 95/98", "command.com /c set", command);
+            assertEquals("command.com /c set", command, "Fails on Windows 95/98");
         }
         if (Platform.IS_WINDOWS & !Platform.IS_WINDOWS_9X)  {
-            assertEquals("Fails on Windows other than 95/98", "cmd.exe /c set", command);
+            assertEquals("cmd.exe /c set", command, "Fails on Windows other than 95/98");
         }
         if (!Platform.IS_WINDOWS)  {
-            assertEquals("Fails on Non-Windows platform", "env", command);
+            assertEquals("env", command, "Fails on Non-Windows platform");
         }
     }
 }
