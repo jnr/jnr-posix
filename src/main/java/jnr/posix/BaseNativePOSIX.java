@@ -34,11 +34,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
-    protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
-    // jnr-ffi only keeps a weak reference to closure implementations, so we must retain a
-    // strong reference to each LibCSignalHandler ourselves or it can be garbage collected,
+    // jnr-ffi only keeps a weak reference to closure implementations, so NativeSignalHandler
+    // (which is the LibC.LibCSignalHandler actually passed to LibC.signal()) must be kept
+    // strongly reachable here for as long as it is installed, or it can be garbage collected,
     // leaving the installed native signal handler pointing at a dead callback (see #137).
-    private final Map<Signal, LibC.LibCSignalHandler> nativeSignalHandlers = new HashMap();
+    protected final Map<Signal, NativeSignalHandler> signalHandlers = new HashMap();
     
     protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
@@ -324,22 +324,32 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     public SignalHandler signal(Signal sig, final SignalHandler handler) {
         synchronized (signalHandlers) {
-            SignalHandler old = signalHandlers.get(sig);
+            NativeSignalHandler old = signalHandlers.get(sig);
 
-            LibC.LibCSignalHandler nativeHandler = new LibC.LibCSignalHandler() {
-                public void signal(int sig) {
-                    handler.handle(sig);
-                }
-            };
+            NativeSignalHandler nativeHandler = new NativeSignalHandler(handler);
 
             long result = libc().signal(sig.intValue(), nativeHandler);
 
             if (result != -1) {
-                signalHandlers.put(sig, handler);
-                nativeSignalHandlers.put(sig, nativeHandler);
+                signalHandlers.put(sig, nativeHandler);
             }
 
-            return old;
+            return old != null ? old.handler : null;
+        }
+    }
+
+    // Implements LibC.LibCSignalHandler (the type LibC.signal() actually retains a native
+    // pointer to) while also holding the original SignalHandler, so a single map entry is
+    // enough to keep both reachable and to answer signal()'s "previous handler" return value.
+    private static final class NativeSignalHandler implements LibC.LibCSignalHandler {
+        private final SignalHandler handler;
+
+        NativeSignalHandler(SignalHandler handler) {
+            this.handler = handler;
+        }
+
+        public void signal(int sig) {
+            handler.handle(sig);
         }
     }
 
