@@ -12,18 +12,18 @@ public class EnvTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void testGetenv() throws Throwable {
+    public void testGetenv() {
         assertNotNull(posix.getenv("PATH"));
         assertNull(posix.getenv("SOME_NON_EXISTENT_ENV"));
     }
 
     @Test
-    public void testSetenvNonOverwrite() throws Throwable {
+    public void testSetenvNonOverwrite() {
         final String path = posix.getenv("PATH");
         int result = posix.setenv("PATH", "new value", 0);
 
@@ -32,7 +32,7 @@ public class EnvTest {
     }
 
     @Test
-    public void testSetenvOverwrite() throws Throwable {
+    public void testSetenvOverwrite() {
         if (!Platform.IS_WINDOWS) {
             final String path = posix.getenv("PATH");
             int result = posix.setenv("PATH", "new value", 1);
@@ -44,7 +44,7 @@ public class EnvTest {
     }
 
     @Test
-    public void testSetEnvNewVar() throws Throwable {
+    public void testSetEnvNewVar() {
         if (!Platform.IS_WINDOWS) {
             int result = posix.setenv("MY_NEW_SETENV_VAR", "Yo", 0);
 
@@ -54,7 +54,7 @@ public class EnvTest {
     }
 
     @Test
-    public void testUnsetenv() throws Throwable {
+    public void testUnsetenv() {
         if (!Platform.IS_WINDOWS) {
             posix.setenv("MY_UNSETENV_VAR", "Yo", 1);
             assertEquals("Yo", posix.getenv("MY_UNSETENV_VAR"));
@@ -67,7 +67,7 @@ public class EnvTest {
     }
 
     @Test
-    public void testEnv() throws Throwable {
+    public void testEnv() {
         final Pointer env = posix.environ();
 
         int offset = 0;

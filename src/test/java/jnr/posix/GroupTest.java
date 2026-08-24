@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jnr.constants.platform.LangInfo;
 import jnr.posix.util.Platform;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
@@ -28,12 +27,12 @@ public class GroupTest {
 
     private static POSIX posix;
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @AfterAll
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @BeforeEach
@@ -70,7 +69,7 @@ public class GroupTest {
     @Test
     public void getgrent() {
         if (getNativePlatform().isUnix()) {
-            ArrayList<Group> grps = new ArrayList<Group>();
+            ArrayList<Group> grps = new ArrayList<>();
             while (true) {
                 Group grp = posix.getgrent();
                 if (grp == null) {
@@ -81,7 +80,6 @@ public class GroupTest {
             for (Group grp : grps) {
                 assertNotNull(grp.getName());
                 assertNotNull(grp.getPassword());
-                assertNotNull(grp.getGID());
                 for (String member : grp.getMembers()) {
                     assertNotNull(member);
                 }
@@ -118,22 +116,10 @@ public class GroupTest {
     }
 
     private String exec(String... command) throws IOException {
-        InputStreamReader isr = null;
-        BufferedReader reader = null;
-
-        try {
-            isr = new InputStreamReader(Runtime.getRuntime().exec(command).getInputStream());
-            reader = new BufferedReader(isr);
+        try (InputStreamReader isr = new InputStreamReader(Runtime.getRuntime().exec(command)
+            .getInputStream()); BufferedReader reader = new BufferedReader(isr)) {
 
             return reader.readLine();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-
-            if (isr != null) {
-                isr.close();
-            }
         }
     }
 

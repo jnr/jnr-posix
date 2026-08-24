@@ -13,7 +13,7 @@ public class SignalTest {
     private static POSIX javaPosix;
     
     @BeforeAll
-    public static void setupClass() throws Exception {
+    public static void setupClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = new JavaPOSIX(new DummyPOSIXHandler());
     }

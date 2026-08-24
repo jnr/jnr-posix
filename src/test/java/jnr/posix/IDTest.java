@@ -1,16 +1,16 @@
 /***** BEGIN LICENSE BLOCK *****
  * Version: EPL 2.0/GPL 2.0/LGPL 2.1
- *
+ * <p>
  * The contents of this file are subject to the Eclipse Public
  * License Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of
  * the License at http://www.eclipse.org/legal/cpl-v10.html
- *
+ * <p>
  * Software distributed under the License is distributed on an "AS
  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
- *
+ * <p>
  *
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -44,13 +44,13 @@ public class IDTest {
     }
     private static POSIX nativePosix, javaPosix;
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         nativePosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), false);
     }
 
     @AfterAll
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @BeforeEach

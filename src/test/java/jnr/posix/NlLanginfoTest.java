@@ -14,7 +14,7 @@ public class NlLanginfoTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 

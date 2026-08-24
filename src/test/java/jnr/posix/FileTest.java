@@ -24,7 +24,7 @@ public class FileTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
@@ -145,7 +145,7 @@ public class FileTest {
     }
 
     @Test
-    public void lutimesTest() throws Throwable {
+    public void lutimesTest() throws IOException {
         // FIXME: On Windows this is working but providing wrong numbers and therefore getting wrong results.
         if (!Platform.IS_WINDOWS) {
             File f1 = File.createTempFile("lutimes", null);
@@ -198,7 +198,7 @@ public class FileTest {
     }
 
     @Test
-    public void mkdirRelativeTest() throws Throwable {
+    public void mkdirRelativeTest() {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getPath(), 0);
         assertEquals(0, rval, "mkdir did not return 0");
@@ -207,7 +207,7 @@ public class FileTest {
     }
 
     @Test
-    public void mkdirAbsoluteTest() throws Throwable {
+    public void mkdirAbsoluteTest() {
         File dir = new File("tmp" + System.identityHashCode(posix));
         int rval = posix.mkdir(dir.getAbsolutePath(), 0);
         assertEquals(0, rval, "mkdir did not return 0");
@@ -370,7 +370,7 @@ public class FileTest {
     }
 
     @Test
-    public void openTest() throws Throwable {
+    public void openTest() {
         int fd = posix.open("pom.xml", 0, 0666);
 
         assertNotEquals(-1, fd);
@@ -423,7 +423,7 @@ public class FileTest {
             posix.close(fd);
 
             raf = new RandomAccessFile(tmp, "r");
-            assertEquals(raf.readLine(), "Now is the summer of our discontent");
+            assertEquals("Now is the summer of our discontent", raf.readLine());
             posix.unlink(tmp.getAbsolutePath());
         }
     }
@@ -466,7 +466,7 @@ public class FileTest {
     }
 
     @Test
-    public void fcntlIntTest() throws Throwable {
+    public void fcntlIntTest() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = new int[2];
             int ret = posix.pipe(fds);
@@ -600,7 +600,7 @@ public class FileTest {
             File tmp = File.createTempFile("mkfifoTest", "tmp");
             tmp.deleteOnExit();
 
-            int ret = posix.mkfifo(tmp.getAbsolutePath(), 0666);
+            posix.mkfifo(tmp.getAbsolutePath(), 0666);
 
             FileInputStream fis = new FileInputStream(tmp);
             FileOutputStream fos = new FileOutputStream(tmp);
@@ -615,7 +615,7 @@ public class FileTest {
     }
 
     @Test
-    public void lseekTest() throws Throwable {
+    public void lseekTest() {
         if (Platform.IS_MAC) {
             int fd = posix.open("/dev/zero", 0, 0);
 

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
-import java.text.NumberFormat;
 import jnr.posix.DummyPOSIXHandler;
 import jnr.posix.FileStat;
 import jnr.posix.POSIX;
@@ -22,13 +21,13 @@ public class WindowsFileTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    private class Pair {
-        public File base;
-        public File leaf;
+    private static class Pair {
+        public final File base;
+        public final File leaf;
         public Pair(File base, File leaf) {
             this.base = base;
             this.leaf = leaf;
@@ -66,11 +65,11 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testLowercaseDriveLetter() throws Throwable {
+    public void testLowercaseDriveLetter() {
         // FIXME: Not all systems have a C drive but nearly all do
         FileStat st = posix.stat("c:/");
-        assertTrue(st.dev() == 2);
-        assertTrue(st.rdev() == 2);
+        assertEquals(2, st.dev());
+        assertEquals(2, st.rdev());
     }
 
     @Test
@@ -79,8 +78,8 @@ public class WindowsFileTest {
 
         try {
             FileStat st = posix.stat(f.getAbsolutePath());
-            assertTrue(st.uid() == 0);
-            assertTrue(st.gid() == 0);
+            assertEquals(0, st.uid());
+            assertEquals(0, st.gid());
         } finally {
             f.delete();
         }
@@ -116,8 +115,8 @@ public class WindowsFileTest {
 
         try {
             FileStat st = posix.stat(f.getAbsolutePath());
-            assertTrue(st.blocks() == -1);
-            assertTrue(st.blockSize() == -1);
+            assertEquals(-1, st.blocks());
+            assertEquals(-1, st.blockSize());
         } finally {
             f.delete();
         }
@@ -214,7 +213,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void testFindFirstFileBogusFile() throws Throwable {
+    public void testFindFirstFileBogusFile() {
         POSIX posix = POSIXFactory.getNativePOSIX();
         FileStat stat = posix.allocateStat();
         int result = ((WindowsPOSIX) posix).findFirstFile("sdjfhjfsdfhdsdfhsdj", stat);
@@ -222,7 +221,7 @@ public class WindowsFileTest {
     }
 
     @Test
-    public void utimensatWindows() throws Throwable {
+    public void utimensatWindows() throws IOException {
         File file = File.createTempFile("utimensat", null);
         try {
             FileStat fileStat = posix.stat(file.getPath());

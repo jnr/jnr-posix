@@ -19,7 +19,7 @@ public class PasswdTest {
     private static POSIX posix;
     private static Class passwdClass;
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         if (Platform.IS_MAC) {
             passwdClass = MacOSPasswd.class;
         } else if (Platform.IS_LINUX) {
@@ -39,7 +39,7 @@ public class PasswdTest {
     }
 
     @AfterAll
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @BeforeEach
@@ -57,7 +57,7 @@ public class PasswdTest {
             assertNotNull(pwd);
             assertEquals(LOGIN, pwd.getLoginName(), "Login name not equal");
 
-            assertTrue(pwd.getClass().equals(passwdClass));
+            assertEquals(pwd.getClass(), passwdClass);
         }
     }
     @Test public void nonExistantUserReturnsNull() {

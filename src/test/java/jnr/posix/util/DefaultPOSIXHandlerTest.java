@@ -5,16 +5,13 @@ import jnr.posix.POSIXFactory;
 import org.junit.jupiter.api.Test;
 
 import java.lang.management.ManagementFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultPOSIXHandlerTest
 {
     @Test
-    public void testGetPid() throws Exception
-    {
+    public void testGetPid() {
         int pid_from_jmx = Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 
         POSIX posix = POSIXFactory.getPOSIX(new DefaultPOSIXHandler(), true);

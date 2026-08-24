@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.IntBuffer;
 
 /**
  * Created by headius on 5/31/14.
@@ -18,7 +17,7 @@ public class IOTest {
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
@@ -53,7 +52,7 @@ public class IOTest {
     }
 
     @Test
-    public void testPipe() throws Throwable {
+    public void testPipe() {
         int[] fds = {0, 0};
         int ret = posix.pipe(fds);
         Assertions.assertTrue(ret >= 0);
@@ -92,7 +91,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSocketPair() throws Throwable {
+    public void testSocketPair() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 
@@ -123,7 +122,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSendRecvMsg_NoControl() throws Throwable {
+    public void testSendRecvMsg_NoControl() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 
@@ -147,7 +146,7 @@ public class IOTest {
 
             int sendStatus = posix.sendmsg(fds[0], outMessage, 0);
 
-            Assertions.assertTrue(sendStatus == dataBytes.length);
+            Assertions.assertEquals(sendStatus, dataBytes.length);
 
             // ----------------
 
@@ -158,7 +157,7 @@ public class IOTest {
 
             int recvStatus = posix.recvmsg(fds[1], inMessage, 0);
 
-            Assertions.assertTrue(recvStatus == dataBytes.length);
+            Assertions.assertEquals(recvStatus, dataBytes.length);
 
             for (int i = 0; i < recvStatus; ++i) {
                 Assertions.assertEquals(dataBytes[i], outIov[0].get(i));
@@ -167,7 +166,7 @@ public class IOTest {
     }
 
     @Test
-    public void testSendRecvMsg_WithControl() throws Throwable {
+    public void testSendRecvMsg_WithControl() {
         if (!Platform.IS_WINDOWS) {
             int[] fds = {0, 0};
 
@@ -201,7 +200,7 @@ public class IOTest {
 
             int sendStatus = posix.sendmsg(fds[0], outMessage, 0);
 
-            Assertions.assertTrue(sendStatus == dataBytes.length);
+            Assertions.assertEquals(sendStatus, dataBytes.length);
 
             // ----------------
 
@@ -213,7 +212,7 @@ public class IOTest {
             inMessage.allocateControl(4);
             int recvStatus = posix.recvmsg(fds[1], inMessage, 0);
 
-            Assertions.assertTrue(recvStatus == dataBytes.length);
+            Assertions.assertEquals(recvStatus, dataBytes.length);
 
             ByteBuffer inFdBuf = inMessage.getControls()[0].getData();
             inFdBuf.order(ByteOrder.nativeOrder());

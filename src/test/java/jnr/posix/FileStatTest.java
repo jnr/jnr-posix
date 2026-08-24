@@ -27,20 +27,20 @@ public class FileStatTest {
             byte[] buf = new byte[amount];
             fis.write(buf);
         } catch (IOException e) {
-            if (fis != null) { try { fis.close(); } catch (IOException e2) {} }
+            if (fis != null) { try { fis.close(); } catch (IOException ignored) {} }
         }
     }
 
     private static POSIX posix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
 
     @AfterAll
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @BeforeEach
@@ -78,8 +78,7 @@ public class FileStatTest {
     public void filestatDescriptor() throws Throwable {
         File f = File.createTempFile("stat", null);
 
-        try {
-            FileInputStream fis = new FileInputStream(f);
+        try (FileInputStream fis = new FileInputStream(f)) {
             FileStat stat = posix.allocateStat();
             int result = posix.fstat(fis.getFD(), stat);
             assertEquals(0, result);
@@ -95,16 +94,14 @@ public class FileStatTest {
         // Windows does not store fd in FileDescriptor so this test wll not work
         if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
             File f = File.createTempFile("stat", null);
-            try {
-                FileInputStream fis = new FileInputStream(f);
+            try (FileInputStream fis = new FileInputStream(f)) {
                 FileDescriptor desc = fis.getFD();
                 int fd = -1;
                 try {
                     Field fdField = FieldAccess.getProtectedField(FileDescriptor.class, "fd");
                     fd = fdField.getInt(desc);
-                } catch (SecurityException e) {
-                } catch (IllegalArgumentException e) {
-                } catch (IllegalAccessException e) {
+                } catch (SecurityException | IllegalArgumentException |
+                         IllegalAccessException ignored) {
                 }
                 FileStat stat = posix.allocateStat();
                 int result = posix.fstat(fd, stat);
@@ -115,23 +112,23 @@ public class FileStatTest {
             }
         } else {
             FileStat stat = posix.fstat(0);
-            assertTrue(stat != null);
+            assertNotNull(stat);
         }
     }
 
     // FIXME: I could guarantee this does not exist but this was very very quick :)
     private static final String NON_EXISTENT_FILENAME = "skdjlfklfsdjk";
     @Test
-    public void filestatFailed() throws Throwable {
+    public void filestatFailed() {
         FileStat stat = null;
 
         // A little wonky without adding a new posixhandler but we are using dummy so this is ok for now
         // the default handler raises on a problem in stat so we are only verifying this at the moment.
         try {
             stat = posix.stat(NON_EXISTENT_FILENAME);
-        } catch (UnsupportedOperationException e) {}
+        } catch (UnsupportedOperationException ignored) {}
 
-        assertTrue(stat == null);
+        assertNull(stat);
     }
 
     

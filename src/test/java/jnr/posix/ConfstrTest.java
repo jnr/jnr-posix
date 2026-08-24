@@ -11,7 +11,7 @@ import jnr.posix.util.Platform;
 public class ConfstrTest {
     private static POSIX posix;
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
@@ -28,7 +28,7 @@ public class ConfstrTest {
             ByteBuffer buf = ByteBuffer.allocate(len);
             posix.confstr(Confstr._CS_PATH, buf, len);
             String str = new String(buf.array());
-            assertTrue(str.length() > 0, "CS_PATH is blank");
+            assertFalse(str.isEmpty(), "CS_PATH is blank");
         }
     }
 }

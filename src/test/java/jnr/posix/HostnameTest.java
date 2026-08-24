@@ -15,7 +15,7 @@ public class HostnameTest {
     private static POSIX jPosix;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         jPosix = POSIXFactory.getJavaPOSIX();
     }
@@ -32,7 +32,7 @@ public class HostnameTest {
     }
 
     @Test
-    public void testHostnameIsResonable() throws IOException {
+    public void testHostnameIsResonable() {
         String hostname = "";
         try {
             hostname = new Scanner(Runtime.getRuntime().exec("hostname").getInputStream()).next();

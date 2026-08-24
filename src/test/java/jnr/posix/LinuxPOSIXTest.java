@@ -18,11 +18,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
 
 import static jnr.posix.LinuxIoPrio.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class LinuxPOSIXTest {
@@ -30,7 +29,7 @@ public class LinuxPOSIXTest {
     private static Linux linuxPOSIX = null;
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
         assumeTrue(jnr.ffi.Platform.getNativePlatform().getOS().equals(Platform.OS.LINUX));
 
         POSIX posix = POSIXFactory.getNativePOSIX();
@@ -52,18 +51,18 @@ public class LinuxPOSIXTest {
 
         Future<Integer> threadPriorityFuture = Executors.newFixedThreadPool(1).submit(new Callable<Integer>() {
             @Override
-            public Integer call() throws Exception {
+            public Integer call() {
                 linuxPOSIX.ioprio_set(IOPRIO_WHO_PROCESS, 0, IOPRIO_PRIO_VALUE(IOPRIO_CLASS_IDLE, 7));
                 return linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0);
             }
         });
 
-        int threadPriority = threadPriorityFuture.get().intValue();
+        int threadPriority = threadPriorityFuture.get();
 
-        Assertions.assertEquals(7, IOPRIO_PRIO_DATA(threadPriority));
-        Assertions.assertEquals(IOPRIO_CLASS_IDLE, IOPRIO_PRIO_CLASS(threadPriority));
-        Assertions.assertEquals(4, IOPRIO_PRIO_DATA(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
-        Assertions.assertEquals(IOPRIO_CLASS_BE, IOPRIO_PRIO_CLASS(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
+        assertEquals(7, IOPRIO_PRIO_DATA(threadPriority));
+        assertEquals(IOPRIO_CLASS_IDLE, IOPRIO_PRIO_CLASS(threadPriority));
+        assertEquals(4, IOPRIO_PRIO_DATA(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
+        assertEquals(IOPRIO_CLASS_BE, IOPRIO_PRIO_CLASS(linuxPOSIX.ioprio_get(IOPRIO_WHO_PROCESS, 0)));
     }
 
     @Test
@@ -83,9 +82,9 @@ public class LinuxPOSIXTest {
         String data = "twoControlMessages";
         byte[] dataBytes = data.getBytes();
 
-        Assertions.assertTrue(ret >= 0);
-        Assertions.assertTrue(fds[0] > 0);
-        Assertions.assertTrue(fds[1] > 0);
+        assertTrue(ret >= 0);
+        assertTrue(fds[0] > 0);
+        assertTrue(fds[1] > 0);
 
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.order(ByteOrder.nativeOrder());
@@ -97,7 +96,7 @@ public class LinuxPOSIXTest {
                 buf,
                 buf.remaining());
 
-        Assertions.assertTrue(ret >= 0);
+        assertTrue(ret >= 0);
 
         MsgHdr outMessage = linuxPOSIX.allocateMsgHdr();
 
@@ -124,7 +123,7 @@ public class LinuxPOSIXTest {
             return;
         }
 
-        Assertions.assertEquals(dataBytes.length, sendStatus);
+        assertEquals(dataBytes.length, sendStatus);
 
         // ----------------
 
@@ -136,13 +135,13 @@ public class LinuxPOSIXTest {
         inMessage.allocateControls(new int[]{4, 12});
         int recvStatus = linuxPOSIX.recvmsg(fds[1], inMessage, 0);
 
-        Assertions.assertEquals(dataBytes.length, recvStatus);
+        assertEquals(dataBytes.length, recvStatus);
 
-        Assertions.assertEquals(2, inMessage.getControls().length);
+        assertEquals(2, inMessage.getControls().length);
 
         CmsgHdr[] controls = inMessage.getControls();
-        for (int x = 0; x < controls.length; x++) {
-            validateCmsghdr(controls[x]);
+        for (CmsgHdr control : controls) {
+            validateCmsghdr(control);
         }
     }
 
@@ -155,7 +154,7 @@ public class LinuxPOSIXTest {
 
             int fd = inFdBuf.getInt();
 
-            Assertions.assertTrue(fd != 0);
+            assertTrue(fd != 0);
         } else if (control.getLevel() == SocketLevel.SOL_SOCKET.intValue()
                 && control.getType() == 0x02) {
             //Credentials
@@ -166,9 +165,9 @@ public class LinuxPOSIXTest {
             int got_uid = data.getInt();
             int got_gid = data.getInt();
 
-            Assertions.assertEquals(linuxPOSIX.getpid(), got_pid);
-            Assertions.assertEquals(linuxPOSIX.getuid(), got_uid);
-            Assertions.assertEquals(linuxPOSIX.getgid(), got_gid);
+            assertEquals(linuxPOSIX.getpid(), got_pid);
+            assertEquals(linuxPOSIX.getuid(), got_uid);
+            assertEquals(linuxPOSIX.getgid(), got_gid);
         } else {
             Assertions.fail("Unable to determine cmsghdr type");
         }
@@ -179,12 +178,12 @@ public class LinuxPOSIXTest {
         File file = File.createTempFile("posix_fadvise", null);
         int fd = linuxPOSIX.open(file.getAbsolutePath(), OpenFlags.O_RDWR.intValue(), 0444);
 
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
-        Assertions.assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_SEQUENTIAL));
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_RANDOM));
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NOREUSE));
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_WILLNEED));
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_DONTNEED));
+        assertEquals(0, linuxPOSIX.posix_fadvise(fd, 0, 0, PosixFadvise.POSIX_FADV_NORMAL)); // normal last to reset it
 
         linuxPOSIX.close(fd);
     }

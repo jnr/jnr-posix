@@ -29,11 +29,11 @@ public class JavaPOSIXTest {
     }
 
     @BeforeAll
-    public static void setUpClass() throws Exception {
+    public static void setUpClass() {
     }
 
     @AfterAll
-    public static void tearDownClass() throws Exception {
+    public static void tearDownClass() {
     }
 
     @BeforeEach
@@ -76,7 +76,7 @@ public class JavaPOSIXTest {
         assertTrue(ret < 0);
     }
 
-    @Test public void statMissingFileTest() throws IOException {
+    @Test public void statMissingFileTest() {
         FileStat stat = posix.allocateStat();
 
         int ret = posix.stat("does not exist", stat);
