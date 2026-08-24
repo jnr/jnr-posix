@@ -1,7 +1,8 @@
 package jnr.posix;
 
 import jnr.constants.platform.LangInfo;
-import jnr.posix.util.Platform;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -19,16 +20,14 @@ class NlLanginfoTest {
     }
 
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void testNlLanginfo() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
+        try (InputStreamReader isr = new InputStreamReader(
+            Runtime.getRuntime().exec("locale charmap")
+                .getInputStream()); BufferedReader reader = new BufferedReader(isr)) {
 
-            try (InputStreamReader isr = new InputStreamReader(
-                Runtime.getRuntime().exec("locale charmap")
-                    .getInputStream()); BufferedReader reader = new BufferedReader(isr)) {
-
-                String localeCharmap = reader.readLine();
-                assertEquals(localeCharmap, posix.nl_langinfo(LangInfo.CODESET.intValue()));
-            }
+            String localeCharmap = reader.readLine();
+            assertEquals(localeCharmap, posix.nl_langinfo(LangInfo.CODESET.intValue()));
         }
     }
 

@@ -1,7 +1,8 @@
 package jnr.posix;
 
 import jnr.constants.platform.Signal;
-import jnr.posix.util.Platform;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -32,33 +33,31 @@ class SignalTest {
     }
     
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void testBasicSignal() {
-        if (!Platform.IS_WINDOWS) {
-            Signal s = Signal.SIGHUP;
-            final AtomicBoolean fired = new AtomicBoolean(false);
-            posix.signal(s, signal -> fired.set(true));
+        Signal s = Signal.SIGHUP;
+        final AtomicBoolean fired = new AtomicBoolean(false);
+        posix.signal(s, signal -> fired.set(true));
 
-            posix.kill(posix.getpid(), s.intValue());
-            waitUntilTrue(fired, 200);
-            assertTrue(fired.get());
-        }
+        posix.kill(posix.getpid(), s.intValue());
+        waitUntilTrue(fired, 200);
+        assertTrue(fired.get());
     }
 
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void testJavaSignal() {
-        if (!Platform.IS_WINDOWS) {
-            Signal s = Signal.SIGHUP;
-            final AtomicBoolean fired = new AtomicBoolean(false);
-            SignalHandler previousHandler = javaPosix.signal(s, signal -> fired.set(true));
+        Signal s = Signal.SIGHUP;
+        final AtomicBoolean fired = new AtomicBoolean(false);
+        SignalHandler previousHandler = javaPosix.signal(s, signal -> fired.set(true));
 
-            assertNotNull(previousHandler);
+        assertNotNull(previousHandler);
 
-            // have to use native here; no abstraction for kill in pure Java
-            // TODO: sun.misc.Signal.raise can be used to kill current pid
-            posix.kill(posix.getpid(), s.intValue());
+        // have to use native here; no abstraction for kill in pure Java
+        // TODO: sun.misc.Signal.raise can be used to kill current pid
+        posix.kill(posix.getpid(), s.intValue());
 
-            waitUntilTrue(fired, 200);
-            assertTrue(fired.get());
-        }
+        waitUntilTrue(fired, 200);
+        assertTrue(fired.get());
     }
 }

@@ -1,6 +1,7 @@
 package jnr.posix;
 
-import jnr.posix.util.Platform;
+import jnr.ffi.Platform;
+import jnr.posix.junit.EnabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,26 +33,23 @@ class HANDLETest {
     }
 
     @Test
+    @EnabledOnJnrOs(Platform.OS.WINDOWS)
     void stdinHandle() {
-        if (Platform.IS_WINDOWS) {
-            assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE).isValid());
-            assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE)));
-        }
+        assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE).isValid());
+        assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_INPUT_HANDLE)));
     }
 
     @Test
+    @EnabledOnJnrOs(Platform.OS.WINDOWS)
     void stdoutHandle() {
-        if (Platform.IS_WINDOWS) {
-            assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE).isValid());
-            assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE)));
-        }
+        assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE).isValid());
+        assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_OUTPUT_HANDLE)));
     }
 
     @Test
+    @EnabledOnJnrOs(Platform.OS.WINDOWS)
     void stderrHandle() {
-        if (Platform.IS_WINDOWS) {
-            assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE).isValid());
-            assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE)));
-        }
+        assertTrue(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE).isValid());
+        assertTrue(isValidHandleType(kernel32().GetStdHandle(WindowsLibC.STD_ERROR_HANDLE)));
     }
 }

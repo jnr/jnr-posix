@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jnr.posix.util.Platform;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static jnr.ffi.Platform.getNativePlatform;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GroupTest {
@@ -29,70 +29,66 @@ class GroupTest {
     // @Test
     // public void hello() {}
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void getgrnam() {
-        if (getNativePlatform().isUnix()) {
-            final String LOGIN = "daemon";
-            Group grp = posix.getgrnam(LOGIN);
-            assertNotNull(grp);
-            assertEquals(LOGIN, grp.getName(), "Login name not equal");
-        }
+        final String LOGIN = "daemon";
+        Group grp = posix.getgrnam(LOGIN);
+        assertNotNull(grp);
+        assertEquals(LOGIN, grp.getName(), "Login name not equal");
     }
 
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void nonExistantGroupReturnsNull() {
-        if (getNativePlatform().isUnix()) {
-            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull(posix.getgrnam(LOGIN), "getpwnam for non-existant group should return null");
-        }
+        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+        assertNull(posix.getgrnam(LOGIN), "getpwnam for non-existant group should return null");
     }
 
     @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
     void getgrent() {
-        if (getNativePlatform().isUnix()) {
-            ArrayList<Group> grps = new ArrayList<>();
-            while (true) {
-                Group grp = posix.getgrent();
-                if (grp == null) {
-                    break;
-                }
-                grps.add(grp);
+        ArrayList<Group> grps = new ArrayList<>();
+        while (true) {
+            Group grp = posix.getgrent();
+            if (grp == null) {
+                break;
             }
-            for (Group grp : grps) {
-                assertNotNull(grp.getName());
-                assertNotNull(grp.getPassword());
-                for (String member : grp.getMembers()) {
-                    assertNotNull(member);
-                }
+            grps.add(grp);
+        }
+        for (Group grp : grps) {
+            assertNotNull(grp.getName());
+            assertNotNull(grp.getPassword());
+            for (String member : grp.getMembers()) {
+                assertNotNull(member);
             }
         }
     }
 
     @Test
+    @DisabledOnJnrOs({Platform.OS.WINDOWS, Platform.OS.DARWIN})
     void getgroups() throws Throwable {
-        if (getNativePlatform().isUnix() && !Platform.IS_MAC) {
-            String[] groupIdsAsStrings = exec("id", "-G").split(" ");
-            long[] expectedGroupIds = new long[groupIdsAsStrings.length];
+        String[] groupIdsAsStrings = exec("id", "-G").split(" ");
+        long[] expectedGroupIds = new long[groupIdsAsStrings.length];
 
-            for (int i = 0; i < groupIdsAsStrings.length; i++) {
-                expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
-            }
-
-            long[] actualGroupIds = posix.getgroups();
-
-            // getgroups does not specify whether the effective group ID is included along with the supplementary
-            // group IDs. However, `id -G` always includes all group IDs. So, we must do something of a fuzzy match.
-            // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
-            // effective group ID before comparing the two arrays.
-            if (actualGroupIds.length == expectedGroupIds.length - 1) {
-                long effectiveGroupId = Long.parseLong(exec("id", "-g"));
-                expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
-            }
-
-            Arrays.sort(expectedGroupIds);
-            Arrays.sort(actualGroupIds);
-
-            assertArrayEquals(expectedGroupIds, actualGroupIds);
+        for (int i = 0; i < groupIdsAsStrings.length; i++) {
+            expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
         }
+
+        long[] actualGroupIds = posix.getgroups();
+
+        // getgroups does not specify whether the effective group ID is included along with the supplementary
+        // group IDs. However, `id -G` always includes all group IDs. So, we must do something of a fuzzy match.
+        // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
+        // effective group ID before comparing the two arrays.
+        if (actualGroupIds.length == expectedGroupIds.length - 1) {
+            long effectiveGroupId = Long.parseLong(exec("id", "-g"));
+            expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
+        }
+
+        Arrays.sort(expectedGroupIds);
+        Arrays.sort(actualGroupIds);
+
+        assertArrayEquals(expectedGroupIds, actualGroupIds);
     }
 
     private String exec(String... command) throws IOException {

@@ -63,10 +63,6 @@ class LinuxPOSIXTest {
 
     @Test
     void testMessageHdrMultipleControl() {
-        if (jnr.posix.util.Platform.IS_WINDOWS) {
-            return;
-        }
-
         int[] fds = {0, 0};
 
         int ret = linuxPOSIX.socketpair(AddressFamily.AF_UNIX.intValue(),
