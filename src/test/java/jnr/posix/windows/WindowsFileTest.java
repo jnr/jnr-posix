@@ -16,6 +16,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -186,9 +187,10 @@ class WindowsFileTest {
                 new long[]{mtimeSeconds, mtimeNanoSeconds},
                 0);
 
-        fileStat = posix.stat(file.getPath());
-        assertEquals(atimeSeconds, fileStat.atime(), "access time should be updated");
-        assertEquals(mtimeSeconds, fileStat.mtime(), "modification time should be updated");
+        FileStat updatedStat = posix.stat(file.getPath());
+        assertAll("timestamps after update",
+                () -> assertEquals(atimeSeconds, updatedStat.atime(), "access time should be updated"),
+                () -> assertEquals(mtimeSeconds, updatedStat.mtime(), "modification time should be updated"));
     }
 
     @Test
@@ -204,15 +206,17 @@ class WindowsFileTest {
                 file.getAbsolutePath(),
                 new long[]{atimeSecondsInPast, 0},
                 new long[]{mtimeSecondsInPast, 0}, 0);
-        fileStat = posix.stat(file.getPath());
-        assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
-        assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
+        FileStat pastStat = posix.stat(file.getPath());
+        assertAll("timestamps set to explicit past time",
+                () -> assertEquals(pastStat.atime(), atimeSecondsInPast, "access time should be updated"),
+                () -> assertEquals(pastStat.mtime(), mtimeSecondsInPast, "modification time should be updated"));
 
         posix.utimensat(0, file.getAbsolutePath(), null, null, 0);
 
-        fileStat = posix.stat(file.getPath());
-        assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
-        assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
+        FileStat currentStat = posix.stat(file.getPath());
+        assertAll("timestamps reset to current time",
+                () -> assertTrue(timeWithinRange(currentStat.atime(), atimeSeconds, 10), "access time should be updated to current time"),
+                () -> assertTrue(timeWithinRange(currentStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time"));
     }
 
     @Test
@@ -227,15 +231,17 @@ class WindowsFileTest {
         posix.utimes(file.getAbsolutePath(),
                 new long[]{atimeSecondsInPast, 0},
                 new long[]{mtimeSecondsInPast, 0});
-        fileStat = posix.stat(file.getPath());
-        assertEquals(fileStat.atime(), atimeSecondsInPast, "access time should be updated");
-        assertEquals(fileStat.mtime(), mtimeSecondsInPast, "modification time should be updated");
+        FileStat pastStat = posix.stat(file.getPath());
+        assertAll("timestamps set to explicit past time",
+                () -> assertEquals(pastStat.atime(), atimeSecondsInPast, "access time should be updated"),
+                () -> assertEquals(pastStat.mtime(), mtimeSecondsInPast, "modification time should be updated"));
 
         posix.utimes(file.getAbsolutePath(), null, null);
 
-        fileStat = posix.stat(file.getPath());
-        assertTrue(timeWithinRange(fileStat.atime(), atimeSeconds, 10), "access time should be updated to current time");
-        assertTrue(timeWithinRange(fileStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time");
+        FileStat currentStat = posix.stat(file.getPath());
+        assertAll("timestamps reset to current time",
+                () -> assertTrue(timeWithinRange(currentStat.atime(), atimeSeconds, 10), "access time should be updated to current time"),
+                () -> assertTrue(timeWithinRange(currentStat.mtime(), mtimeSeconds, 10), "modification time should be updated to current time"));
     }
 
     private boolean timeWithinRange(long actual, long expected, long precision) {

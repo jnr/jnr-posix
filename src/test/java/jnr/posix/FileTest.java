@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -52,8 +53,9 @@ class FileTest {
 
             FileStat stat = posix.stat(f.getAbsolutePath());
 
-            assertEquals(800, stat.atime(), "atime seconds failed");
-            assertEquals(900, stat.mtime(), "mtime seconds failed");
+            assertAll("timestamps",
+                    () -> assertEquals(800, stat.atime(), "atime seconds failed"),
+                    () -> assertEquals(900, stat.mtime(), "mtime seconds failed"));
 
             // The nano secs part is available in other stat implementations. We really just want to verify that the
             // nsec portion of the timeval is passed through to the POSIX call.
@@ -209,10 +211,11 @@ class FileTest {
 
         private void assertStatNanoSecond(File file, long atimeSeconds, long atimeNanoSeconds, long mtimeSeconds, long mtimeNanoSeconds) {
             NanosecondFileStat nanosecondFileStat = (NanosecondFileStat) posix.stat(file.getPath());
-            assertEquals(atimeSeconds, nanosecondFileStat.atime(), "Access timestamp should be updated");
-            assertEquals(mtimeSeconds, nanosecondFileStat.mtime(), "Modification timestamp should be updated");
-            assertEquals(atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs(), "Access time precision should be in ns");
-            assertEquals(mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs(), "Modification time precision should be in ns");
+            assertAll("nanosecond precision timestamps",
+                    () -> assertEquals(atimeSeconds, nanosecondFileStat.atime(), "Access timestamp should be updated"),
+                    () -> assertEquals(mtimeSeconds, nanosecondFileStat.mtime(), "Modification timestamp should be updated"),
+                    () -> assertEquals(atimeNanoSeconds, nanosecondFileStat.aTimeNanoSecs(), "Access time precision should be in ns"),
+                    () -> assertEquals(mtimeNanoSeconds, nanosecondFileStat.mTimeNanoSecs(), "Modification time precision should be in ns"));
             file.delete();
         }
     }

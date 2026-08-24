@@ -45,8 +45,9 @@ class ProcessTest {
         void objectReturn() {
             RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
 
-            assertTrue(rlim.rlimCur() > 0, "Bad soft limit for number of processes");
-            assertTrue(rlim.rlimMax() > 0, "Bad hard limit for number of processes");
+            assertAll("rlimit",
+                    () -> assertTrue(rlim.rlimCur() > 0, "Bad soft limit for number of processes"),
+                    () -> assertTrue(rlim.rlimMax() > 0, "Bad hard limit for number of processes"));
         }
 
         @Test
@@ -56,8 +57,9 @@ class ProcessTest {
             int result = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue(), rlim);
             assertEquals(0, result, "getrlimit did not return 0");
 
-            assertTrue(rlim.rlimCur() > 0, "Bad soft limit for number of processes");
-            assertTrue(rlim.rlimMax() > 0, "Bad hard limit for number of processes");
+            assertAll("rlimit",
+                    () -> assertTrue(rlim.rlimCur() > 0, "Bad soft limit for number of processes"),
+                    () -> assertTrue(rlim.rlimMax() > 0, "Bad hard limit for number of processes"));
         }
 
         @Test
@@ -67,8 +69,9 @@ class ProcessTest {
             int result = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue(), rlim);
             assertEquals(0, result, "getrlimit did not return 0");
 
-            assertTrue(rlim.getLong(0) > 0, "Bad soft limit for number of processes");
-            assertTrue(rlim.getLong(8) > 0, "Bad hard limit for number of processes");
+            assertAll("rlimit",
+                    () -> assertTrue(rlim.getLong(0) > 0, "Bad soft limit for number of processes"),
+                    () -> assertTrue(rlim.getLong(8) > 0, "Bad hard limit for number of processes"));
         }
     }
 
@@ -88,8 +91,9 @@ class ProcessTest {
             assertEquals(0, result, "setrlimit did not return 0");
 
             RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-            assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update");
-            assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update");
+            assertAll("updated rlimit",
+                    () -> assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update"),
+                    () -> assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update"));
         }
 
         @Test
@@ -101,8 +105,9 @@ class ProcessTest {
             assertEquals(0, result, "setrlimit did not return 0");
 
             RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-            assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update");
-            assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update");
+            assertAll("updated rlimit",
+                    () -> assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update"),
+                    () -> assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update"));
         }
 
         @Test
@@ -115,8 +120,9 @@ class ProcessTest {
             assertEquals(0, result, "setrlimit did not return 0");
 
             RLimit rlim = posix.getrlimit(RLIMIT.RLIMIT_NPROC.intValue());
-            assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update");
-            assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update");
+            assertAll("updated rlimit",
+                    () -> assertEquals(originalRlim.rlimCur() - 1, rlim.rlimCur(), "soft limit didn't update"),
+                    () -> assertEquals(originalRlim.rlimMax() - 1, rlim.rlimMax(), "hard limit didn't update"));
         }
     }
 }
