@@ -6,7 +6,7 @@
     <groupId>com.github.jnr</groupId>
     <artifactId>jnr-parent</artifactId>
     <version>0.0.1</version>
-    <relativePath/>
+    <relativePath />
   </parent>
 
   <artifactId>jnr-posix</artifactId>
@@ -27,6 +27,7 @@
     <connection>scm:git:git@github.com:jnr/jnr-posix.git</connection>
     <developerConnection>scm:git:git@github.com:jnr/jnr-posix.git</developerConnection>
     <url>git@github.com:jnr/jnr-posix.git</url>
+    <tag>release-1.3</tag>
   </scm>
 
   <licenses>
