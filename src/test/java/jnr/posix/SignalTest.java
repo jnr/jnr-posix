@@ -47,6 +47,26 @@ public class SignalTest {
     }
     
     @Test
+    public void testSignalSurvivesGarbageCollection() {
+        if (!Platform.IS_WINDOWS) {
+            Signal s = Signal.SIGHUP;
+            final AtomicBoolean fired = new AtomicBoolean(false);
+            posix.signal(s, new SignalHandler() {
+                public void handle(int signal) {
+                    fired.set(true);
+                }
+            });
+
+            System.gc();
+            System.gc();
+
+            posix.kill(posix.getpid(), s.intValue());
+            waitUntilTrue(fired, 200);
+            Assert.assertTrue("signal handler should still fire after a GC run", fired.get());
+        }
+    }
+
+    @Test
     public void testJavaSignal() {
         if (!Platform.IS_WINDOWS) {
             Signal s = Signal.SIGHUP;
