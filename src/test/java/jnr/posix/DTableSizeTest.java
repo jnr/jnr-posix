@@ -1,22 +1,20 @@
 package jnr.posix;
 
-import jnr.posix.util.Platform;
-import org.junit.Test;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-public class DTableSizeTest {
+class DTableSizeTest {
     @Test
-    public void testGetDtableSize() throws Exception
-    {
-        if (!Platform.IS_WINDOWS) { // FIXME: I have seen window's impl so this can be impld
-            POSIX posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-            assumeTrue("getdtablesize only supported on native posix", posix.isNative());
+    @DisabledOnJnrOs(Platform.OS.WINDOWS) // FIXME: I have seen window's impl so this can be impld
+    void testGetDtableSize() {
+        POSIX posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
+        assumeTrue(posix.isNative(), "getdtablesize only supported on native posix");
 
-            int dtablesize = posix.getdtablesize();
-            assertThat(dtablesize, not(-1));
-        }
+        int dtablesize = posix.getdtablesize();
+        assertNotEquals(-1, dtablesize);
     }
 }

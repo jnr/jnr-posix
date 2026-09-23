@@ -1,47 +1,45 @@
 package jnr.posix;
 
-import org.hamcrest.Matcher;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.Scanner;
 
-public class HostnameTest {
+class HostnameTest {
     private static POSIX posix;
     private static POSIX jPosix;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @BeforeAll
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         jPosix = POSIXFactory.getJavaPOSIX();
     }
 
     @Test
-    public void testHostnameWorks() {
+    void testHostnameWorks() {
         assertNotNull(posix.gethostname());
     }
-    
+
     @Test
-    public void jPosixIsReasonable() {
-        // cast here works around a generic resolution problem in Java 11+
-        assumeThat(System.getenv().keySet(), (Matcher) anyOf(hasItem("HOSTNAME"), hasItem("COMPUTERNAME")));
+    void jPosixIsReasonable() {
+        assumeTrue(System.getenv().containsKey("HOSTNAME") || System.getenv().containsKey("COMPUTERNAME"));
         assertNotNull(jPosix.gethostname());
     }
 
     @Test
-    public void testHostnameIsResonable() throws IOException {
+    void testHostnameIsResonable() {
         String hostname = "";
         try {
             hostname = new Scanner(Runtime.getRuntime().exec("hostname").getInputStream()).next();
         } catch (IOException e) {
-            assumeNoException(e);
+            assumeTrue(false, "hostname command failed: " + e);
         }
-        assumeThat(hostname, is(not(equalTo(""))));
-        assertThat(posix.gethostname().toLowerCase(), equalTo(hostname.toLowerCase()));
+        assumeTrue(!hostname.isEmpty());
+        assertEquals(hostname.toLowerCase(), posix.gethostname().toLowerCase());
     }
 }

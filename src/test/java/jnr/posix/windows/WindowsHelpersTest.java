@@ -1,16 +1,16 @@
 /***** BEGIN LICENSE BLOCK *****
  * Version: EPL 2.0/GPL 2.0/LGPL 2.1
- *
+ * <p>
  * The contents of this file are subject to the Eclipse Public
  * License Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of
  * the License at http://www.eclipse.org/legal/cpl-v10.html
- *
+ * <p>
  * Software distributed under the License is distributed on an "AS
  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
- *
+ * <p>
  *
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -31,22 +31,25 @@
 package jnr.posix.windows;
 
 import jnr.posix.util.WindowsHelpers;
-import junit.framework.TestCase;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-public class WindowsHelpersTest extends TestCase {
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-    public void testIsBatch() {
-        assertTrue(WindowsHelpers.isBatch("file.bat"));
-        assertTrue(WindowsHelpers.isBatch("FILE.BAT"));
-        assertTrue(WindowsHelpers.isBatch("file.cmd"));
-        assertTrue(WindowsHelpers.isBatch("FILE.CMD"));
+class WindowsHelpersTest {
 
-        assertFalse(WindowsHelpers.isBatch("file.exe"));
-        assertFalse(WindowsHelpers.isBatch("file.txt"));
-        assertFalse(WindowsHelpers.isBatch("file"));
-        assertFalse(WindowsHelpers.isBatch("filebat"));
-        assertFalse(WindowsHelpers.isBatch("filecmd"));
-        assertFalse(WindowsHelpers.isBatch(""));
-        assertFalse(WindowsHelpers.isBatch(null));
+    @ParameterizedTest
+    @ValueSource(strings = {"file.bat", "FILE.BAT", "file.cmd", "FILE.CMD"})
+    void isBatchRecognizesBatchFiles(String path) {
+        assertTrue(WindowsHelpers.isBatch(path));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"file.exe", "file.txt", "file", "filebat", "filecmd", ""})
+    void isBatchRejectsNonBatchFiles(String path) {
+        assertFalse(WindowsHelpers.isBatch(path));
     }
 }

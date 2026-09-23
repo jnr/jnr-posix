@@ -1,19 +1,22 @@
 package jnr.posix;
 
 import jnr.constants.platform.Signal;
-import jnr.posix.util.Platform;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SignalTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class SignalTest {
     private static POSIX posix;
     private static POSIX javaPosix;
     
-    @BeforeClass
-    public static void setupClass() throws Exception {
+    @BeforeAll
+    static void setupClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = new JavaPOSIX(new DummyPOSIXHandler());
     }
@@ -30,41 +33,31 @@ public class SignalTest {
     }
     
     @Test
-    public void testBasicSignal() {
-        if (!Platform.IS_WINDOWS) {
-            Signal s = Signal.SIGHUP;
-            final AtomicBoolean fired = new AtomicBoolean(false);
-            posix.signal(s, new SignalHandler() {
-                public void handle(int signal) {
-                    fired.set(true);
-                }
-            });
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void testBasicSignal() {
+        Signal s = Signal.SIGHUP;
+        final AtomicBoolean fired = new AtomicBoolean(false);
+        posix.signal(s, signal -> fired.set(true));
 
-            posix.kill(posix.getpid(), s.intValue());
-            waitUntilTrue(fired, 200);
-            Assert.assertTrue(fired.get());
-        }
+        posix.kill(posix.getpid(), s.intValue());
+        waitUntilTrue(fired, 200);
+        assertTrue(fired.get());
     }
-    
+
     @Test
-    public void testJavaSignal() {
-        if (!Platform.IS_WINDOWS) {
-            Signal s = Signal.SIGHUP;
-            final AtomicBoolean fired = new AtomicBoolean(false);
-            SignalHandler previousHandler = javaPosix.signal(s, new SignalHandler() {
-                public void handle(int signal) {
-                    fired.set(true);
-                }
-            });
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void testJavaSignal() {
+        Signal s = Signal.SIGHUP;
+        final AtomicBoolean fired = new AtomicBoolean(false);
+        SignalHandler previousHandler = javaPosix.signal(s, signal -> fired.set(true));
 
-            Assert.assertNotNull(previousHandler);
+        assertNotNull(previousHandler);
 
-            // have to use native here; no abstraction for kill in pure Java
-            // TODO: sun.misc.Signal.raise can be used to kill current pid
-            posix.kill(posix.getpid(), s.intValue());
+        // have to use native here; no abstraction for kill in pure Java
+        // TODO: sun.misc.Signal.raise can be used to kill current pid
+        posix.kill(posix.getpid(), s.intValue());
 
-            waitUntilTrue(fired, 200);
-            Assert.assertTrue(fired.get());
-        }
+        waitUntilTrue(fired, 200);
+        assertTrue(fired.get());
     }
 }

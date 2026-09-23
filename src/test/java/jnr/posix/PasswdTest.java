@@ -1,25 +1,22 @@
 
 package jnr.posix;
 
+import jnr.posix.junit.DisabledOnJnrOs;
 import jnr.posix.util.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  */
-public class PasswdTest {
+class PasswdTest {
 
-    public PasswdTest() {
-    }
     private static POSIX posix;
     private static Class passwdClass;
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @BeforeAll
+    static void setUpClass() {
         if (Platform.IS_MAC) {
             passwdClass = MacOSPasswd.class;
         } else if (Platform.IS_LINUX) {
@@ -38,32 +35,22 @@ public class PasswdTest {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
+    @Test
+    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+    void getpwnam() {
+        final String LOGIN = "root";
+        Passwd pwd = posix.getpwnam(LOGIN);
+        assertNotNull(pwd);
+        assertEquals(LOGIN, pwd.getLoginName(), "Login name not equal");
+
+        assertEquals(pwd.getClass(), passwdClass);
     }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test public void getpwnam() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            final String LOGIN = "root";
-            Passwd pwd = posix.getpwnam(LOGIN);
-            assertNotNull(pwd);
-            assertEquals("Login name not equal", LOGIN, pwd.getLoginName());
-
-            assertTrue(pwd.getClass().equals(passwdClass));
-        }
-    }
-    @Test public void nonExistantUserReturnsNull() {
-        if (jnr.ffi.Platform.getNativePlatform().isUnix()) {
-            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull("getpwnam for non-existant user should return null", posix.getpwnam(LOGIN));
-        }
+    @Test
+    @DisplayName("returns null for non-existent user")
+    @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+    void nonExistantUserReturnsNull() {
+        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+        assertNull(posix.getpwnam(LOGIN), "getpwnam for non-existant user should return null");
     }
 }

@@ -7,41 +7,21 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jnr.constants.platform.LangInfo;
-import jnr.posix.util.Platform;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import jnr.ffi.Platform;
+import jnr.posix.junit.DisabledOnJnrOs;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static jnr.ffi.Platform.getNativePlatform;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- */
-public class GroupTest {
-
-    public GroupTest() {
-    }
+class GroupTest {
 
     private static POSIX posix;
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+
+    @BeforeAll
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     // TODO add test methods here.
@@ -50,90 +30,74 @@ public class GroupTest {
     // @Test
     // public void hello() {}
     @Test
-    public void getgrnam() {
-        if (getNativePlatform().isUnix()) {
-            final String LOGIN = "daemon";
-            Group grp = posix.getgrnam(LOGIN);
-            assertNotNull(grp);
-            assertEquals("Login name not equal", LOGIN, grp.getName());
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void getgrnam() {
+        final String LOGIN = "daemon";
+        Group grp = posix.getgrnam(LOGIN);
+        assertNotNull(grp);
+        assertEquals(LOGIN, grp.getName(), "Login name not equal");
+    }
+
+    @Test
+    @DisplayName("returns null for non-existent group")
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void nonExistantGroupReturnsNull() {
+        final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
+        assertNull(posix.getgrnam(LOGIN), "getpwnam for non-existant group should return null");
+    }
+
+    @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void getgrent() {
+        ArrayList<Group> grps = new ArrayList<>();
+        while (true) {
+            Group grp = posix.getgrent();
+            if (grp == null) {
+                break;
+            }
+            grps.add(grp);
+        }
+        for (Group grp : grps) {
+            assertNotNull(grp.getName());
+            assertNotNull(grp.getPassword());
+            for (String member : grp.getMembers()) {
+                assertNotNull(member);
+            }
         }
     }
 
     @Test
-    public void nonExistantGroupReturnsNull() {
-        if (getNativePlatform().isUnix()) {
-            final String LOGIN = "dkjhfjkdsfhjksdhfsdjkhfsdkjhfdskj";
-            assertNull("getpwnam for non-existant group should return null", posix.getgrnam(LOGIN));
+    @DisabledOnJnrOs({Platform.OS.WINDOWS, Platform.OS.DARWIN})
+    void getgroups() throws Throwable {
+        String[] groupIdsAsStrings = exec("id", "-G").split(" ");
+        long[] expectedGroupIds = new long[groupIdsAsStrings.length];
+
+        for (int i = 0; i < groupIdsAsStrings.length; i++) {
+            expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
         }
-    }
 
-    @Test
-    public void getgrent() {
-        if (getNativePlatform().isUnix()) {
-            ArrayList<Group> grps = new ArrayList<Group>();
-            while (true) {
-                Group grp = posix.getgrent();
-                if (grp == null) {
-                    break;
-                }
-                grps.add(grp);
-            }
-            for (Group grp : grps) {
-                assertNotNull(grp.getName());
-                assertNotNull(grp.getPassword());
-                assertNotNull(grp.getGID());
-                for (String member : grp.getMembers()) {
-                    assertNotNull(member);
-                }
-            }
+        long[] actualGroupIds = posix.getgroups();
+
+        // getgroups does not specify whether the effective group ID is included along with the supplementary
+        // group IDs. However, `id -G` always includes all group IDs. So, we must do something of a fuzzy match.
+        // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
+        // effective group ID before comparing the two arrays.
+        if (actualGroupIds.length == expectedGroupIds.length - 1) {
+            long effectiveGroupId = Long.parseLong(exec("id", "-g"));
+            expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
         }
-    }
 
-    @Test
-    public void getgroups() throws Throwable {
-        if (getNativePlatform().isUnix() && !Platform.IS_MAC) {
-            String[] groupIdsAsStrings = exec("id", "-G").split(" ");
-            long[] expectedGroupIds = new long[groupIdsAsStrings.length];
+        Arrays.sort(expectedGroupIds);
+        Arrays.sort(actualGroupIds);
 
-            for (int i = 0; i < groupIdsAsStrings.length; i++) {
-                expectedGroupIds[i] = Long.parseLong(groupIdsAsStrings[i]);
-            }
-
-            long[] actualGroupIds = posix.getgroups();
-
-            // getgroups does not specify whether the effective group ID is included along with the supplementary
-            // group IDs. However, `id -G` always includes all group IDs. So, we must do something of a fuzzy match.
-            // If the actual list is shorter than the expected list by 1, alter the expected list by removing the
-            // effective group ID before comparing the two arrays.
-            if (actualGroupIds.length == expectedGroupIds.length - 1) {
-                long effectiveGroupId = Long.parseLong(exec("id", "-g"));
-                expectedGroupIds = removeElement(expectedGroupIds, effectiveGroupId);
-            }
-
-            Arrays.sort(expectedGroupIds);
-            Arrays.sort(actualGroupIds);
-
-            assertArrayEquals(expectedGroupIds, actualGroupIds);
-        }
+        assertArrayEquals(expectedGroupIds, actualGroupIds);
     }
 
     private String exec(String... command) throws IOException {
-        InputStreamReader isr = null;
-        BufferedReader reader = null;
-
-        try {
-            isr = new InputStreamReader(Runtime.getRuntime().exec(command).getInputStream());
-            reader = new BufferedReader(isr);
+        try (InputStreamReader isr = new InputStreamReader(Runtime.getRuntime().exec(command)
+            .getInputStream()); BufferedReader reader = new BufferedReader(isr)) {
 
             return reader.readLine();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-
-            if (isr != null) {
-                isr.close();
-            }
         }
     }
 

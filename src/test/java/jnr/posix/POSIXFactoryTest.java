@@ -1,19 +1,18 @@
 package jnr.posix;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class POSIXFactoryTest {
+class POSIXFactoryTest {
     @Test
-    public void testGetNativePOSIX() throws Throwable {
+    void testGetNativePOSIX() {
         POSIX posix = POSIXFactory.getNativePOSIX();
         assertTrue(posix.isNative());
     }
 
     @Test
-    public void testGetJavaPOSIX() throws Throwable {
+    void testGetJavaPOSIX() {
         POSIX posix = POSIXFactory.getJavaPOSIX();
         assertFalse(posix.isNative());
     }
