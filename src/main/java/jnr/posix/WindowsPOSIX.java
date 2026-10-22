@@ -329,9 +329,19 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
     }
     
     public FileStat fstat(int fd) {
-        WindowsFileStat stat = new WindowsFileStat(this);
+        WindowsRawFileStat stat = new WindowsRawFileStat(this, handler);
         if (fstat(fd, stat) < 0) handler.error(Errno.valueOf(errno()), "fstat", "" + fd);
         return stat;
+    }
+
+    @Override
+    public int fstat(int fd, FileStat stat) {
+        WindowsByHandleFileInformation info = new WindowsByHandleFileInformation(getRuntime());
+        if (wlibc().GetFileInformationByHandle(wlibc()._get_osfhandle(fd), info) == 0) return -1;
+
+        ((WindowsRawFileStat) stat).setup(info);
+
+        return 0;
     }
     
     @Override
