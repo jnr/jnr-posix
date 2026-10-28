@@ -186,7 +186,8 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int getpgid() {
-        return libc().getpgid();
+        // C getpgid takes the pid; 0 is the calling process
+        return libc().getpgid(0);
     }
 
     public int getpgrp() {
@@ -223,20 +224,25 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().getgrnam(which);
     }
 
+    // set/end*ent return void in C; 0 keeps the int API
     public int setpwent() {
-        return libc().setpwent();
+        libc().setpwent();
+        return 0;
     }
 
     public int endpwent() {
-        return libc().endpwent();
+        libc().endpwent();
+        return 0;
     }
 
     public int setgrent() {
-        return libc().setgrent();
+        libc().setgrent();
+        return 0;
     }
 
     public int endgrent() {
-        return libc().endgrent();
+        libc().endgrent();
+        return 0;
     }
 
     public int getuid() {
@@ -299,7 +305,8 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int setpgrp(int pid, int pgrp) {
-        return libc().setpgrp(pid, pgrp);
+        // C setpgrp takes no arguments (it is setpgid(0, 0)); the two-argument form is setpgid
+        return libc().setpgid(pid, pgrp);
     }
 
     public int setsid() {

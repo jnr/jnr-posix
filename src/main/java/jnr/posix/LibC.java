@@ -55,11 +55,9 @@ public interface LibC {
     @IgnoreError int getgid();
     String getlogin();
     int setgid(int gid);
-    int getpgid();
     int getpgid(int pid);
     int setpgid(int pid, int pgid);
     int getpgrp();
-    int setpgrp(int pid, int pgrp);
     @IgnoreError int getppid();
     @IgnoreError int getpid();
     NativePasswd getpwent();
@@ -68,10 +66,10 @@ public interface LibC {
     NativeGroup getgrent();
     NativeGroup getgrgid(int which);
     NativeGroup getgrnam(CharSequence which);
-    int setpwent();
-    int endpwent();
-    int setgrent();
-    int endgrent();
+    void setpwent();
+    void endpwent();
+    void setgrent();
+    void endgrent();
     @IgnoreError int getuid();
     int setsid();
     int setuid(int uid);
