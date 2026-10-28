@@ -433,6 +433,18 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
         return libc().readlink(path, bufPtr, bufsize);
     }
 
+    public long readlink(CharSequence path, byte[] buf, long bufsize) {
+        return libc().readlink(path, buf, bufsize);
+    }
+
+    public long readlink(CharSequence path, ByteBuffer buf, long bufsize) {
+        return libc().readlink(path, buf, bufsize);
+    }
+
+    public long readlink(CharSequence path, Pointer bufPtr, long bufsize) {
+        return libc().readlink(path, bufPtr, bufsize);
+    }
+
     public int unsetenv(String envName) {
         return libc().unsetenv(envName);
     }
@@ -671,6 +683,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public int confstr(Confstr name, ByteBuffer buf, int len) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
+
+    public long confstr(Confstr name, ByteBuffer buf, long len) {
         errno(Errno.EOPNOTSUPP.intValue());
         return -1;
     }

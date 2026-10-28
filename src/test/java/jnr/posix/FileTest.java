@@ -576,6 +576,24 @@ class FileTest {
 
         @Test
         @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
+        void readlinkLongLengthTest() throws IOException {
+            File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
+            File link = new File(file.getAbsolutePath() + "link");
+
+            posix.symlink(file.getAbsolutePath(), link.getAbsolutePath());
+
+            byte[] fileBytes = file.getAbsolutePath().getBytes();
+            byte[] buffer = new byte[fileBytes.length];
+            ByteBuffer byteBuffer = ByteBuffer.allocate(fileBytes.length);
+
+            assertEquals((long) fileBytes.length, posix.readlink(link.getAbsolutePath(), buffer, (long) buffer.length));
+            assertArrayEquals(fileBytes, buffer);
+            assertEquals((long) fileBytes.length, posix.readlink(link.getAbsolutePath(), byteBuffer, (long) byteBuffer.capacity()));
+            assertArrayEquals(fileBytes, byteBuffer.array());
+        }
+
+        @Test
+        @DisabledOnJnrOs(jnr.ffi.Platform.OS.WINDOWS)
         void readlinkByteBufferTest() throws IOException {
             File file = File.createTempFile("jnr-pøsix-réådlînk-tést", "tmp", tempDir);
             File link = new File(file.getAbsolutePath() + "link");

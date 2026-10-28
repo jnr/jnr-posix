@@ -36,4 +36,15 @@ class ConfstrTest {
         String str = new String(buf.array());
         assertFalse(str.isEmpty(), "CS_PATH is blank");
     }
+
+    @Test
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void confstrLongLength() {
+        long len = posix.confstr(Confstr._CS_PATH, null, 0L);
+        assertEquals((long) posix.confstr(Confstr._CS_PATH, null, 0), len);
+
+        ByteBuffer buf = ByteBuffer.allocate((int) len);
+        assertEquals(len, posix.confstr(Confstr._CS_PATH, buf, len));
+        assertFalse(new String(buf.array()).isEmpty(), "CS_PATH is blank");
+    }
 }

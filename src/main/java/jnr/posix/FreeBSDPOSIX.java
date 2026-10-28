@@ -96,6 +96,10 @@ final class FreeBSDPOSIX extends BaseNativePOSIX {
         return libc().confstr(name, buf, len);
     }
 
+    public long confstr(Confstr name, ByteBuffer buf, long len) {
+        return libc().confstr(name, buf, len);
+    }
+
     public int fpathconf(int fd, Pathconf name) {
         return libc().fpathconf(fd, name);
     }

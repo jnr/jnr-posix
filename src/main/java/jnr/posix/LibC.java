@@ -116,6 +116,9 @@ public interface LibC {
     int readlink(CharSequence oldpath, @Out ByteBuffer buffer, int len);
     int readlink(CharSequence path, @Out byte[] buffer, int len);
     int readlink(CharSequence path, Pointer bufPtr, int bufsize);
+    @ssize_t long readlink(CharSequence path, @Out ByteBuffer buffer, @size_t long len);
+    @ssize_t long readlink(CharSequence path, @Out byte[] buffer, @size_t long len);
+    @ssize_t long readlink(CharSequence path, Pointer bufPtr, @size_t long bufsize);
     int setenv(CharSequence envName, CharSequence envValue, int overwrite);
     @IgnoreError int umask(int mask);
     int unsetenv(CharSequence envName);
@@ -161,6 +164,7 @@ public interface LibC {
     public long sysconf(Sysconf name);
 
     public int confstr(Confstr name, @Out ByteBuffer buf, int len);
+    public @size_t long confstr(Confstr name, @Out ByteBuffer buf, @size_t long len);
 
     public int fpathconf(int fd, Pathconf name);
 

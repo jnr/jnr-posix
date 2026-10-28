@@ -106,6 +106,9 @@ public interface POSIX {
     int readlink(CharSequence path, byte[] buf, int bufsize);
     int readlink(CharSequence path, ByteBuffer buf, int bufsize);
     int readlink(CharSequence path, Pointer bufPtr, int bufsize);
+    long readlink(CharSequence path, byte[] buf, long bufsize);
+    long readlink(CharSequence path, ByteBuffer buf, long bufsize);
+    long readlink(CharSequence path, Pointer bufPtr, long bufsize);
     int rmdir(String path);
     int setenv(String envName, String envValue, int overwrite); // 0 no !0 yes
     int setsid();
@@ -148,6 +151,7 @@ public interface POSIX {
     public long sysconf(Sysconf name);
 
     public int confstr(Confstr name, @Out ByteBuffer buf, int len);
+    public long confstr(Confstr name, @Out ByteBuffer buf, long len);
 
     public int fpathconf(int fd, Pathconf name);
 

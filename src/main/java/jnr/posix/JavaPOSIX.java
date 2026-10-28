@@ -340,6 +340,24 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public long readlink(CharSequence path, byte[] buf, long bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
+    public long readlink(CharSequence path, ByteBuffer buf, long bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
+    public long readlink(CharSequence path, Pointer bufPtr, long bufsize) {
+        handler.unimplementedError("readlink");
+
+        return -1;
+    }
+
     // At this point the environment is not being used by any methods here.
     // getenv/setenv/unsetenv do behave properly via POSIX definitions, but 
     // it is only a storage facility at the moment.  In a future release, this
@@ -543,6 +561,11 @@ final class JavaPOSIX implements POSIX {
     }
 
     public int confstr(Confstr name, ByteBuffer buf, int len) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
+
+    public long confstr(Confstr name, ByteBuffer buf, long len) {
         errno(Errno.EOPNOTSUPP.intValue());
         return -1;
     }
