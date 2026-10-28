@@ -1,29 +1,30 @@
 package jnr.posix;
 
 import com.kenai.jffi.MemoryIO;
+import jnr.ffi.Platform;
 import jnr.ffi.Pointer;
-import jnr.posix.util.Platform;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import jnr.posix.junit.DisabledOnJnrOs;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class EnvTest {
+class EnvTest {
     private static POSIX posix;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @BeforeAll
+    static void setUpClass() {
         posix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
     }
 
     @Test
-    public void testGetenv() throws Throwable {
+    void testGetenv() {
         assertNotNull(posix.getenv("PATH"));
         assertNull(posix.getenv("SOME_NON_EXISTENT_ENV"));
     }
 
     @Test
-    public void testSetenvNonOverwrite() throws Throwable {
+    void testSetenvNonOverwrite() {
         final String path = posix.getenv("PATH");
         int result = posix.setenv("PATH", "new value", 0);
 
@@ -32,42 +33,39 @@ public class EnvTest {
     }
 
     @Test
-    public void testSetenvOverwrite() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
-            final String path = posix.getenv("PATH");
-            int result = posix.setenv("PATH", "new value", 1);
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void testSetenvOverwrite() {
+        final String path = posix.getenv("PATH");
+        int result = posix.setenv("PATH", "new value", 1);
 
-            assertEquals(0, result);
-            assertNotEquals(path, posix.getenv("PATH"));
-            posix.setenv("PATH", path, 1);
-        }
+        assertEquals(0, result);
+        assertNotEquals(path, posix.getenv("PATH"));
+        posix.setenv("PATH", path, 1);
     }
 
     @Test
-    public void testSetEnvNewVar() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
-            int result = posix.setenv("MY_NEW_SETENV_VAR", "Yo", 0);
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void testSetEnvNewVar() {
+        int result = posix.setenv("MY_NEW_SETENV_VAR", "Yo", 0);
 
-            assertEquals(0, result);
-            assertEquals("Yo", posix.getenv("MY_NEW_SETENV_VAR"));
-        }
+        assertEquals(0, result);
+        assertEquals("Yo", posix.getenv("MY_NEW_SETENV_VAR"));
     }
 
     @Test
-    public void testUnsetenv() throws Throwable {
-        if (!Platform.IS_WINDOWS) {
-            posix.setenv("MY_UNSETENV_VAR", "Yo", 1);
-            assertEquals("Yo", posix.getenv("MY_UNSETENV_VAR"));
+    @DisabledOnJnrOs(Platform.OS.WINDOWS)
+    void testUnsetenv() {
+        posix.setenv("MY_UNSETENV_VAR", "Yo", 1);
+        assertEquals("Yo", posix.getenv("MY_UNSETENV_VAR"));
 
-            int result = posix.unsetenv("MY_UNSETENV_VAR");
-            assertEquals(0, result);
+        int result = posix.unsetenv("MY_UNSETENV_VAR");
+        assertEquals(0, result);
 
-            assertNull(posix.getenv("MY_UNSETENV_VAR"));
-        }
+        assertNull(posix.getenv("MY_UNSETENV_VAR"));
     }
 
     @Test
-    public void testEnv() throws Throwable {
+    void testEnv() {
         final Pointer env = posix.environ();
 
         int offset = 0;

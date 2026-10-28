@@ -1,16 +1,16 @@
 /***** BEGIN LICENSE BLOCK *****
  * Version: EPL 2.0/GPL 2.0/LGPL 2.1
- *
+ * <p>
  * The contents of this file are subject to the Eclipse Public
  * License Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of
  * the License at http://www.eclipse.org/legal/cpl-v10.html
- *
+ * <p>
  * Software distributed under the License is distributed on an "AS
  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
- *
+ * <p>
  *
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -31,40 +31,33 @@
 
 package jnr.posix;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class IDTest {
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-    public IDTest() {
-    }
+class IDTest {
     private static POSIX nativePosix, javaPosix;
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+
+    @BeforeAll
+    static void setUpClass() {
         nativePosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), true);
         javaPosix = POSIXFactory.getPOSIX(new DummyPOSIXHandler(), false);
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
+    @Test
+    void getuid() {
+        assertEquals(
+            nativePosix.getuid(), javaPosix.getuid(),
+            "Java posix did not return same value as native posix"
+        );
     }
 
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
-    @Test public void getuid() {
-        assertEquals("Java posix did not return same value as native posix", nativePosix.getuid(), javaPosix.getuid());
-    }
-    @Test public void getgid() {
-        assertEquals("Java posix did not return same value as native posix", nativePosix.getgid(), javaPosix.getgid());
+    @Test
+    void getgid() {
+        assertEquals(
+            nativePosix.getgid(), javaPosix.getgid(),
+            "Java posix did not return same value as native posix"
+        );
     }
 }

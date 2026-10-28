@@ -1,16 +1,16 @@
 /***** BEGIN LICENSE BLOCK *****
  * Version: EPL 2.0/GPL 2.0/LGPL 2.1
- *
+ * <p>
  * The contents of this file are subject to the Eclipse Public
  * License Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of
  * the License at http://www.eclipse.org/legal/cpl-v10.html
- *
+ * <p>
  * Software distributed under the License is distributed on an "AS
  * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
  * implied. See the License for the specific language governing
  * rights and limitations under the License.
- *
+ * <p>
  *
  *
  * Alternatively, the contents of this file may be used under the terms of
@@ -30,30 +30,34 @@
  */
 package jnr.posix.util;
 
-import jnr.posix.util.Platform;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
  * Admittedly, there is a lot of cyclomatic complexity and system-dependent
  * testing going on here.  At least it's in one place.
  */
 
-public class PlatformTest extends TestCase {
+class PlatformTest {
 
-    public void testBitLengths()  {
-        assertTrue("Not 32 or 64-bit platform?", Platform.IS_32_BIT ^ Platform.IS_64_BIT);
+    @Test
+    void testBitLengths()  {
+        assertTrue(Platform.IS_32_BIT ^ Platform.IS_64_BIT, "Not 32 or 64-bit platform?");
     }
 
-    public void testEnvCommand()  {
+    @Test
+    void testEnvCommand()  {
         String command =Platform.envCommand();
         if (Platform.IS_WINDOWS_9X)  {
-            assertEquals("Fails on Windows 95/98", "command.com /c set", command);
+            assertEquals("command.com /c set", command, "Fails on Windows 95/98");
         }
         if (Platform.IS_WINDOWS & !Platform.IS_WINDOWS_9X)  {
-            assertEquals("Fails on Windows other than 95/98", "cmd.exe /c set", command);
+            assertEquals("cmd.exe /c set", command, "Fails on Windows other than 95/98");
         }
         if (!Platform.IS_WINDOWS)  {
-            assertEquals("Fails on Non-Windows platform", "env", command);
+            assertEquals("env", command, "Fails on Non-Windows platform");
         }
     }
 }
