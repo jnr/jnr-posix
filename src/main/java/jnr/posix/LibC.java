@@ -186,9 +186,13 @@ public interface LibC {
 
     Variable<Long> environ();
 
+    @Variadic(fixedCount = 1)
     int syscall(int number);
+    @Variadic(fixedCount = 1)
     int syscall(int number, int arg1);
+    @Variadic(fixedCount = 1)
     int syscall(int number, int arg1, int arg2);
+    @Variadic(fixedCount = 1)
     int syscall(int number, int arg1, int arg2, int arg3);
 
     int daemon(int nochdir, int noclose);
