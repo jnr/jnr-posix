@@ -34,6 +34,22 @@ class ProcessTest {
         assertEquals(propCwd, posix.getcwd());
     }
 
+    @Test
+    @EnabledOnJnrOs({Platform.OS.LINUX, Platform.OS.DARWIN})
+    void getpgidWithNoArgumentIsTheCallersGroup() {
+        assertEquals(posix.getpgrp(), posix.getpgid(0));
+        assertEquals(posix.getpgrp(), posix.getpgid());
+    }
+
+    @Test
+    @EnabledOnJnrOs({Platform.OS.LINUX, Platform.OS.DARWIN})
+    void passwdAndGroupRewindsReturnZero() {
+        assertEquals(0, posix.setpwent());
+        assertEquals(0, posix.endpwent());
+        assertEquals(0, posix.setgrent());
+        assertEquals(0, posix.endgrent());
+    }
+
     // These tests may fail depending on how the system they're being run on is configured.  Since they are
     // system-defined limits that may even differ based on UID, it's hard to find something universally true.
     // Limiting the number of processes a user can create is believed to be universally enabled since without it
