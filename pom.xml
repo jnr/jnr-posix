@@ -11,7 +11,7 @@
 
   <artifactId>jnr-posix</artifactId>
   <packaging>jar</packaging>
-  <version>3.2.6</version>
+  <version>3.2.7-SNAPSHOT</version>
   <name>jnr-posix</name>
   <description>
     Common cross-project/cross-platform POSIX APIs
@@ -27,7 +27,7 @@
     <connection>scm:git:git@github.com:jnr/jnr-posix.git</connection>
     <developerConnection>scm:git:git@github.com:jnr/jnr-posix.git</developerConnection>
     <url>git@github.com:jnr/jnr-posix.git</url>
-    <tag>jnr-posix-3.2.6</tag>
+    <tag>release-1.3</tag>
   </scm>
 
   <licenses>
