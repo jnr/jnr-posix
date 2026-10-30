@@ -5,7 +5,7 @@
   <parent>
     <groupId>com.github.jnr</groupId>
     <artifactId>jnr-parent</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.3</version>
     <relativePath />
   </parent>
 
@@ -92,12 +92,12 @@
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-ffi</artifactId>
-      <version>2.3.4</version>
+      <version>2.3.6</version>
     </dependency>
     <dependency>
       <groupId>com.github.jnr</groupId>
       <artifactId>jnr-constants</artifactId>
-      <version>0.11.2</version>
+      <version>0.11.3</version>
     </dependency>
   </dependencies>
 
@@ -149,13 +149,8 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.sonatype.central</groupId>
-        <artifactId>central-publishing-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
         <configuration>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
@@ -223,16 +218,6 @@
               <forkCount>2</forkCount>
               <reuseForks>false</reuseForks>
             </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>release</id>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-gpg-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
