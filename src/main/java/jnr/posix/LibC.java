@@ -209,5 +209,8 @@ public interface LibC {
     String strerror(int errno);
 
     int gettimeofday(Timeval tv, long alwaysNull);
+
+    int clock_gettime(int clock_id, @Out Timespec tp);
+    int clock_getres(int clock_id, @Out Timespec res);
 }
 

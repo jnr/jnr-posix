@@ -928,4 +928,17 @@ final public class WindowsPOSIX extends BaseNativePOSIX {
         tv.usec(currentMillis % 1000 * 1000);
         return 0;
     }
+
+    // The Windows C runtime has no clock_gettime or clock_getres.
+    @Override
+    public int clock_gettime(int clockId, Timespec tp) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
+
+    @Override
+    public int clock_getres(int clockId, Timespec res) {
+        errno(Errno.EOPNOTSUPP.intValue());
+        return -1;
+    }
 }

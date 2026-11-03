@@ -654,6 +654,21 @@ final class CheckedPOSIX implements POSIX {
         try {return posix.gettimeofday(tv); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    @Override
+    public Timespec allocateTimespec() {
+        try {return posix.allocateTimespec(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    @Override
+    public int clock_gettime(int clockId, Timespec tp) {
+        try {return posix.clock_gettime(clockId, tp); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
+    @Override
+    public int clock_getres(int clockId, Timespec res) {
+        try {return posix.clock_getres(clockId, res); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public String gethostname() {
         try {return posix.gethostname(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }

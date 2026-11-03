@@ -835,6 +835,21 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public Timespec allocateTimespec() {
+        handler.unimplementedError("allocateTimespec");
+        return null;
+    }
+
+    public int clock_gettime(int clockId, Timespec tp) {
+        handler.unimplementedError("clock_gettime");
+        return -1;
+    }
+
+    public int clock_getres(int clockId, Timespec res) {
+        handler.unimplementedError("clock_getres");
+        return -1;
+    }
+
     public String gethostname() {
         return helper.gethostname();
     }
