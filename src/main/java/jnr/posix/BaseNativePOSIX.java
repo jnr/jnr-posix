@@ -19,9 +19,11 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import jnr.constants.platform.Confstr;
 import jnr.constants.platform.Pathconf;
@@ -34,7 +36,15 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     protected final POSIXHandler handler;
     protected final JavaLibCHelper helper;
     
-    protected final Map<Signal, SignalHandler> signalHandlers = new HashMap();
+    private static final long SIG_ERR = -1;
+
+    // The handlers installed with signal() by all instances in this class loader, per signal, since the signal
+    // disposition is per process. jnr-ffi only keeps a weak reference to a closure's implementation, so they're kept
+    // strongly reachable here for as long as they may be installed, even if their instance is dropped. Otherwise the
+    // installed native signal handler would point at a recycled closure (see #137). restoreSignalHandlers() uses
+    // them to put back what each instance replaced, in any order.
+    private static final Map<Signal, List<NativeSignalHandler>> installedSignalHandlers =
+            new HashMap<Signal, List<NativeSignalHandler>>();
     
     protected BaseNativePOSIX(LibCProvider libcProvider, POSIXHandler handler) {
         this.handler = handler;
@@ -326,20 +336,107 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public SignalHandler signal(Signal sig, final SignalHandler handler) {
-        synchronized (signalHandlers) {
-            SignalHandler old = signalHandlers.get(sig);
+        NativeSignalHandler nativeHandler = new NativeSignalHandler(this, handler);
+        // installed by address, so that restoreSignalHandlers() can tell whether it's still the installed one
+        nativeHandler.address = getRuntime().getClosureManager()
+                .getClosurePointer(LibC.LibCSignalHandler.class, nativeHandler).address();
 
-            long result = libc().signal(sig.intValue(), new LibC.LibCSignalHandler() {
-                public void signal(int sig) {
-                    handler.handle(sig);
+        synchronized (installedSignalHandlers) {
+            List<NativeSignalHandler> installed = installedSignalHandlers.get(sig);
+            if (installed == null) {
+                installed = new ArrayList<NativeSignalHandler>();
+                installedSignalHandlers.put(sig, installed);
+            }
+            NativeSignalHandler old = find(installed, this);
+
+            long replaced = libc().signal(sig.intValue(), nativeHandler.address);
+
+            if (replaced != SIG_ERR) {
+                nativeHandler.replaced = replaced;
+                installed.add(nativeHandler);
+                if (old != null) {
+                    remove(installed, old);
                 }
-            });
-
-            if (result != -1) {
-                signalHandlers.put(sig, handler);
             }
 
-            return old;
+            return old != null ? old.handler : null;
+        }
+    }
+
+    public void restoreSignalHandlers() {
+        synchronized (installedSignalHandlers) {
+            for (Map.Entry<Signal, List<NativeSignalHandler>> entry : installedSignalHandlers.entrySet()) {
+                List<NativeSignalHandler> installed = entry.getValue();
+                NativeSignalHandler own = find(installed, this);
+                if (own == null) {
+                    continue;
+                }
+
+                int sig = entry.getKey().intValue();
+                // signal() can't tell which handler is installed without replacing it
+                long current = libc().signal(sig, own.replaced);
+                if (current == own.address) {
+                    remove(installed, own);
+                    continue;
+                }
+
+                if (current != SIG_ERR) {
+                    libc().signal(sig, current);
+                }
+                if (replacedBy(installed, own)) {
+                    // another instance in this class loader replaced it, and will put back what this one replaced
+                    remove(installed, own);
+                } else {
+                    // something outside this class loader replaced it and may put it back, so it stays reachable
+                    own.posix = null;
+                }
+            }
+        }
+    }
+
+    private static NativeSignalHandler find(List<NativeSignalHandler> installed, BaseNativePOSIX posix) {
+        for (NativeSignalHandler nativeHandler : installed) {
+            if (nativeHandler.posix == posix) {
+                return nativeHandler;
+            }
+        }
+        return null;
+    }
+
+    private static boolean replacedBy(List<NativeSignalHandler> installed, NativeSignalHandler nativeHandler) {
+        for (NativeSignalHandler other : installed) {
+            if (other.replaced == nativeHandler.address) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Removes a handler that isn't installed anymore. A handler that replaced it puts back what it replaced instead.
+    private static void remove(List<NativeSignalHandler> installed, NativeSignalHandler nativeHandler) {
+        installed.remove(nativeHandler);
+        for (NativeSignalHandler other : installed) {
+            if (other.replaced == nativeHandler.address) {
+                other.replaced = nativeHandler.replaced;
+            }
+        }
+    }
+
+    // The LibC.LibCSignalHandler whose closure is installed for a signal, along with the SignalHandler it calls, the
+    // instance that installed it and the native handler it replaced.
+    private static final class NativeSignalHandler implements LibC.LibCSignalHandler {
+        private final SignalHandler handler;
+        private BaseNativePOSIX posix;
+        private long address;
+        private long replaced;
+
+        NativeSignalHandler(BaseNativePOSIX posix, SignalHandler handler) {
+            this.posix = posix;
+            this.handler = handler;
+        }
+
+        public void signal(int sig) {
+            handler.handle(sig);
         }
     }
 
