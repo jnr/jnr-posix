@@ -648,4 +648,13 @@ final class LazyPOSIX implements POSIX {
 
     @Override
     public int gettimeofday(Timeval tv) { return posix().gettimeofday(tv); }
+
+    @Override
+    public Timespec allocateTimespec() { return posix().allocateTimespec(); }
+
+    @Override
+    public int clock_gettime(int clockId, Timespec tp) { return posix().clock_gettime(clockId, tp); }
+
+    @Override
+    public int clock_getres(int clockId, Timespec res) { return posix().clock_getres(clockId, res); }
 }

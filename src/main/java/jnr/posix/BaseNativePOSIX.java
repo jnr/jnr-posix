@@ -965,4 +965,13 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     @Override
     public int gettimeofday(Timeval tv) { return libc().gettimeofday(tv, 0); }
+
+    @Override
+    public Timespec allocateTimespec() { return new DefaultNativeTimespec(getRuntime()); }
+
+    @Override
+    public int clock_gettime(int clockId, Timespec tp) { return libc().clock_gettime(clockId, tp); }
+
+    @Override
+    public int clock_getres(int clockId, Timespec res) { return libc().clock_getres(clockId, res); }
 }

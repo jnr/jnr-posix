@@ -238,4 +238,27 @@ public interface POSIX {
 
     Timeval allocateTimeval();
     int gettimeofday(Timeval tv);
+
+    Timespec allocateTimespec();
+
+    /**
+     * Read the time of the given clock into tp.
+     *
+     * Clock ids differ between platforms (CLOCK_MONOTONIC is 1 on Linux and 6 on macOS), so callers
+     * must pass the value for the platform they are running on.
+     *
+     * @param clockId the platform's clock id, such as CLOCK_REALTIME or CLOCK_MONOTONIC
+     * @param tp the timespec to fill in, from {@link #allocateTimespec()}
+     * @return 0 on success, or -1 with errno set
+     */
+    int clock_gettime(int clockId, Timespec tp);
+
+    /**
+     * Read the resolution of the given clock into res.
+     *
+     * @param clockId the platform's clock id, such as CLOCK_REALTIME or CLOCK_MONOTONIC
+     * @param res the timespec to fill in, from {@link #allocateTimespec()}
+     * @return 0 on success, or -1 with errno set
+     */
+    int clock_getres(int clockId, Timespec res);
 }
