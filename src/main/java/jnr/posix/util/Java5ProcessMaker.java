@@ -80,58 +80,58 @@ public class Java5ProcessMaker implements ProcessMaker {
     }
 
     public ProcessMaker inheritIO() {
-        handler.unimplementedError("inheritIO");
+        builder.inheritIO();
         return this;
     }
 
     public Redirect redirectError() {
-        return Redirect.PIPE; // only option on Java 5/6
+        return Redirect.fromProcessBuilderRedirect(builder.redirectError());
     }
 
     public ProcessMaker redirectError(File file) {
-        handler.unimplementedError("redirectError");
+        builder.redirectError(file);
         return this;
     }
 
     public ProcessMaker redirectError(Redirect destination) {
-        handler.unimplementedError("redirectError");
+        builder.redirectError(destination.toProcessBuilderRedirect());
         return this;
     }
 
     public boolean redirectErrorStream() {
-        return false;
+        return builder.redirectErrorStream();
     }
 
     public ProcessMaker redirectErrorStream(boolean redirectErrorStream) {
-        handler.unimplementedError("redirectErrorStream");
+        builder.redirectErrorStream(redirectErrorStream);
         return this;
     }
 
     public Redirect redirectInput() {
-        return Redirect.PIPE; // only option on Java 5/6
+        return Redirect.fromProcessBuilderRedirect(builder.redirectInput());
     }
 
     public ProcessMaker redirectInput(File file) {
-        handler.unimplementedError("redirectInput");
+        builder.redirectInput(file);
         return this;
     }
 
     public ProcessMaker redirectInput(Redirect source) {
-        handler.unimplementedError("redirectInput");
+        builder.redirectInput(source.toProcessBuilderRedirect());
         return this;
     }
 
     public Redirect redirectOutput() {
-        return Redirect.PIPE; // only option on Java 5/6
+        return Redirect.fromProcessBuilderRedirect(builder.redirectOutput());
     }
 
     public ProcessMaker redirectOutput(File file) {
-        handler.unimplementedError("redirectOutput");
+        builder.redirectOutput(file);
         return this;
     }
 
     public ProcessMaker redirectOutput(Redirect destination) {
-        handler.unimplementedError("redirectOutput");
+        builder.redirectOutput(destination.toProcessBuilderRedirect());
         return this;
     }
 
