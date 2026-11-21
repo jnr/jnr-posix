@@ -78,6 +78,28 @@ public interface ProcessMaker {
         public Type type() {
             return type;
         }
+
+        ProcessBuilder.Redirect toProcessBuilderRedirect() {
+            switch (type) {
+                case APPEND: return ProcessBuilder.Redirect.appendTo(file);
+                case INHERIT: return ProcessBuilder.Redirect.INHERIT;
+                case PIPE: return ProcessBuilder.Redirect.PIPE;
+                case READ: return ProcessBuilder.Redirect.from(file);
+                case WRITE: return ProcessBuilder.Redirect.to(file);
+                default: throw new IllegalStateException("unknown redirect type: " + type);
+            }
+        }
+
+        static Redirect fromProcessBuilderRedirect(ProcessBuilder.Redirect redirect) {
+            switch (redirect.type()) {
+                case APPEND: return appendTo(redirect.file());
+                case INHERIT: return INHERIT;
+                case PIPE: return PIPE;
+                case READ: return from(redirect.file());
+                case WRITE: return to(redirect.file());
+                default: throw new IllegalStateException("unknown redirect type: " + redirect.type());
+            }
+        }
     }
 
     public List<String> command();
