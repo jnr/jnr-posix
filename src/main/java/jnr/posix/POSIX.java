@@ -95,6 +95,17 @@ public interface POSIX {
     int kill(int pid, int signal);
     int kill(long pid, int signal);
     SignalHandler signal(Signal sig, SignalHandler handler);
+
+    /**
+     * Puts back the native signal handlers that this instance replaced with {@link #signal(Signal, SignalHandler)}.
+     * If another instance in the same class loader has replaced this instance's handler since, that instance puts
+     * back what this one replaced when it restores its own. If something else has replaced it, such as code in
+     * another class loader, it's left alone. Does nothing if this implementation doesn't install native signal
+     * handlers.
+     */
+    default void restoreSignalHandlers() {
+    }
+
     int raise(int sig);
     int lchmod(String filename, int mode);
     int lchown(String filename, int user, int group);

@@ -255,6 +255,10 @@ final class CheckedPOSIX implements POSIX {
         try { return posix.signal(sig, handler); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }
 
+    public void restoreSignalHandlers() {
+        try { posix.restoreSignalHandlers(); } catch (UnsatisfiedLinkError ule) { unimplementedNull(); }
+    }
+
     public int raise(int sig) {
         try { return posix.raise(sig); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }

@@ -100,6 +100,7 @@ public interface LibC {
         @Delegate void signal(int sig);
     }
     @intptr_t long signal(int sig, LibCSignalHandler handler);
+    @intptr_t long signal(int sig, @intptr_t long handler);
     int raise(int raise);
     int lchmod(CharSequence filename, int mode);
     int lchown(CharSequence filename, int user, int group);

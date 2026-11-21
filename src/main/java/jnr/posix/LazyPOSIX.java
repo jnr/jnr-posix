@@ -252,6 +252,14 @@ final class LazyPOSIX implements POSIX {
         return posix().signal(sig, handler);
     }
 
+    public void restoreSignalHandlers() {
+        // an instance that isn't loaded yet hasn't installed any
+        POSIX posix = this.posix;
+        if (posix != null) {
+            posix.restoreSignalHandlers();
+        }
+    }
+
     public int raise(int sig) {
         return posix().raise(sig);
     }
