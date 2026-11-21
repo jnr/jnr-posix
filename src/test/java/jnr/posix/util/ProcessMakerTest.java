@@ -32,8 +32,7 @@ class ProcessMakerTest {
     private static ProcessMaker child() {
         String java = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         String classpath = System.getProperty("java.class.path");
-        ProcessMaker maker = new Java5ProcessMaker(new DummyPOSIXHandler(),
-                java, "-cp", classpath, ProcessMakerTest.class.getName());
+        ProcessMaker maker = new JavaLangProcessMaker(java, "-cp", classpath, ProcessMakerTest.class.getName());
 
         // The JVM writes a "Picked up ..." note to stderr when one of these is set
         maker.environment().remove("JDK_JAVA_OPTIONS");

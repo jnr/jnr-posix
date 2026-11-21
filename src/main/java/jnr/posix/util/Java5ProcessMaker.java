@@ -33,18 +33,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class Java5ProcessMaker implements ProcessMaker {
-    private final ProcessBuilder builder;
+@Deprecated
+public class Java5ProcessMaker extends JavaLangProcessMaker {
     private final POSIXHandler handler;
 
     public Java5ProcessMaker(POSIXHandler handler, String... command) {
+        super(command);
         this.handler = handler;
-        builder = new ProcessBuilder(command);
     }
 
     public Java5ProcessMaker(POSIXHandler handler) {
+        super();
         this.handler = handler;
-        builder = new ProcessBuilder();
     }
 
     public List<String> command() {
@@ -80,81 +80,62 @@ public class Java5ProcessMaker implements ProcessMaker {
     }
 
     public ProcessMaker inheritIO() {
-        builder.inheritIO();
+        handler.unimplementedError("inheritIO");
         return this;
     }
 
     public Redirect redirectError() {
-        return Redirect.fromProcessBuilderRedirect(builder.redirectError());
+        return Redirect.PIPE; // only option on Java 5/6
     }
 
     public ProcessMaker redirectError(File file) {
-        builder.redirectError(file);
+        handler.unimplementedError("redirectError");
         return this;
     }
 
     public ProcessMaker redirectError(Redirect destination) {
-        builder.redirectError(destination.toProcessBuilderRedirect());
+        handler.unimplementedError("redirectError");
         return this;
     }
 
     public boolean redirectErrorStream() {
-        return builder.redirectErrorStream();
+        return false;
     }
 
     public ProcessMaker redirectErrorStream(boolean redirectErrorStream) {
-        builder.redirectErrorStream(redirectErrorStream);
+        handler.unimplementedError("redirectErrorStream");
         return this;
     }
 
     public Redirect redirectInput() {
-        return Redirect.fromProcessBuilderRedirect(builder.redirectInput());
+        return Redirect.PIPE; // only option on Java 5/6
     }
 
     public ProcessMaker redirectInput(File file) {
-        builder.redirectInput(file);
+        handler.unimplementedError("redirectInput");
         return this;
     }
 
     public ProcessMaker redirectInput(Redirect source) {
-        builder.redirectInput(source.toProcessBuilderRedirect());
+        handler.unimplementedError("redirectInput");
         return this;
     }
 
     public Redirect redirectOutput() {
-        return Redirect.fromProcessBuilderRedirect(builder.redirectOutput());
+        return Redirect.PIPE; // only option on Java 5/6
     }
 
     public ProcessMaker redirectOutput(File file) {
-        builder.redirectOutput(file);
+        handler.unimplementedError("redirectOutput");
         return this;
     }
 
     public ProcessMaker redirectOutput(Redirect destination) {
-        builder.redirectOutput(destination.toProcessBuilderRedirect());
+        handler.unimplementedError("redirectOutput");
         return this;
     }
 
     public Process start() throws IOException {
         return builder.start();
-    }
-
-    private static void envIntoProcessBuilder(ProcessBuilder pb, String[] env) {
-        if (env == null) return;
-
-        pb.environment().clear();
-        for (String envLine : env) {
-            if (envLine.indexOf(0) != -1) {
-                envLine = envLine.replaceFirst("\u0000.*", "");
-            }
-
-            int index = envLine.indexOf('=');
-
-            if (index != -1) {
-                pb.environment().put(
-                        envLine.substring(0, index),
-                        envLine.substring(index + 1));
-            }
-        }
     }
 }

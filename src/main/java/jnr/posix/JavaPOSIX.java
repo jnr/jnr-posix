@@ -5,7 +5,7 @@ import jnr.constants.platform.Fcntl;
 import jnr.constants.platform.Signal;
 import jnr.constants.platform.Sysconf;
 import jnr.ffi.Pointer;
-import jnr.posix.util.Java5ProcessMaker;
+import jnr.posix.util.JavaLangProcessMaker;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.Platform;
 import jnr.posix.util.ProcessMaker;
@@ -32,11 +32,11 @@ final class JavaPOSIX implements POSIX {
     }
 
     public ProcessMaker newProcessMaker(String... command) {
-        return new Java5ProcessMaker(handler, command);
+        return new JavaLangProcessMaker(command);
     }
 
     public ProcessMaker newProcessMaker() {
-        return new Java5ProcessMaker(handler);
+        return new JavaLangProcessMaker();
     }
     
     public FileStat allocateStat() {

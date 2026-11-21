@@ -11,7 +11,7 @@ import jnr.ffi.mapper.FromNativeContext;
 import jnr.ffi.mapper.FromNativeConverter;
 import jnr.ffi.mapper.ToNativeContext;
 import jnr.ffi.mapper.ToNativeConverter;
-import jnr.posix.util.Java5ProcessMaker;
+import jnr.posix.util.JavaLangProcessMaker;
 import jnr.posix.util.MethodName;
 import jnr.posix.util.ProcessMaker;
 
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import jnr.constants.platform.Confstr;
 import jnr.constants.platform.Pathconf;
-import jnr.ffi.annotations.Out;
 
 public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     private final LibC libc;
@@ -44,11 +43,11 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
     }
 
     public ProcessMaker newProcessMaker(String... command) {
-        return new Java5ProcessMaker(handler, command);
+        return new JavaLangProcessMaker(command);
     }
 
     public ProcessMaker newProcessMaker() {
-        return new Java5ProcessMaker(handler);
+        return new JavaLangProcessMaker();
     }
 
     public final LibC libc() {
