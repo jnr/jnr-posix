@@ -261,4 +261,33 @@ public interface POSIX {
      * @return 0 on success, or -1 with errno set
      */
     int clock_getres(int clockId, Timespec res);
+
+    /**
+     * Open a directory stream, like opendir(3). Read its entries with {@link #readdir(Pointer)} and close it with
+     * {@link #closedir(Pointer)}.
+     *
+     * Directory streams are supported on Linux (64-bit) and macOS. Elsewhere this returns null with errno set to
+     * ENOSYS.
+     *
+     * @param path the directory to open
+     * @return the directory stream, or null with errno set
+     */
+    Pointer opendir(String path);
+
+    /**
+     * Read the next entry of a directory stream, like readdir(3). The entries "." and ".." are included. The type
+     * of an entry is {@link DirEnt#DT_UNKNOWN} when the file system doesn't report it.
+     *
+     * @param dir a directory stream from {@link #opendir(String)}
+     * @return the next entry, or null at the end of the stream (with errno 0) or on an error (with errno set)
+     */
+    DirEnt readdir(Pointer dir);
+
+    /**
+     * Close a directory stream, like closedir(3).
+     *
+     * @param dir a directory stream from {@link #opendir(String)}
+     * @return 0 on success, or -1 with errno set
+     */
+    int closedir(Pointer dir);
 }

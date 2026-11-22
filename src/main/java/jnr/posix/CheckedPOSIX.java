@@ -669,6 +669,21 @@ final class CheckedPOSIX implements POSIX {
         try {return posix.clock_getres(clockId, res); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
     }
 
+    @Override
+    public Pointer opendir(String path) {
+        try {return posix.opendir(path); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    @Override
+    public DirEnt readdir(Pointer dir) {
+        try {return posix.readdir(dir); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
+    }
+
+    @Override
+    public int closedir(Pointer dir) {
+        try {return posix.closedir(dir); } catch (UnsatisfiedLinkError ule) { return unimplementedInt(); }
+    }
+
     public String gethostname() {
         try {return posix.gethostname(); } catch (UnsatisfiedLinkError ule) { return unimplementedNull(); }
     }

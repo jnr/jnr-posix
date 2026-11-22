@@ -657,4 +657,10 @@ final class LazyPOSIX implements POSIX {
 
     @Override
     public int clock_getres(int clockId, Timespec res) { return posix().clock_getres(clockId, res); }
+
+    public Pointer opendir(String path) { return posix().opendir(path); }
+
+    public DirEnt readdir(Pointer dir) { return posix().readdir(dir); }
+
+    public int closedir(Pointer dir) { return posix().closedir(dir); }
 }

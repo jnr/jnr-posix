@@ -850,6 +850,21 @@ final class JavaPOSIX implements POSIX {
         return -1;
     }
 
+    public Pointer opendir(String path) {
+        handler.unimplementedError("opendir");
+        return null;
+    }
+
+    public DirEnt readdir(Pointer dir) {
+        handler.unimplementedError("readdir");
+        return null;
+    }
+
+    public int closedir(Pointer dir) {
+        handler.unimplementedError("closedir");
+        return -1;
+    }
+
     public String gethostname() {
         return helper.gethostname();
     }

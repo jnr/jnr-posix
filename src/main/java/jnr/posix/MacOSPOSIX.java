@@ -20,6 +20,13 @@ final class MacOSPOSIX extends BaseNativePOSIX {
         environ = loader.load();
     }
 
+    @Override
+    NativeDirEnt.Layout direntLayout() {
+        // as in allocateStat, arm64 only has 64-bit inodes and the symbols jnr binds to on x86_64 use 32-bit ones
+        return Platform.getNativePlatform().getCPU() == Platform.CPU.AARCH64 ?
+                NativeDirEnt.Layout.DARWIN_64_BIT_INODE : NativeDirEnt.Layout.DARWIN_32_BIT_INODE;
+    }
+
     public FileStat allocateStat() {
         if (Platform.getNativePlatform().getCPU() == Platform.CPU.AARCH64) {
             return new MacOSFileStat64Inode(this);
