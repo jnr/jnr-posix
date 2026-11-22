@@ -41,6 +41,12 @@ final class LinuxPOSIX extends BaseNativePOSIX implements Linux {
     }
 
     @Override
+    NativeDirEnt.Layout direntLayout() {
+        // 32-bit readdir has a different struct dirent and fails with EOVERFLOW for large inode numbers
+        return Platform.IS_32_BIT ? null : NativeDirEnt.Layout.LINUX_64;
+    }
+
+    @Override
     public FileStat allocateStat() {
         if (Platform.IS_32_BIT) {
             return new LinuxFileStat32(this);

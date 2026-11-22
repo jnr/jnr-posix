@@ -212,5 +212,9 @@ public interface LibC {
 
     int clock_gettime(int clock_id, @Out Timespec tp);
     int clock_getres(int clock_id, @Out Timespec res);
+
+    Pointer opendir(CharSequence path);
+    Pointer readdir(Pointer dir);
+    int closedir(Pointer dir);
 }
 

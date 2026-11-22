@@ -973,4 +973,40 @@ public abstract class BaseNativePOSIX extends NativePOSIX implements POSIX {
 
     @Override
     public int clock_getres(int clockId, Timespec res) { return libc().clock_getres(clockId, res); }
+
+    /**
+     * The layout of struct dirent on this platform, or null where it isn't known and directory streams are not
+     * supported.
+     */
+    NativeDirEnt.Layout direntLayout() {
+        return null;
+    }
+
+    @Override
+    public Pointer opendir(String path) {
+        if (direntLayout() == null) {
+            errno(Errno.ENOSYS.intValue());
+            return null;
+        }
+
+        return libc().opendir(path);
+    }
+
+    @Override
+    public DirEnt readdir(Pointer dir) {
+        NativeDirEnt.Layout layout = direntLayout();
+        if (layout == null) {
+            errno(Errno.ENOSYS.intValue());
+            return null;
+        }
+
+        // readdir returns NULL both at the end of the stream and on an error, which only errno tells apart
+        errno(0);
+        Pointer entry = libc().readdir(dir);
+
+        return entry == null ? null : layout.read(entry);
+    }
+
+    @Override
+    public int closedir(Pointer dir) { return libc().closedir(dir); }
 }
